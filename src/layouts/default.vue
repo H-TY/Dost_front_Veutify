@@ -1,6 +1,6 @@
 <template>
   <!-- Logo & 導覽列 -->
-  <v-app-bar class="bg-light-blue-darken-4 align-center" height="190">
+  <v-app-bar class="bg-light-blue-darken-4 align-center" :height="mobile === true ? '120' : '190'">
 
     <!-- Mobile 版導覽列 -->
     <!-- v-if 若為手機的斷點尺寸時，顯示以下 code -->
@@ -9,8 +9,8 @@
         <v-row>
           <!-- Logo -->
           <v-col class="d-flex justify-star align-center">
-            <v-btn :to="logo.to" variant="plain" :ripple="false" size="50">
-              <v-img :src="logo.img" width="50"></v-img>
+            <v-btn class="bg-white rounded-circle" :to="logo.to" variant="text" :ripple="false" size="60">
+              <v-img :src="logo.img" width="40"></v-img>
             </v-btn>
           </v-col>
           <!-- Mobile版_購物車懸浮按鈕 -->
