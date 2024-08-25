@@ -22,7 +22,7 @@
                 <v-icon class="bg-white rounded-circle text-h5" size="46" color="pink-lighten-1" :icon="cart.icon"></v-icon>
               </v-badge>
             </v-btn>
-          </template> 
+          </template>
           <!-- 漢堡按鈕 / 摺疊按鈕（作為綁定觸發動作用的 icon） -->
           <v-col class="d-flex justify-end align-center">
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
@@ -42,13 +42,13 @@
           </v-col>
           <!-- Logo -->
           <v-col class="d-flex justify-center align-center">
-            <v-btn class="bg-white rounded-circle" :to="logo.to" variant="text" :ripple="false" size="100">
-              <v-img :src="logo.img" width="70" cover></v-img>
+            <v-btn class="bg-white rounded-circle" color="white" :to="logo.to" :ripple="false" size="100">
+              <v-img class="opacity-100" :src="logo.img" width="70" cover></v-img>
             </v-btn>
           </v-col>
           <!-- 導覽列_右側_register & login -->
           <v-row class="flex-column" no-gutters>
-            <template v-for="RLitem in RegLogin" :key="RLitem.to"> 
+            <template v-for="RLitem in RegLogin" :key="RLitem.to">
               <v-col class="d-flex justify-end align-center">
                 <v-btn v-if="RLitem.show" :prepend-icon="RLitem.icon" :to="RLitem.to" variant="plain" :ripple="false">{{ RLitem.text }}</v-btn>
               </v-col>
@@ -58,7 +58,7 @@
         <!-- 導覽項目 -->
         <v-row class="flex-nowrap">
           <v-col class="py-0 d-flex justify-center align-center">
-            <template v-for="item in navItems" :key="item.to"> 
+            <template v-for="item in navItems" :key="item.to">
               <v-btn v-if="item.show" class="px-0" width="150" :prepend-icon="item.icon" :to="item.to" variant="plain" :ripple="false">{{ item.text }}</v-btn>
             </template>
             <!-- 登出按鈕 -->
@@ -89,7 +89,7 @@
       <v-divider class="my-4"></v-divider>
       <!-- 註冊 & 登入項目 -->
       <v-row>
-        <template v-for="RLitem in RegLogin" :key="RLitem.to"> 
+        <template v-for="RLitem in RegLogin" :key="RLitem.to">
           <v-col class="d-flex justify-center align-center">
             <v-btn v-if="RLitem.show" :prepend-icon="RLitem.icon" :to="RLitem.to" variant="plain" :ripple="false">{{ RLitem.text }}</v-btn>
           </v-col>
@@ -109,15 +109,15 @@
 </template>
 
 <script setup>
-import {ref, computed, onMounted} from 'vue'
-import {useDisplay} from 'vuetify'
+import { ref, computed, onMounted } from 'vue'
+import { useDisplay } from 'vuetify'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
 // 解構出 mobile的斷點
-const {mobile} = useDisplay()
+const { mobile } = useDisplay()
 
 const user = useUserStore()
 const router = useRouter()
@@ -127,28 +127,29 @@ const createSnackbar = useSnackbar()
 const drawer = ref(false)
 
 // Logo
-const logo = {to: '/', img: new URL('@/assets/Dost_logo.png', import.meta.url).href}
+const logo = { to: '/', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
 
 // 購物車
-const cart = {to: '/cart', text:'購物車', icon:'mdi-cart-variant'}
+const cart = { to: '/cart', text: '購物車', icon: 'mdi-cart-variant' }
 
 // 導覽列項目
-const navItems = computed (() => {
+const navItems = computed(() => {
   return [
-    { to: '/about', text:'About Me', icon:'mdi-alpha-d-box', show: user.isLogin || !user.isLogin},
-    { to: '/coolDogs', text:'帥氣狗狗', icon:'mdi-dog', show: user.isLogin || !user.isLogin},
-    { to: '/booking', text:'預約時間', icon:'mdi-calendar-clock', show: user.isLogin},
-    { to: '/test', text:'狗狗適性測驗', icon:'mdi-dog-side', show: user.isLogin || !user.isLogin},
-    { to: '/shop', text:'寵物用品', icon:'mdi-store', show: user.isLogin || !user.isLogin},
+    { to: '/about', text: 'About Me', icon: 'mdi-alpha-d-box', show: user.isLogin || !user.isLogin },
+    { to: '/coolDogs', text: '帥氣狗狗', icon: 'mdi-dog', show: user.isLogin || !user.isLogin },
+    { to: '/booking', text: '預約時間', icon: 'mdi-calendar-clock', show: user.isLogin || !user.isLogin },
+    { to: '/test', text: '狗狗適性測驗', icon: 'mdi-dog-side', show: user.isLogin || !user.isLogin },
+    { to: '/shop', text: '寵物用品', icon: 'mdi-store', show: user.isLogin || !user.isLogin },
     // { to: '/cart', text:'購物車', icon:'mdi-cart-variant', show: user.isLogin},
-    { to: '/admin', text:'管理區', icon:'mdi-account-tie', show: user.isLogin && user.isAdmin},
+    { to: '/userZone', text:'會員專區', icon:'mdi-account-box', show: user.isLogin},
+    { to: '/admin', text: '管理區', icon: 'mdi-account-tie', show: user.isLogin && user.isAdmin },
   ]
 })
 
 // 導覽列_註冊 & 登入
 const RegLogin = [
-  { to: '/register', text:'註冊', icon:'mdi-account-plus', show: !user.isLogin},
-  { to: '/login', text:'登入', icon:'mdi-account-circle', show: !user.isLogin},
+  { to: '/register', text: '註冊', icon: 'mdi-account-plus', show: !user.isLogin },
+  { to: '/login', text: '登入', icon: 'mdi-account-circle', show: !user.isLogin },
 ]
 
 const logout = async () => {
@@ -175,12 +176,11 @@ const logout = async () => {
   box-shadow: none;
 }
 
-.v-app-bar.v-toolbar{
+.v-app-bar.v-toolbar {
   background: none;
 }
 
-.v-toolbar{
+.v-toolbar {
   background: none;
 }
-
 </style>

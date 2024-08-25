@@ -1,5 +1,5 @@
 <template>
-    <!-- ● 狗狗簡述_Card 元件 -->
+  <!-- ● 狗狗簡述_Card 元件 -->
   <v-card class="pa-0" position="relative">
     <router-link :to="{ path: '/dogsResume' }">
       <v-img :src="image" cover width="100%" height="450"></v-img>
@@ -8,22 +8,27 @@
       <v-col class="d-flex flex-column">
         <v-col class="d-flex pa-0">
           <v-card-subtitle class="pa-0">名字
-            <span class="text-h6 font-weight-bold ms-2">{{dogName}}</span>
+            <span class="text-h6 font-weight-bold ms-2">{{ dogName }}</span>
           </v-card-subtitle>
           <v-divider class="align-self-center"></v-divider>
-          <v-card-subtitle class="pa-0">年齡 
-            <span class="text-h6 ms-1">{{age}}</span> 歲
+          <v-card-subtitle class="pa-0">年齡
+            <span class="text-h6 ms-1">{{ age }}</span> 歲
           </v-card-subtitle>
         </v-col>
         <v-card-subtitle class="pa-0 mt-2 text-start">性格、特徵
-          <span class="text-body-1 ms-2">{{feature}}</span>
+          <span class="text-body-1 ms-2">{{ feature }}</span>
         </v-card-subtitle>
       </v-col>
-      <v-col class="d-flex pt-2" :class="$route.path === '/booking' ? 'justify-end':'justify-space-between'">
+      <v-col class="d-flex pt-2" :class="$route.path === '/booking' ? 'justify-end' : 'justify-space-between'">
         <v-card-subtitle class="pa-0 align-self-end ">價格
-          <span class="text-h5 font-weight-bold ms-2">{{price}}</span> 元 / 2小時
+          <span class="text-h5 font-weight-bold ms-1">{{ price }}</span> 元 / 2小時
         </v-card-subtitle>
-        <v-btn class="bg-red" :class="$route.path === '/booking' ? 'd-none' : 'd-flex'" @click="bookingAddId">預約</v-btn>
+        <v-btn class="bg-red" :class="[
+          $route.path === '/booking' ? 'd-none' : 'd-flex',
+          props.booking === '預約已滿' ? 'bg-grey' : '']" 
+          :text="props.booking === '預約已滿' ? '預約已滿' : '預約'" 
+          :disabled="props.booking === '預約已滿'" 
+          @click="bookingAddId"></v-btn>
       </v-col>
     </v-sheet>
   </v-card>

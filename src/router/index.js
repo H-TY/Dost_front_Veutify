@@ -49,6 +49,9 @@ router.beforeEach(async (to, from, next) => {
     // 重新導向至首頁
     next('/')
   } else if (to.meta.login && !user.isLogin) {
+    // 跳出需登入提示
+    alert('您需要登入才能進行預約')
+    // 導向至登入頁面
     next('/login')
   } else if (to.meta.admin && !user.isAdmin) {
     next('/')

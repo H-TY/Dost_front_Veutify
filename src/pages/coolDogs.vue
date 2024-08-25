@@ -19,7 +19,7 @@ import DogsCard from '@/components/dogsCard.vue'
 
 definePage({
   meta: {
-    title: '帥氣狗狗',
+    title: 'Dost | 帥氣狗狗',
     login: false,
     admin: false
   }

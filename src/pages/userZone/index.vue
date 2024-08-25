@@ -1,5 +1,5 @@
 <template>
-  123
+  會員專區123
 </template>
 
 <script setup>
@@ -7,9 +7,14 @@ import { definePage } from 'vue-router/auto'
 
 definePage({
   meta: {
-    title: 'Dost',
-    login: false,
+    title: 'Dost | 會員專區',
+    login: true,
     admin: false
   }
 })
 </script>
+
+<route lang="yaml">
+  meta:
+    layout: userZone
+</route>

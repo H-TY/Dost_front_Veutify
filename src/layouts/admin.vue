@@ -30,7 +30,7 @@
 
 <script setup>
 // Logo
-const logo = {to: '/admin', img: new URL('@/assets/logo.png', import.meta.url).href}
+const logo = {to: '/admin', img: new URL('@/assets/Dost_logo.png', import.meta.url).href}
 
 // 導覽列項目
 const navItems = [

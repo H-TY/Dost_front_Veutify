@@ -346,7 +346,7 @@ const submit = handleSubmit(async(values)=>{
     if(fileRecords.value.length > 0){
       fd.append('image', fileRecords.value[0].file)
     }
-
+  
     if(dialog.value.id === ''){
       // .post(網址, 送出的資料, 請求的設定)
       // 這邊 fd 是送出的資料
