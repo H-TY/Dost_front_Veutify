@@ -1,7 +1,7 @@
 <template>
-  <v-container>
+  <v-container class="mt-10">
     <v-row>
-      <v-col cols="4" class="mt-7" v-for="item in items" :key="item._id">
+      <v-col cols="4" v-for="item in items" :key="item._id">
         <DogsCard v-bind="item"></DogsCard>
       </v-col>
       <v-col cols="12">

@@ -1,5 +1,5 @@
 <template>
-  <v-container class="w-75">
+  <v-container class="w-75 mt-12">
     <v-row>
       <v-col class="text-center" cols="12">
         <h1 class="text-spacing1">歡迎註冊加入</h1>
@@ -114,7 +114,7 @@ const submit = handleSubmit(async (formData) => {
     })
     createSnackbar({
       text: '註冊成功',
-      snackbarProps:{
+      snackbarProps: {
         color: 'green'
       }
     })
@@ -124,7 +124,7 @@ const submit = handleSubmit(async (formData) => {
     console.log(error)
     createSnackbar({
       text: error?.response?.data?.message || '發生錯誤',
-      snackbarProps:{
+      snackbarProps: {
         color: 'red'
       }
     })

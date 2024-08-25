@@ -1,5 +1,5 @@
 <template>
-  <v-container class="text-center">
+  <v-container class="text-center mt-10">
     <h1>預約狗狗時間</h1>
     <!-- ● 狗狗簡述資訊卡片 -->
     <swiper :slidesPerView="'auto'" :centeredSlides="true" :spaceBetween="30" :pagination="{
@@ -15,13 +15,7 @@
     <v-row class="my-7">
       <!-- ● 日期選擇 -->
       <v-col class="d-flex flex-wrap justify-center" cols="12" sm="6">
-        <v-date-picker 
-        width="400" 
-        color="primary" 
-        v-model="date" 
-        show-adjacent-months
-        @click="dialogOpen"
-        ></v-date-picker>
+        <v-date-picker width="400" color="primary" v-model="date" show-adjacent-months @click="dialogOpen"></v-date-picker>
         <!-- 點擊日期，跳出視窗選擇預約時段 -->
         <v-dialog v-model="dialog" width="auto">
           <v-form>
@@ -37,34 +31,18 @@
       <v-col class="d-flex justify-center">
         <!-- ● 預約表單 -->
         <v-form class="w-90" cols="12" sm="6" @submit.prevent="submit" :disabled="isSubmitting">
-          <v-text-field 
-          label="預約人姓名"
-          v-model="name.value.value"
-          :error-messages="name.errorMessage.value"
-          ></v-text-field>
-          <v-text-field 
-          label="預約人電話"
-          v-model="phone.value.value"
-          :error-messages="phone.errorMessage.value"
-          ></v-text-field>
+          <v-text-field label="預約人姓名" :class="addClass" v-model="name.value.value" :error-messages="name.errorMessage.value"></v-text-field>
+          <v-text-field label="預約人電話" :class="addClass" v-model="phone.value.value" :error-messages="phone.errorMessage.value"></v-text-field>
           <v-text-field readonly>預約狗狗：
-            <v-sheet 
-              class="text-h6 font-weight-bold bg-transparent"
-            >{{ Dinfo.dogName }}</v-sheet></v-text-field>
+            <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ Dinfo.dogName }}</v-sheet></v-text-field>
           <v-text-field readonly>預約日期：
-            <v-sheet 
-              class="text-h6 font-weight-bold bg-transparent"
-              >{{ dateForm }}</v-sheet>
+            <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ dateForm }}</v-sheet>
           </v-text-field>
           <v-text-field readonly>預約時間：
-            <v-list class="my-0 pa-0 bg-transparent"
-            :items="selectedTime.sort((a, b)=>parseInt(a)-parseInt(b))"
-            ></v-list>
+            <v-list class="my-0 pa-0 bg-transparent" :items="selectedTime.sort((a, b) => parseInt(a) - parseInt(b))"></v-list>
           </v-text-field>
           <v-text-field readonly>總計金額：
-            <v-sheet 
-              class="text-h5 font-weight-bold bg-transparent"
-            >{{ Total }}</v-sheet>&nbsp元
+            <v-sheet class="text-h5 font-weight-bold bg-transparent">{{ Total }}</v-sheet>&nbsp元
           </v-text-field>
           <v-btn class="w-40 mt-5" type="submit" color="green" :loading="isSubmitting">送出預約</v-btn>
         </v-form>
@@ -118,7 +96,7 @@ definePage({
 
 
 // 取帳戶名稱
-const userName = computed (()=>{
+const userName = computed(() => {
   if (!User.isLogin) {
     router.push('/login')
     return
@@ -211,12 +189,12 @@ const dialog = ref(false) // 預設不跳出
 
 // 選取日期觸發觸發彈窗事件
 const dialogOpen = () => {
-      dialog.value = true
+  dialog.value = true
 }
 
 // 關閉彈窗（未綁動作）
 const dialogClose = () => {
-    dialog.value = false
+  dialog.value = false
 }
 
 
@@ -261,11 +239,11 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
   initialValues: {
     name: userName.value,
     phone: '',
-    dogName:'',
+    dogName: '',
     bookingDate: '',
-    bookingTime:[],
+    bookingTime: [],
     totalPrice: 0,
-    accountName:'',
+    accountName: '',
   }
 })
 
@@ -282,9 +260,9 @@ const accountName = useField('accountName')
 
 // 監聽綁定使用者和狗狗名字
 watch(dateForm, (newValue, oldValue) => {
-  if (newValue !== oldValue){
+  if (newValue !== oldValue) {
     return accountName.value.value = userName.value,
-    dogName.value.value = Dinfo.value.dogName
+      dogName.value.value = Dinfo.value.dogName
   }
 })
 
@@ -292,29 +270,29 @@ watch(dateForm, (newValue, oldValue) => {
 // 監聽選取的日期，當選取的日期不同時，取消原選擇的預約時段，並同時傳遞更新的預約日期給裏表格(要送至後端的表格資訊)
 // 外表格的綁定不是用 v-model，而是借由此函式監聽觸發更改日期並回傳值給裏表格
 watch(dateForm, (newValue, oldValue) => {
-  if (newValue !== oldValue){
-    return selectedTime.value = [], 
-    bookingDate.value.value = dateForm.value
+  if (newValue !== oldValue) {
+    return selectedTime.value = [],
+      bookingDate.value.value = dateForm.value
   }
 })
 
 // 監聽綁定預約時段
 watch(selectedTime, (newValue, oldValue) => {
-  if (newValue !== oldValue){
-    return bookingTime.value.value = selectedTime.value.sort((a, b)=>parseInt(a)-parseInt(b))
+  if (newValue !== oldValue) {
+    return bookingTime.value.value = selectedTime.value.sort((a, b) => parseInt(a) - parseInt(b))
   }
 })
 
 // 監聽綁定總計金額
 watch(Total, (newValue, oldValue) => {
-  if (newValue !== oldValue){
+  if (newValue !== oldValue) {
     return totalPrice.value.value = Total.value
   }
 })
 
 
 // ★ FormData 直接傳至後端處理會失敗，需再經過 multer 的套件解析 form-data，才能傳入後端
-const submit = handleSubmit ( async (values) => {
+const submit = handleSubmit(async (values) => {
   try {
     const fd = new FormData()
 
@@ -327,13 +305,13 @@ const submit = handleSubmit ( async (values) => {
     fd.append('totalPrice', values.totalPrice)
     fd.append('accountName', values.accountName)
 
-    
+
     await apiAuth.post('/order', fd)
 
     createSnackbar({
-      text:'預約成功',
-      snackbarProps:{
-        color:'green'
+      text: '預約成功',
+      snackbarProps: {
+        color: 'green'
       }
     })
 
@@ -346,15 +324,21 @@ const submit = handleSubmit ( async (values) => {
   } catch (error) {
     console.log(error)
     createSnackbar({
-      text:error?.response?.data?.message || '發生錯誤',
-      snackbarProps:{
-        color:'red'
+      text: error?.response?.data?.message || '發生錯誤',
+      snackbarProps: {
+        color: 'red'
       }
     })
   }
 })
 
 
+// 在表單的"預約人姓名"欄位，動態計算添加自定義 class(.myClass)
+// v-model="name.value.value" 已宣告
+const addClass = computed(() => {
+  return { 'myClass': name.value.value.length > 0 } // 回傳的是 boolean 值
+})
+console.log(addClass)
 
 // watch 監聽響應式（ref、reactive、computed）的變化
 // watch(dateForm, (newValue, oldValue) => {
@@ -371,17 +355,27 @@ const submit = handleSubmit ( async (values) => {
 
 </script>
 
-<style>
-#input-55,
-#input-57,
-#input-63 {
-  font-size: 1.3rem;
-  font-weight: 600;
+<style scoped>
+.myClass {
+  color: #424242;
 }
 
-.v-list-item-title {
+/* 
+  1. 因為想選擇的 class（.v-field__input） 其他的欄位也有，但只需要修改指定的欄位
+  2. 故先添加自定義的 myClass 到指定的物件標籤裡，方便後續指定某一個標籤修改樣式
+  3. 在指定選擇 .myClass .v-field__input 做樣式的修改，如下所示
+*/
+::v-deep .myClass .v-field__input {
   font-size: 1.2rem;
   font-weight: 600;
 }
 
+::v-deep .v-list-item-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+::v-deep .v-list-item--density-default:not(.v-list-item--nav).v-list-item--one-line {
+  padding: 0;
+}
 </style>

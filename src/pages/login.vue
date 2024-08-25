@@ -1,5 +1,5 @@
 <template>
-  <v-container class="w-75">
+  <v-container class="w-75 mt-12">
     <v-row>
       <v-col class="text-center" cols="12">
         <h1 class="text-spacing1">登入</h1>
@@ -84,21 +84,21 @@ const account = useField('account')
 const password = useField('password')
 
 // formData 表單的內容
-const submit = handleSubmit (async (formData)=>{
+const submit = handleSubmit(async (formData) => {
   const result = await UserStore.login(formData)
-    if (result === '登入成功'){
-      createSnackbar({
-        text: result,
-        snackbarProps:{
-          color: 'green'
-        }
-      })
-      // 登入後導向首頁
-      return router.push('/')
-    }else{
-      createSnackbar({
+  if (result === '登入成功') {
+    createSnackbar({
       text: result,
-      snackbarProps:{
+      snackbarProps: {
+        color: 'green'
+      }
+    })
+    // 登入後導向首頁
+    return router.push('/')
+  } else {
+    createSnackbar({
+      text: result,
+      snackbarProps: {
         color: 'red'
       }
     })

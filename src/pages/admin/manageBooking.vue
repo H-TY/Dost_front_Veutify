@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row class="text-center">
       <v-col>
-        <h1>預約狗狗查詢</h1>
+        <h1>預約管理</h1>
       </v-col>
     </v-row>
     <v-row class="text-center">
@@ -13,7 +13,7 @@
 
     <!-- ● 已預約資料表格 -->
     <v-card class="mt-8" flat>
-      <v-card-title>查詢預約狗狗結果</v-card-title>
+      <v-card-title>查詢預約資料</v-card-title>
 
       <template v-slot:text>
         <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line></v-text-field>
@@ -77,14 +77,7 @@ const headers = [
 
 const loadItems = async () => {
   try {
-    const { data } = await apiAuth.get('/order', {
-      params: {
-        search: User.value
-      }
-    })
-    // 用 .splice() 取查詢結果的資料
-    // .splice(索引:開始取資料的地方, 要刪除資料的數量, 要放入的資料:...展開陣列)
-    // 若用 .push() 取查詢結果的資料，再重複取資料的時候，會再原先已取到的資料再次重複取資料並疊加上去
+    const { data } = await apiAuth.get('/order')
     items.value.splice(0, items.value.length, ...data.result.data)
   } catch (error) {
     console.log(error)
@@ -105,5 +98,5 @@ loadItems()
 
 <route lang="yaml">
   meta:
-    layout: userZone
+    layout: admin
 </route>
