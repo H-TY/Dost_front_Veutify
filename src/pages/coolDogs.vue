@@ -1,5 +1,5 @@
 <template>
-  <v-container class="mt-10">
+  <v-container class="my-8">
     <v-row>
       <v-col cols="4" v-for="item in items" :key="item._id">
         <DogsCard v-bind="item"></DogsCard>

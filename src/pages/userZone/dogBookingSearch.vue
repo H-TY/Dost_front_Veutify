@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container class="my-5" fluid>
     <v-row class="text-center">
       <v-col>
         <h1>預約狗狗查詢</h1>
@@ -13,7 +13,7 @@
 
     <!-- ● 已預約資料表格 -->
     <v-card class="mt-8" flat>
-      <v-card-title>查詢預約狗狗結果</v-card-title>
+      <v-card-title>查詢預約結果</v-card-title>
 
       <template v-slot:text>
         <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line></v-text-field>

@@ -1,0 +1,9 @@
+Fonts used in this design:
+
+Font: Poppins
+Author: Indian Type Foundry
+Url: https://www.fontsquirrel.com/fonts/poppins
+
+Font: Lapsus Pro
+Author: theguybrush
+Url: https://www.fontsquirrel.com/fonts/lapsus-pro

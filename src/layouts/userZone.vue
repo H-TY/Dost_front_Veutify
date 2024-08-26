@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer class="border-0" position="relative" theme="light" permanent>
     <template v-slot:image>
-      <v-img src="@/assets/img/userZone_bg_01-修.png" height="1000" cover></v-img>
+      <v-img src="@/assets/img/bg_img/userZone_bg_01-修.png" height="1000" cover></v-img>
     </template>
 
     <!-- Logo -->
@@ -37,7 +37,7 @@
 
     <!-- 登出按鈕 -->
     <v-col class="d-flex justify-center mt-5">
-      <v-btn v-if="user.isLogin" prepend-icon="mdi-account-arrow-right" class="bg-light-blue bottom-0 mb-11" position="absolute" variant="outlined" rounded :ripple="false" @click="logout">登出</v-btn>
+      <v-btn v-if="user.isLogin" prepend-icon="mdi-account-arrow-right" class="bg-deep-orange-darken-2 bottom-0 mb-11" position="absolute" variant="outlined" rounded :ripple="false" @click="logout">登出</v-btn>
     </v-col>
   </v-navigation-drawer>
 

@@ -1,0 +1,9 @@
+Fonts used in this design:
+
+Font: Milkshake
+Author: Laura Worthington
+Url: https://www.fontsquirrel.com/fonts/milkshake
+
+Font: Poppins
+Author: Indian Type Foundry
+Url: https://www.fontsquirrel.com/fonts/poppins

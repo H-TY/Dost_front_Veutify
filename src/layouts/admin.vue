@@ -25,7 +25,7 @@
     <!-- ● 登出按鈕 -->
     <v-col>
       <v-sheet class="d-flex justify-center mt-6">
-        <v-btn v-if="user.isLogin" prepend-icon="mdi-account-arrow-right" class="bg-light-blue w-50" :rounded="isExpanded == true ? '' : 'circle'" :text="isExpanded == true ? '登出' : ''" :ripple="false" variant="outlined" @click="logout"></v-btn>
+        <v-btn v-if="user.isLogin" prepend-icon="mdi-account-arrow-right" class="bg-deep-orange-darken-2 w-50" :rounded="isExpanded == true ? '' : 'circle'" :text="isExpanded == true ? '登出' : ''" :ripple="false" variant="outlined" @click="logout"></v-btn>
       </v-sheet>
     </v-col>
   </v-navigation-drawer>

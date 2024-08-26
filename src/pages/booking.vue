@@ -1,5 +1,5 @@
 <template>
-  <v-container class="text-center mt-10">
+  <v-container class="text-center my-8">
     <h1>預約狗狗時間</h1>
     <!-- ● 狗狗簡述資訊卡片 -->
     <swiper :slidesPerView="'auto'" :centeredSlides="true" :spaceBetween="30" :pagination="{
