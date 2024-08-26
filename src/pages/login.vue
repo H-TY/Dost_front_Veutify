@@ -1,5 +1,5 @@
 <template>
-  <v-container class="w-75 mt-12">
+  <v-container class="w-75 mt-sm-12 mt-3 mb-7">
     <v-row>
       <v-col class="text-center" cols="12">
         <h1 class="text-spacing1">登入</h1>

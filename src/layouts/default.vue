@@ -110,50 +110,44 @@
   </v-main>
 
   <!-- ● footer 欄位 -->
-  <v-footer class="bg-light-blue-darken-4 flex-column flex-grow-0 px-10":height="mobile === true ? '48%' : '22%'">
+  <v-footer class="bg-light-blue-darken-4 flex-column flex-grow-0 px-10" :height="mobile === true ? '48%' : '22%'">
     <v-container class="pa-0" fluid>
       <v-row class="d-flex ma-0 mt-4 ga-6 ga-sm-0">
-        <v-col cols="12" sm="4" class="d-flex justify-center justify-sm-start pa-0 px-xs-12">
+        <v-col cols="12" sm="4" class="d-flex  justify-sm-start pa-0 px-xs-12">
           <v-col cols="3" class="d-flex text-start text-subtitle-2 align-center pa-0" style="max-width:80px;">
             <v-img src="@/assets/img/Dost_QRcode.png" class="rounded-lg border-solid border-xl bg-white" max-width="60px" max-height="60px"></v-img>
-          </v-col> 
-          <v-col cols="8" class="text-start text-subtitle-2 align-content-center pa-0">
-            <v-list class="bg-transparent d-flex flex-column text-caption">
+          </v-col>
+          <v-col class="text-subtitle-2 align-content-center pa-0">
+            <v-list class="bg-transparent d-flex flex-column text-caption text-sm-start text-end">
               <v-list-item class="pa-0" min-height="0">DOST</v-list-item>
-              <v-list-item class="pa-0" min-height="0">TEL　02-1234 1234</v-list-item>
-              <v-list-item class="pa-0" min-height="0">ADD　243新北市泰山區貴子里致遠新村55之1號</v-list-item>
+              <v-list-item class="pa-0" min-height="0">02-1234 1234</v-list-item>
+              <v-list-item class="pa-0" min-height="0">243新北市泰山區貴子里致遠新村55之1號</v-list-item>
             </v-list>
           </v-col>
         </v-col>
-        <v-col cols="12" sm="4" class="text-center text-subtitle-2 d-flex align-content-center justify-space-around ga-7 gap-sm-10 pa-0 px-xs-12">
-          <v-divider class="align-self-center cdivider"></v-divider>
+        <v-col cols="12" sm="4" class="text-end text-subtitle-2 d-flex align-content-center justify-space-around ga-7 gap-sm-1 pa-0 px-xs-12 px-sm-12">
+          <v-divider class="align-self-center d-sm-none cdivider"></v-divider>
           <v-btn class="align-self-center" icon="mdi-facebook" color="light-blue"></v-btn>
           <v-btn class="align-self-center" icon="mdi-twitter" color="light-blue"></v-btn>
           <v-btn class="align-self-center" icon="mdi-youtube" color="light-blue"></v-btn>
-          <v-divider class="align-self-center cdivider"></v-divider>
+          <v-divider class="align-self-center d-sm-none cdivider"></v-divider>
         </v-col>
-        <v-col cols="12" sm="4" class="text-subtitle-2 justify-sm-end align-content-center d-flex flex-grow-0 flex-nowrap pa-0 px-xs-12">
-          <v-text-field
-              max-width="300px"
-              placeholder="Enter your e-mail to subscription"
-              type="input"
-              prepend-inner-icon="mdi-email"
-              clearable
-          ></v-text-field>
+        <v-col cols="12" sm="4" class="text-subtitle-2 justify-end align-content-center d-flex flex-nowrap pa-0 px-xs-12" max-width="300px">
+          <v-text-field class="ms-sm-10" max-width="400px" placeholder="Enter your e-mail to subscription" type="input" prepend-inner-icon="mdi-email" clearable></v-text-field>
           <v-btn class="align-self-center ms-5">訂閱</v-btn>
         </v-col>
       </v-row>
-        <v-divider class="w-100 my-4"></v-divider>
+      <v-divider class="w-100 my-4"></v-divider>
       <v-row class="text-center ma-0">
         <v-col class="text-subtitle-2 align-content-center pa-0 text-sm-start" cols="12" sm="6">
           2024 / 8 / 27　前端網頁設計課程 — <strong>期末專題作業</strong>
         </v-col>
         <v-col class="text-subtitle-2 align-content-center pa-0 text-sm-end" cols="12" sm="6">
-          資料、圖片來源：
+          資料、圖片、影片來源：
           <a href="https://unsplash.com/" class="text-decoration-none text-subtitle-1 font-weight-black acolor" target="_blank">unsplash</a>
           ｜
           <a href="https://www.freepik.com/" class="text-decoration-none text-subtitle-1 font-weight-black acolor" target="_blank">Freepik</a>
-          
+
         </v-col>
       </v-row>
     </v-container>
@@ -241,19 +235,25 @@ const logout = async () => {
 
 /* footer 區塊，設定 <a> 連結顏色 */
 .acolor {
-  color: #81D4FA; /* 常規狀態下的顏色 */
+  color: #81D4FA;
+  /* 常規狀態下的顏色 */
 }
+
 .acolor:hover {
-  color: #FB8C00; /* 滑鼠懸停時的顏色 */
+  color: #FB8C00;
+  /* 滑鼠懸停時的顏色 */
 }
+
 .acolor:visited {
-  color: #b3b3b3; /* 訪問過的連結顏色 */
+  color: #b3b3b3;
+  /* 訪問過的連結顏色 */
 }
 
 /* 讓分隔線 v-divider 變粗 */
 .cdivider {
-  border-width: 1px; /* 你可以設定你需要的粗細 */
+  border-width: 1px;
+  /* 你可以設定你需要的粗細 */
   border-color: white;
-  opacity:0.3;
+  opacity: 0.3;
 }
 </style>

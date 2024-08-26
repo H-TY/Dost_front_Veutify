@@ -317,7 +317,7 @@ const submit = handleSubmit(async (values) => {
 
     resetForm()
     // 因不是綁在表格上，故 resetForm() 僅對有手動輸入表格的資料有效；其他欄位需另外手動設定重置
-    dateForm.value = ' '
+    dateForm.value = NaN
     selectedTime.value = []
     Total.value = 0
 
