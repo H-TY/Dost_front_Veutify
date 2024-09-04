@@ -2,9 +2,16 @@
   <v-container class="text-center my-8">
     <h1>預約狗狗時間</h1>
     <!-- ● 狗狗簡述資訊卡片 -->
-    <swiper :slidesPerView="'auto'" :centeredSlides="true" :spaceBetween="30" :pagination="{
+    <swiper 
+    :slidesPerView="'auto'" 
+    :centeredSlides="true" 
+    :spaceBetween="30" 
+    :pagination="{
       clickable: true,
-    }" :navigation="true" :modules="modules" ref="mySwiperRef" class="mySwiper my-10">
+    }" 
+    :navigation="true" 
+    :modules="modules" 
+    class="mySwiper my-10">
       <swiper-slide v-for="item in items" :key="item._id">
         <v-sheet style="width: 100%;">
           <DogsCard v-bind="item"></DogsCard>
@@ -68,8 +75,7 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 // Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/pagination'
-import 'swiper/css/navigation';
-import '@/styles/style.css'
+import 'swiper/css/navigation'
 // import required modules
 import { Pagination, Navigation } from 'swiper/modules'
 
@@ -356,6 +362,41 @@ console.log(addClass)
 </script>
 
 <style scoped>
+/* 狗狗簡述資訊卡片 Swiper_Centered auto 的樣式 */
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.swiper-slide {
+  width: 50%;
+}
+
+::v-deep .swiper-pagination {
+  position: initial;
+  margin-top: 30px;
+}
+
+/* --- 分隔線 --- */
+
 .myClass {
   color: #424242;
 }
