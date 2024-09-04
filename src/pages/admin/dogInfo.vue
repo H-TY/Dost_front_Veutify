@@ -7,7 +7,7 @@
     </v-row>
     <v-row class="text-center">
       <v-col>
-        <v-btn color="green" @click="openDialog(null)">新增夥伴資訊</v-btn>
+        <v-btn class="d-inline-flex pa-4" color="green" @click="openDialog(null)">新增夥伴資訊</v-btn>
       </v-col>
       <!-- 跳出視窗 -->
       <v-dialog v-model="dialog.open" persistent width="500">
@@ -182,8 +182,14 @@
             </v-list>
           </template>
           <!-- 上下架欄位 -->
-          <template #['item.sell']='{value}'>
-            <v-icon icon="mdi-check" v-if="value"></v-icon>
+          <template #['item.sell']='{value, item}'>
+            <!-- 顯示 item 的 值 -->
+            <!-- <div><span v-text="JSON.stringify(item, null, 2)"></span></div> -->
+            <!-- :model-value 依據目前 sell 的值，顯示勾選狀態 -->
+            <!-- @update:modelValue 更新 model-value 狀態 -->
+            <v-checkbox 
+            :model-value="value"
+            @update:modelValue="checkboxChange(item._id, $event)"></v-checkbox>
           </template>
           <template #['item.edit']='{item}'>
             <v-btn icon="mdi-pencil" variant="text" color="blue" @click="openDialog(item)"></v-btn>
@@ -202,6 +208,7 @@ import { definePage } from 'vue-router/auto'
 import { useApi } from '@/composables/axios'
 import { useSnackbar } from 'vuetify-use-dialog'
 
+
 definePage({
   meta: {
     title: 'Dost | 狗狗資訊管理',
@@ -218,7 +225,6 @@ const fileAgent = ref(null)
 // null 表示“空”或“无”，是一个被显式赋值为“没有对象”的值。通常用于指示某个变量尚未保存任何对象或数据。（let obj = null）
 // undefined　表示“未定义”，当一个变量声明了但没有赋值时，其默认值就是 undefined。（let x　未寫等於任何的值，console.log(x); // undefine）
 // NaN　表示无效数字结果，通常出现在错误的数学运算中。
-
 
 
 // 可以預約的時段
@@ -253,6 +259,7 @@ const openDialog = (item)=>{
   }
   dialog.value.open = true
 }
+
 
 // 關閉彈窗
 const closeDialog = () => {
@@ -358,7 +365,7 @@ const submit = handleSubmit(async(values)=>{
     createSnackbar({
       text:dialog.value.id === ''? '新增成功' : '編輯成功',
       snackbarProps:{
-        color:'green'
+        color:'green',
       }
     })
     closeDialog()
@@ -439,9 +446,50 @@ const tableLoadItems = async (reset) => {
 // 要呼叫 function
 tableLoadItems()
 
+
+
+// ● 更改上架的勾選狀態
+const checkboxChange = async (id, newValue) =>{
+  try {
+    // 發送至後端修改指定 id 的陣列資料裡 sell 的值
+    await apiAuth.patch('/dogs/'+ id ,{
+      sell: newValue
+    })
+
+    // 更新 items 中的相應 id 的 sell 的值，讓 checkbox 的勾選狀態同步顯示
+    const item = items.value.find(item => item._id === id)
+    if (item) {
+      item.sell = newValue // 更新状态
+    }
+
+    createSnackbar({
+      text: newValue === true? '上架成功' : '下架完成',
+      snackbarProps:{
+        color: 'green',
+      }
+    })
+  } catch (error) {
+    console.log(error)
+    createSnackbar({
+      text: error.response.data.message,
+      snackbarProps:{
+        color: 'red',
+        class: 'custom-snackbar',
+      }
+  })
+  }
+}
+
+
 </script>
 
-<style scoped>
+
+<!-- 沒有寫 scoped，設定的樣式為全局樣式（所有頁面同名的 class 都會被影響） -->
+<style>
+/* 設定 snackbar 的全局樣式 */
+.v-snackbar__wrapper{
+  min-width: auto;
+}
 
 </style>
 

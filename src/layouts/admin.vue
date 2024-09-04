@@ -55,9 +55,9 @@ const createSnackbar = useSnackbar()
 // 在導覽列 v-navigation-drawer 增添綁定動作事件 @mouseover @mouseleave
 // 再監聽動作事件判定導覽列是開啟或關閉狀態
 const isExpanded = ref(false)
-watch(isExpanded, (nweE, oldE) => {
-  console.log('nweE:', nweE, 'oldE:', oldE)
-})
+// watch(isExpanded, (nweE, oldE) => {
+//   console.log('nweE:', nweE, 'oldE:', oldE)
+// })
 
 
 // Logo

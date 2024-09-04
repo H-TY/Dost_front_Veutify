@@ -7,7 +7,7 @@
     </v-row>
     <v-row class="text-center">
       <v-col>
-        <v-btn color="green" @click="loadItems">查詢預約</v-btn>
+        <v-btn class="d-inline-flex pa-4" color="green" @click="loadItems">查詢預約</v-btn>
       </v-col>
     </v-row>
 

@@ -1,7 +1,15 @@
 <template>
-  <v-container fluid>
-    <swiper :effect="'cards'" :grabCursor="true" :modules="modules" class="mySwiper">
-      <swiper-slide v-for="(el, index) in photos" :key="index"><img :src="el.img"></swiper-slide>
+  <v-container fluid class="pa-0">
+    <swiper 
+    :effect="'cards'" 
+    :grabCursor="true" 
+    :modules="modules" 
+    class="mySwiper">
+      <swiper-slide 
+      v-for="(el, index) in photos" 
+      :key="index">
+        <img :src="el.img">
+      </swiper-slide>
     </swiper>
   </v-container>
 </template>
@@ -15,7 +23,6 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import 'swiper/css/effect-cards'
-import '@/styles/style.css'
 import { EffectCards } from 'swiper/modules'
 
 const modules = [EffectCards]
@@ -38,8 +45,8 @@ const photos = computed(() => {
 
 <style scoped>
 .swiper {
-  width: 240px;
-  height: 320px;
+  width: 100%;
+  height: 500px;
 }
 
 .swiper-slide {

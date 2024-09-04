@@ -19,6 +19,7 @@ import { VTimePicker } from 'vuetify/labs/VTimePicker'
 import { VCalendar } from 'vuetify/labs/VCalendar'
 
 
+
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   theme: {
@@ -44,5 +45,5 @@ export default createVuetify({
   locale: {
     locale: 'zhHant',
     messages: { zhHant }
-  }
+  },
 })
