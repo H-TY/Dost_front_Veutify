@@ -2,6 +2,7 @@
   <v-container class="text-center my-8">
     <h1>預約狗狗時間</h1>
     <!-- ● 狗狗簡述資訊卡片 -->
+    <p>當前 ID: {{ urlHash }}</p>
     <swiper 
     :slidesPerView="'auto'" 
     :centeredSlides="true" 
@@ -9,10 +10,17 @@
     :pagination="{
       clickable: true,
     }" 
-    :navigation="true" 
-    :modules="modules" 
+    :navigation="true"
+    :hashNavigation="{
+      replaceState: true,
+      watchState: true
+    }"
+    :modules="modules"
+    @slideChange="onSlideChange"
     class="mySwiper my-10">
-      <swiper-slide v-for="item in items" :key="item._id">
+      <swiper-slide 
+      v-for="item in items" 
+      :data-hash="`/booking#${item._id}`">
         <v-sheet style="width: 100%;">
           <DogsCard v-bind="item"></DogsCard>
         </v-sheet>
@@ -59,7 +67,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { definePage } from 'vue-router/auto'
 import { useRoute, useRouter } from 'vue-router'
 import { useApi } from '@/composables/axios'
@@ -70,6 +78,7 @@ import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
 
 // ● 引進 Swiper 套件以及相關檔案
+// Swiper_Centered auto
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from 'swiper/vue'
 // Import Swiper styles
@@ -77,7 +86,7 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 // import required modules
-import { Pagination, Navigation } from 'swiper/modules'
+import { Pagination, Navigation, History, HashNavigation } from 'swiper/modules'
 
 
 const route = useRoute()
@@ -85,7 +94,7 @@ const router = useRouter()
 const { backApi, apiAuth } = useApi()
 const User = useUserStore()
 const createSnackbar = useSnackbar()
-const modules = [Pagination, Navigation]
+const modules = [Pagination, Navigation, HashNavigation, History]
 
 
 definePage({
@@ -99,6 +108,13 @@ definePage({
 // ● 備註待處理
 // 1. Swiper 自動滑到相應的狗狗
 // 2. 彈窗觸發判斷要再重寫，目前只要是日曆的範圍都會觸發到（包含非日期的部分）
+// 先初始化 swiper，為其新增所需的
+// const swiper = new Swiper('.swiper', {
+//   history:{
+//     enabled: true,
+//   }
+// })
+
 
 
 // 取帳戶名稱
@@ -155,16 +171,61 @@ const Dinfo = ref({
   counter: 0,
 })
 
+// 路徑解析查询参数中的 id
+const Rid = ref(route.query.id)
+console.log('Rid:', Rid)
+console.log('Rid.value:', Rid.value)
+console.log(route.query.id)
+
+// onMounted(()=>{}) 用來執行在組件首次渲染（DOM 元素掛載）完成後的操作。
+// 無論你將 onMounted 放在 <script setup> 的哪個位置，都會在組件掛載完成後自動執行。
+// ● 使用時機：
+// 初始化數據：從 API 或服務器請求數據。
+// 設置事件監聽器：比如監聽瀏覽器事件、窗口大小改變等。
+// 操作 DOM：比如設置焦點、滾動事件、第三方庫初始化等。
+// hashchange 不是自定義名稱，而是瀏覽器內建的事件名稱，用來監聽 URL 哈希值的變化。
+onMounted(()=>{
+  setTimeout(() => {
+    reRid()
+  }, 100)
+  
+  reRid()
+  window.addEventListener('hashchange', reRid)
+})
+
+console.log(window.location)
+const urlHash = ref('')
+console.log('urlHash:', urlHash.value)
+
+// 監聽 hashId 的變化
+watch(urlHash, (newId, oldId) => {
+  console.log('哈希newId:', newId, '哈希oldId:', oldId)
+})
+
+const reRid = () => {
+  console.log('urlHash 1', urlHash.value)
+  console.log('window.location.hash', window.location.hash.substring(10))
+  urlHash.value = window.location.hash.substring(10)
+  console.log('urlHash 2', urlHash.value)
+}
+
+// 當 Swiper 的圖片有滑動更更改時，觸發函式（抓取更改後的 id）
+const onSlideChange = () => {
+  console.log('反應1')
+  reRid()
+}
+
+
 // ● 回傳指定 id 的狗狗訊息
 const loadDinfo = async () => {
-  try {
-    // 路徑解析查询参数中的 id
-    const Rid = route.query.id
+  if (Rid.value === undefined) return
 
-    if (route.query.id === undefined) return
+  try {
+
+    await nextTick()
 
     // 利用 id 只回傳某一隻狗狗的資料
-    const { data } = await backApi.get('/dogs/' + Rid)
+    const { data } = await backApi.get('/dogs/' + Rid.value)
 
     Dinfo.value._id = data.result._id
     Dinfo.value.image = data.result.image
@@ -188,6 +249,7 @@ const loadDinfo = async () => {
   }
 }
 loadDinfo()
+
 
 
 // 彈窗效果
@@ -344,7 +406,7 @@ const submit = handleSubmit(async (values) => {
 const addClass = computed(() => {
   return { 'myClass': name.value.value.length > 0 } // 回傳的是 boolean 值
 })
-console.log(addClass)
+// console.log(addClass)
 
 // watch 監聽響應式（ref、reactive、computed）的變化
 // watch(dateForm, (newValue, oldValue) => {
@@ -393,6 +455,21 @@ console.log(addClass)
 ::v-deep .swiper-pagination {
   position: initial;
   margin-top: 30px;
+}
+
+/* 將上下頁滑動按鈕面積加大 */
+::v-deep .swiper-button-prev{
+  width: calc(var(--swiper-navigation-size) / 44* 100);
+  height: inherit;
+  top: 0;
+  left: 0;
+}
+
+::v-deep .swiper-button-next{
+  width: calc(var(--swiper-navigation-size) / 44* 100);
+  height: inherit;
+  top: 0;
+  right: 0;
 }
 
 /* --- 分隔線 --- */

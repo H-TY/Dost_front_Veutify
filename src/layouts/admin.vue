@@ -1,15 +1,31 @@
 <template>
   <!-- Logo & 導覽列 -->
-  <v-navigation-drawer width="230" expand-on-hover rail @mouseover="isExpanded = true" @mouseleave="isExpanded = false">
+  <v-navigation-drawer 
+  width="200" 
+  expand-on-hover 
+  rail 
+  @mouseover="isExpanded = true" 
+  @mouseleave="isExpanded = false">
     <!-- ● Logo -->
     <v-sheet class=" my-4 d-flex">
       <v-col class="pa-0 d-flex justify-end pe-2">
-        <v-list-item class="rounded-circle pa-1" color="white" width=" 50" height="50" :to="logo.to" :ripple="false">
+        <v-list-item 
+        class="rounded-circle pa-1" 
+        color="white" 
+        width=" 50" 
+        height="50" 
+        :to="logo.to" 
+        :ripple="false">
           <v-img :src="logo.img" cover></v-img>
         </v-list-item>
       </v-col>
       <v-col class="pa-0 d-flex align-center">
-        <v-list-item :to="logo.to" :ripple="false" min-height="0" class="align-center justify-center pa-0" text="管理區"></v-list-item>
+        <v-list-item 
+        :to="logo.to" 
+        :ripple="false" 
+        min-height="0" 
+        class="align-center justify-center pa-0" 
+        text="管理區"></v-list-item>
       </v-col>
     </v-sheet>
 
@@ -17,7 +33,14 @@
 
     <!-- ● 導覽項目 -->
     <v-list class=" d-flex flex-column align-center">
-      <v-list-item v-for="item in navItems" :key="item.to" :to="item.to" :title="item.text" :prepend-icon="item.icon" border-radius="50" color="light-blue-darken-1"></v-list-item>
+      <v-list-item 
+      v-for="(item, index) in navItems" 
+      :key="index" 
+      :to="item.to" 
+      :title="item.text" 
+      :prepend-icon="item.icon" 
+      border-radius="50" 
+      color="light-blue-darken-1"></v-list-item>
     </v-list>
 
     <v-divider></v-divider>
@@ -25,7 +48,17 @@
     <!-- ● 登出按鈕 -->
     <v-col>
       <v-sheet class="d-flex justify-center mt-6">
-        <v-btn v-if="user.isLogin" prepend-icon="mdi-account-arrow-right" class="bg-deep-orange-darken-2 w-50" :rounded="isExpanded == true ? '' : 'circle'" :text="isExpanded == true ? '登出' : ''" :ripple="false" variant="outlined" @click="logout"></v-btn>
+        <v-btn 
+        v-if="user.isLogin" 
+        prepend-icon="mdi-account-arrow-right" 
+        class="bg-deep-orange-darken-2 w-50" 
+        :rounded="isExpanded == true ? '' : 'circle'" 
+        :text="isExpanded == true ? '登出' : ''" 
+        :ripple="false" 
+        variant="outlined" 
+        @click="logout" 
+        :height="isExpanded == true ? '36' : ''"
+        ></v-btn>
       </v-sheet>
     </v-col>
   </v-navigation-drawer>

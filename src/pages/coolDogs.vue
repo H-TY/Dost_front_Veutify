@@ -55,14 +55,6 @@ const loadProducts = async () => {
 }
 loadProducts()
 
-// 當 items 的值有修改時，觸發 loadProducts() 的函式
-// watch(items, (newValue, oldValue) => {
-//   console.log('newValue', newValue, 'oldValue', oldValue)
-//   if(newValue !== oldValue){
-//     loadProducts()
-//   }
-// }, { deep: true })
-
 
 
 </script>
