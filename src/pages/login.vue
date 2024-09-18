@@ -6,12 +6,12 @@
         <h4 class="text-spacing2">與狗狗歡度快樂時刻</h4>
       </v-col>
       <v-divider class="py-2"></v-divider>
-      <v-col>
+      <v-col class="d-flex justify-center">
         <!-- 
         @submit.prevent="submit" 表單不會被送出
         :disabled="isSubmitting" 表單送出中，表單不顯示 / 停用
         -->
-        <v-form class="text-center" @submit.prevent="submit" :disabled="isSubmitting">
+        <v-form class="text-center w-50" @submit.prevent="submit" :disabled="isSubmitting">
           <!-- 表格內容 -->
           <v-text-field type="account" label="帳號" minlength="4" maxlength="20" counter v-model="account.value.value" :error-messages="account.errorMessage.value"></v-text-field>
           <v-text-field type="password" label="密碼" minlength="4" maxlength="20" counter v-model="password.value.value" :error-messages="password.errorMessage.value"></v-text-field>

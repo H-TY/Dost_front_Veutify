@@ -2,7 +2,6 @@
   <v-container class="text-center my-8">
     <h1>預約狗狗時間</h1>
     <!-- ● 狗狗簡述資訊卡片 -->
-    <p>當前 ID: {{ urlHash }}</p>
     <swiper 
     :slidesPerView="'auto'" 
     :centeredSlides="true" 
@@ -16,7 +15,7 @@
       watchState: true
     }"
     :modules="modules"
-    @slideChange="onSlideChange"
+    @slideChangeTransitionEnd="onHashChange"
     class="mySwiper my-10">
       <swiper-slide 
       v-for="item in items" 
@@ -87,6 +86,7 @@ import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 // import required modules
 import { Pagination, Navigation, History, HashNavigation } from 'swiper/modules'
+import { ru } from 'vuetify/locale'
 
 
 const route = useRoute()
@@ -106,8 +106,7 @@ definePage({
 })
 
 // ● 備註待處理
-// 1. Swiper 自動滑到相應的狗狗
-// 2. 彈窗觸發判斷要再重寫，目前只要是日曆的範圍都會觸發到（包含非日期的部分）
+// 1. 彈窗觸發判斷要再重寫，目前只要是日曆的範圍都會觸發到（包含非日期的部分）
 // 先初始化 swiper，為其新增所需的
 // const swiper = new Swiper('.swiper', {
 //   history:{
@@ -172,10 +171,39 @@ const Dinfo = ref({
 })
 
 // 路徑解析查询参数中的 id
-const Rid = ref(route.query.id)
-console.log('Rid:', Rid)
-console.log('Rid.value:', Rid.value)
-console.log(route.query.id)
+// console.log(route.query.id)
+
+// 定義網址上的 hash 變數
+const urlHash = ref(null)
+
+// 監聽 hash 的變化
+watch(urlHash, (newId, oldId) => {
+  if(newId !== oldId){
+    return selectedTime.value = []
+  }
+  console.log('哈希newId:', newId, '哈希oldId:', oldId)
+})
+
+// 更新成當前頁面的 hash 值
+const reHash = () => {
+  if (route.query.id){
+    // 讀取從"帥氣狗狗"頁面點擊過來的 id
+    urlHash.value = route.query.id
+    // 滑動至指定的 hash 圖片
+    window.location.hash = `booking#${route.query.id}`
+    // 將原本的 id 歸零，避免影響後續的 Swiper 滑動圖片時 hash 值的更新
+    route.query.id = ''
+  } else {
+    urlHash.value = window.location.hash.substring(10)
+  }
+}
+
+// 事件 @slideChangeTransitionEnd 當滑動動畫結束時觸發函式 onHashChange
+const onHashChange = () => {
+  reHash()
+  loadDinfo()
+}
+
 
 // onMounted(()=>{}) 用來執行在組件首次渲染（DOM 元素掛載）完成後的操作。
 // 無論你將 onMounted 放在 <script setup> 的哪個位置，都會在組件掛載完成後自動執行。
@@ -183,49 +211,28 @@ console.log(route.query.id)
 // 初始化數據：從 API 或服務器請求數據。
 // 設置事件監聽器：比如監聽瀏覽器事件、窗口大小改變等。
 // 操作 DOM：比如設置焦點、滾動事件、第三方庫初始化等。
-// hashchange 不是自定義名稱，而是瀏覽器內建的事件名稱，用來監聽 URL 哈希值的變化。
 onMounted(()=>{
+  // 因在進入頁面時會自動跳轉至當前 Swiper 圖片的 hash 值，同時網址也會添加上 hash 值
+  // 但初次渲染時無 hash 值，故會是預設值 null
+  // 為了正確抓到跳轉後網址的 hash 值，延遲 500 毫秒觸發函式抓取 hash 值
   setTimeout(() => {
-    reRid()
-  }, 100)
-  
-  reRid()
-  window.addEventListener('hashchange', reRid)
+    reHash()
+    loadDinfo()
+  }, 500)
 })
 
-console.log(window.location)
-const urlHash = ref('')
-console.log('urlHash:', urlHash.value)
-
-// 監聽 hashId 的變化
-watch(urlHash, (newId, oldId) => {
-  console.log('哈希newId:', newId, '哈希oldId:', oldId)
-})
-
-const reRid = () => {
-  console.log('urlHash 1', urlHash.value)
-  console.log('window.location.hash', window.location.hash.substring(10))
-  urlHash.value = window.location.hash.substring(10)
-  console.log('urlHash 2', urlHash.value)
-}
-
-// 當 Swiper 的圖片有滑動更更改時，觸發函式（抓取更改後的 id）
-const onSlideChange = () => {
-  console.log('反應1')
-  reRid()
-}
 
 
 // ● 回傳指定 id 的狗狗訊息
 const loadDinfo = async () => {
-  if (Rid.value === undefined) return
+  if (urlHash.value === null) return
 
   try {
 
     await nextTick()
 
     // 利用 id 只回傳某一隻狗狗的資料
-    const { data } = await backApi.get('/dogs/' + Rid.value)
+    const { data } = await backApi.get('/dogs/' + urlHash.value)
 
     Dinfo.value._id = data.result._id
     Dinfo.value.image = data.result.image
