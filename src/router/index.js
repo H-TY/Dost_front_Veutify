@@ -63,6 +63,8 @@ router.beforeEach(async (to, from, next) => {
 // router.afterEach ( (要去哪裡, 從哪裡來) => {} ) 每次進入頁面"後"，執行指定動作
 router.afterEach((to, from) => {
   document.title = to.meta.title
+  // 當進入頁面後，自動滾動至頁面頂部
+  window.scrollTo(0, 0)
 })
 
 export default router

@@ -2,24 +2,13 @@
   <v-container class="text-center my-8">
     <h1>預約狗狗時間</h1>
     <!-- ● 狗狗簡述資訊卡片 -->
-    <swiper 
-    :slidesPerView="'auto'" 
-    :centeredSlides="true" 
-    :spaceBetween="30" 
-    :pagination="{
+    <swiper :slidesPerView="'auto'" :centeredSlides="true" :spaceBetween="30" :pagination="{
       clickable: true,
-    }" 
-    :navigation="true"
-    :hashNavigation="{
+    }" :navigation="true" :hashNavigation="{
       replaceState: true,
       watchState: true
-    }"
-    :modules="modules"
-    @slideChangeTransitionEnd="onHashChange"
-    class="mySwiper my-10">
-      <swiper-slide 
-      v-for="item in items" 
-      :data-hash="`/booking#${item._id}`">
+    }" :modules="modules" @slideChangeTransitionEnd="onHashChange" class="mySwiper my-10">
+      <swiper-slide v-for="item in items" :data-hash="`/booking#${item._id}`">
         <v-sheet style="width: 100%;">
           <DogsCard v-bind="item"></DogsCard>
         </v-sheet>
@@ -29,7 +18,8 @@
     <v-row class="my-7">
       <!-- ● 日期選擇 -->
       <v-col class="d-flex flex-wrap justify-center" cols="12" sm="6">
-        <v-date-picker width="400" color="primary" v-model="date" show-adjacent-months @click="dialogOpen"></v-date-picker>
+        <v-date-picker width="400" color="primary" v-model="date" show-adjacent-months :allowed-dates="allowedSelectDate" @click="dialogOpen($event)">
+        </v-date-picker>
         <!-- 點擊日期，跳出視窗選擇預約時段 -->
         <v-dialog v-model="dialog" width="auto">
           <v-form>
@@ -41,9 +31,10 @@
             </v-sheet>
           </v-form>
         </v-dialog>
+        <v-sheet class="bg-transparent d-flex align-center"><v-icon icon="mdi-message-alert" class="me-1" color="orange-darken-2"></v-icon>當天日期無法預約，若有需求，請來電洽詢，謝謝！</v-sheet>
       </v-col>
+      <!-- ● 預約表單 -->
       <v-col class="d-flex justify-center">
-        <!-- ● 預約表單 -->
         <v-form class="w-90" cols="12" sm="6" @submit.prevent="submit" :disabled="isSubmitting">
           <v-text-field label="預約人姓名" :class="addClass" v-model="name.value.value" :error-messages="name.errorMessage.value"></v-text-field>
           <v-text-field label="預約人電話" :class="addClass" v-model="phone.value.value" :error-messages="phone.errorMessage.value"></v-text-field>
@@ -54,6 +45,9 @@
           </v-text-field>
           <v-text-field readonly>預約時間：
             <v-list class="my-0 pa-0 bg-transparent" :items="selectedTime.sort((a, b) => parseInt(a) - parseInt(b))"></v-list>
+          </v-text-field>
+          <v-text-field readonly>預約總時數：
+            <v-sheet class="text-h5 font-weight-bold bg-transparent">{{ totalBTime }}</v-sheet>&nbsp小時
           </v-text-field>
           <v-text-field readonly>總計金額：
             <v-sheet class="text-h5 font-weight-bold bg-transparent">{{ Total }}</v-sheet>&nbsp元
@@ -105,16 +99,6 @@ definePage({
   }
 })
 
-// ● 備註待處理
-// 1. 彈窗觸發判斷要再重寫，目前只要是日曆的範圍都會觸發到（包含非日期的部分）
-// 先初始化 swiper，為其新增所需的
-// const swiper = new Swiper('.swiper', {
-//   history:{
-//     enabled: true,
-//   }
-// })
-
-
 
 // 取帳戶名稱
 const userName = computed(() => {
@@ -127,13 +111,22 @@ const userName = computed(() => {
 
 
 // 綁定時間，讓日期和表格時間一致
-// 綁定日期
+// 綁定選取的日期，並預設空字串
 const date = ref(new Date(''))
+// console.log(date.value)
+
+//當前日期
+const nowDate = ref(new Date())
 
 // 取出日期並將日期當地化
 const dateForm = computed(() => {
   return isNaN(date.value.getTime()) ? '左側選擇日期' : date.value.toLocaleDateString()
 })
+
+// 限制允許選取的時間為當天以後的日期（不含當天）
+const allowedSelectDate = (date) => {
+  return date > nowDate.value
+}
 
 
 // ● 將全部狗狗資訊匯入上方的 Swiper 元件
@@ -178,7 +171,7 @@ const urlHash = ref(null)
 
 // 監聽 hash 的變化
 watch(urlHash, (newId, oldId) => {
-  if(newId !== oldId){
+  if (newId !== oldId) {
     return selectedTime.value = []
   }
   console.log('哈希newId:', newId, '哈希oldId:', oldId)
@@ -186,12 +179,12 @@ watch(urlHash, (newId, oldId) => {
 
 // 更新成當前頁面的 hash 值
 const reHash = () => {
-  if (route.query.id){
+  if (route.query.id) {
     // 讀取從"帥氣狗狗"頁面點擊過來的 id
     urlHash.value = route.query.id
     // 滑動至指定的 hash 圖片
     window.location.hash = `booking#${route.query.id}`
-    // 將原本的 id 歸零，避免影響後續的 Swiper 滑動圖片時 hash 值的更新
+    // 將原本的 route.query.id 賦值空字串，避免影響後續的 Swiper 滑動圖片時 hash 值的更新
     route.query.id = ''
   } else {
     urlHash.value = window.location.hash.substring(10)
@@ -211,7 +204,7 @@ const onHashChange = () => {
 // 初始化數據：從 API 或服務器請求數據。
 // 設置事件監聽器：比如監聽瀏覽器事件、窗口大小改變等。
 // 操作 DOM：比如設置焦點、滾動事件、第三方庫初始化等。
-onMounted(()=>{
+onMounted(() => {
   // 因在進入頁面時會自動跳轉至當前 Swiper 圖片的 hash 值，同時網址也會添加上 hash 值
   // 但初次渲染時無 hash 值，故會是預設值 null
   // 為了正確抓到跳轉後網址的 hash 值，延遲 500 毫秒觸發函式抓取 hash 值
@@ -263,18 +256,24 @@ loadDinfo()
 const dialog = ref(false) // 預設不跳出
 
 // 選取日期觸發觸發彈窗事件
-const dialogOpen = () => {
+// 綁定事件 @click="dialogOpen($event)" 藉由 $event 原生事件物件做判斷，當點取的日期數字相同時觸發彈窗事件
+// .slice(-2) 擷取文字，-2 表示從後面開始接取 2 位
+const dialogOpen = ($event) => {
+  // console.log('$event', $event)
+  // console.log('$event.target.innerText', $event.target.innerText)
+  // console.log('dateForm.value.slice(-2)', dateForm.value.slice(-2))
+  if($event.target.innerText == dateForm.value.slice(-2)){
   dialog.value = true
+  }
 }
-
-// 關閉彈窗（未綁動作）
-const dialogClose = () => {
-  dialog.value = false
-}
-
 
 // ● 動態選取預約時段
 const selectedTime = ref([])
+
+// ● 預約總時數計算
+const totalBTime = computed(() => {
+  return selectedTime.value.length * 2;
+})
 
 // ● 計算總金額
 const Total = computed(() => {
@@ -298,6 +297,11 @@ const bookingFormSchema = yup.object({
   bookingTime: yup
     .array()
     .required('預約時段必填'),
+  totalBookingTime: yup
+    .number()
+    .required('預約總時數必填')
+    .typeError('預約總時數格式錯誤')
+    .min(0, '預約總時數不能小於 0'),
   totalPrice: yup
     .number()
     .required('預約總金額必填')
@@ -317,6 +321,7 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
     dogName: '',
     bookingDate: '',
     bookingTime: [],
+    totalBookingTime: 0,
     totalPrice: 0,
     accountName: '',
   }
@@ -327,6 +332,7 @@ const phone = useField('phone')
 const dogName = useField('dogName')
 const bookingDate = useField('bookingDate')
 const bookingTime = useField('bookingTime')
+const totalBookingTime = useField('totalBookingTime')
 const totalPrice = useField('totalPrice')
 const accountName = useField('accountName')
 
@@ -358,6 +364,13 @@ watch(selectedTime, (newValue, oldValue) => {
   }
 })
 
+// 監聽綁定總計時數
+watch(totalBTime, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    return totalBookingTime.value.value = totalBTime.value
+  }
+})
+
 // 監聽綁定總計金額
 watch(Total, (newValue, oldValue) => {
   if (newValue !== oldValue) {
@@ -377,6 +390,7 @@ const submit = handleSubmit(async (values) => {
     fd.append('dogName', values.dogName)
     fd.append('bookingDate', values.bookingDate)
     fd.append('bookingTime', values.bookingTime)
+    fd.append('totalBookingTime', values.totalBookingTime)
     fd.append('totalPrice', values.totalPrice)
     fd.append('accountName', values.accountName)
 
@@ -420,14 +434,6 @@ const addClass = computed(() => {
 //   console.log('newValue', typeof newValue, newValue, 'oldValue', oldValue)
 // }, { deep: true })
 
-// watch(dialog, (newValue, oldValue) => {
-//   console.log('newValue', newValue, 'oldValue', oldValue)
-// }, { deep: true })
-
-// watch(selectedTime,(newValue, oldValue)=>{
-//   console.log('newValue', newValue, 'oldValue', oldValue)
-// }, { deep: true })
-
 </script>
 
 <style scoped>
@@ -465,19 +471,26 @@ const addClass = computed(() => {
 }
 
 /* 將上下頁滑動按鈕面積加大 */
-::v-deep .swiper-button-prev{
+::v-deep .swiper-button-prev {
   width: calc(var(--swiper-navigation-size) / 44* 100);
   height: inherit;
   top: 0;
   left: 0;
 }
 
-::v-deep .swiper-button-next{
+::v-deep .swiper-button-next {
   width: calc(var(--swiper-navigation-size) / 44* 100);
   height: inherit;
   top: 0;
   right: 0;
 }
+
+/* --- 分隔線 --- */
+.customDay{
+  width: 36px;
+  height: 36px;
+}
+
 
 /* --- 分隔線 --- */
 

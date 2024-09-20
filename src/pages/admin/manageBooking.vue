@@ -64,7 +64,7 @@ const User = ref(user.account)
 const search = ref('')
 const items = ref([])
 const headers = [
-  { align: 'center', title: '編號', key: '_id' },
+  { align: 'center', title: '訂單編號', key: '_id' },
   { align: 'center', title: '下單日期', key: 'createdAt', value: item => new Date(item.createdAt).toLocaleString() },
   { align: 'center', title: '帳號名稱', key: 'accountName' },
   { align: 'center', title: '預約人', key: 'name' },
@@ -72,6 +72,7 @@ const headers = [
   { align: 'center', title: '預約狗狗', key: 'dogName' },
   { align: 'center', title: '預約日期', key: 'bookingDate' },
   { align: 'center', title: '預約時段', key: 'bookingTime' },
+  { align: 'center', title: '預約總時數', key: 'totalBookingTime' },
   { align: 'center', title: '預約總金額', key: 'totalPrice' },
 ]
 
