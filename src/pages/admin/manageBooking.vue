@@ -19,7 +19,7 @@
         <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line></v-text-field>
       </template>
 
-      <v-data-table :headers="headers" :items="items" :search="search">
+      <v-data-table v-model:sort-by="sortBy" :headers="headers" :items="items" :search="search">
         <template #['item.bookingTime']='{ value }'>
           <v-list>
             <!--
@@ -63,8 +63,9 @@ const User = ref(user.account)
 
 const search = ref('')
 const items = ref([])
+const sortBy = [{key: 'bookingOrderNumber', order:'desc'}]
 const headers = [
-  { align: 'center', title: '訂單編號', key: '_id' },
+  { align: 'center', title: '訂單編號', key: 'bookingOrderNumber' },
   { align: 'center', title: '下單日期', key: 'createdAt', value: item => new Date(item.createdAt).toLocaleString() },
   { align: 'center', title: '帳號名稱', key: 'accountName' },
   { align: 'center', title: '預約人', key: 'name' },

@@ -9,7 +9,7 @@ const backApi = axios.create({
 })
 
 // 發登入請求，會走這邊的 api 路徑
-// 所有登入後需要執行操作的部分，都走　apiAuth，可以省去寫帶證明的 code
+// 所有登入後需要執行操作的部分，都走　apiAuth，可以省去寫帶證明 token 的 code
 const apiAuth = axios.create({
   baseURL: import.meta.env.VITE_API
 })

@@ -19,7 +19,7 @@
         <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line></v-text-field>
       </template>
 
-      <v-data-table :headers="headers" :items="items" :search="search">
+      <v-data-table v-model:sort-by="sortBy" :headers="headers" :items="items" :search="search">
         <template #['item.bookingTime']='{ value }'>
           <v-list>
             <!--
@@ -63,8 +63,9 @@ const User = ref(user.account)
 
 const search = ref('')
 const items = ref([])
+const sortBy = [{key: 'bookingOrderNumber', order:'desc'}]
 const headers = [
-  { align: 'center', title: '訂單編號', key: '_id' },
+  { align: 'center', title: '訂單編號', key: 'bookingOrderNumber' },
   { align: 'center', title: '下單日期', key: 'createdAt', value: item => new Date(item.createdAt).toLocaleString() },
   { align: 'center', title: '帳號名稱', key: 'accountName' },
   { align: 'center', title: '預約人', key: 'name' },
@@ -87,6 +88,7 @@ const loadItems = async () => {
     // .splice(索引:開始取資料的地方, 要刪除資料的數量, 要放入的資料:...展開陣列)
     // 若用 .push() 取查詢結果的資料，再重複取資料的時候，會再原先已取到的資料再次重複取資料並疊加上去
     items.value.splice(0, items.value.length, ...data.result.data)
+    // console.log('...data.result.data:', ...data.result.data)
   } catch (error) {
     console.log(error)
     createSnackbar({

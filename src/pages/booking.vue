@@ -65,6 +65,7 @@ import { definePage } from 'vue-router/auto'
 import { useRoute, useRouter } from 'vue-router'
 import { useApi } from '@/composables/axios'
 import { useUserStore } from '@/stores/user'
+import { useBookingOrderStore } from '@/stores/bookingOrder'
 import { useSnackbar } from 'vuetify-use-dialog'
 import DogsCard from '@/components/dogsCard.vue'
 import * as yup from 'yup'
@@ -87,6 +88,7 @@ const route = useRoute()
 const router = useRouter()
 const { backApi, apiAuth } = useApi()
 const User = useUserStore()
+const BookingOrderData = useBookingOrderStore()
 const createSnackbar = useSnackbar()
 const modules = [Pagination, Navigation, HashNavigation, History]
 
@@ -260,9 +262,10 @@ const dialog = ref(false) // 預設不跳出
 // .slice(-2) 擷取文字，-2 表示從後面開始接取 2 位
 const dialogOpen = ($event) => {
   // console.log('$event', $event)
-  // console.log('$event.target.innerText', $event.target.innerText)
+  // console.log('$event.target.innerText:', $event.target.innerText)
+  // console.log(`dateForm.value.slice(-2).replace('/',''):`, dateForm.value.slice(-2).replace('/',''))
   // console.log('dateForm.value.slice(-2)', dateForm.value.slice(-2))
-  if($event.target.innerText == dateForm.value.slice(-2)){
+  if($event.target.innerText == dateForm.value.slice(-2).replace('/','')){
   dialog.value = true
   }
 }
@@ -282,6 +285,9 @@ const Total = computed(() => {
 
 // 定義預約表格
 const bookingFormSchema = yup.object({
+  bookingOrderNumber:yup
+    .string()
+    .required('預約訂單編號必填'),
   name: yup
     .string()
     .required('預約人名字必填'),
@@ -316,6 +322,7 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
   validationSchema: bookingFormSchema,
   // initialValues 設定表單各欄位的初始值
   initialValues: {
+    bookingOrderNumber:'',
     name: userName.value,
     phone: '',
     dogName: '',
@@ -327,6 +334,7 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
   }
 })
 
+const bookingOrderNumber = useField('bookingOrderNumber')
 const name = useField('name')
 const phone = useField('phone')
 const dogName = useField('dogName')
@@ -347,15 +355,29 @@ watch(dateForm, (newValue, oldValue) => {
   }
 })
 
+
+// 宣告要觸發的 Stores 裡的函式
+const triggerStoresEBOD = async () => {
+  await BookingOrderData.endBookingOrderData()
+}
+
 // 監聽綁定預約時間
 // 監聽選取的日期，當選取的日期不同時，取消原選擇的預約時段，並同時傳遞更新的預約日期給裏表格(要送至後端的表格資訊)
 // 外表格的綁定不是用 v-model，而是借由此函式監聽觸發更改日期並回傳值給裏表格
+// 訂單編號依據當天的日期依序排列編號
+// 點擊日期觸發 triggerStoresEBOD() 時，會找出後端最新的訂單編號，依此繼續編號
 watch(dateForm, (newValue, oldValue) => {
   if (newValue !== oldValue) {
     return selectedTime.value = [],
-      bookingDate.value.value = dateForm.value
+      bookingDate.value.value = dateForm.value,
+      // 觸發 Stores 裡的函式
+      triggerStoresEBOD(),
+      // 因要符合帳單編號的資料類型，故再轉成文字的資料類型 .toString()
+      bookingOrderNumber.value.value = (BookingOrderData.bookingOrderNumber + 1).toString(),
+      console.log('bookingOrderNumber', bookingOrderNumber.value.value)
   }
 })
+
 
 // 監聽綁定預約時段
 watch(selectedTime, (newValue, oldValue) => {
@@ -385,6 +407,7 @@ const submit = handleSubmit(async (values) => {
     const fd = new FormData()
 
     // 要將東西放進去的語法 fd.append(key, value)
+    fd.append('bookingOrderNumber', values.bookingOrderNumber)
     fd.append('name', values.name)
     fd.append('phone', values.phone)
     fd.append('dogName', values.dogName)
@@ -435,6 +458,8 @@ const addClass = computed(() => {
 // }, { deep: true })
 
 </script>
+
+
 
 <style scoped>
 /* 狗狗簡述資訊卡片 Swiper_Centered auto 的樣式 */
