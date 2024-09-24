@@ -1,5 +1,5 @@
 <template>
-  <v-container class="text-center my-8">
+  <v-container class="text-center mt-8">
     <h1>預約狗狗時間</h1>
     <!-- ● 狗狗簡述資訊卡片 -->
     <swiper :slidesPerView="'auto'" :centeredSlides="true" :spaceBetween="30" :pagination="{
@@ -36,10 +36,10 @@
             </v-sheet>
           </v-form>
         </v-dialog>
-        <v-sheet class="bg-transparent d-flex align-center"><v-icon icon="mdi-message-alert" class="me-1" color="orange-darken-2"></v-icon>當天日期無法預約，若有需求，請來電洽詢，謝謝！</v-sheet>
+        <v-sheet class="bg-transparent d-flex align-center" :class="mobile ? 'mt-5' : ''"><v-icon icon="mdi-message-alert" class="me-1" color="orange-darken-2"></v-icon>當天日期無法預約，若有需求，請來電洽詢，謝謝！</v-sheet>
       </v-col>
       <!-- ● 預約表單 -->
-      <v-col class="d-flex justify-center">
+      <v-col class="d-flex justify-center" :class="mobile ? 'my-4' : ''">
         <v-form class="w-90" cols="12" sm="6" @submit.prevent="submit" :disabled="isSubmitting">
           <v-text-field label="預約人姓名" :class="addClass" v-model="name.value.value" :error-messages="name.errorMessage.value"></v-text-field>
           <v-text-field label="預約人電話" :class="addClass" v-model="phone.value.value" :error-messages="phone.errorMessage.value"></v-text-field>
@@ -66,6 +66,7 @@
 
 <script setup>
 import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { useDisplay } from 'vuetify'
 import { definePage } from 'vue-router/auto'
 import { useRoute, useRouter } from 'vue-router'
 import { useApi } from '@/composables/axios'
@@ -91,6 +92,7 @@ import { ru } from 'vuetify/locale'
 
 const route = useRoute()
 const router = useRouter()
+const { mobile } = useDisplay()
 const { backApi, apiAuth } = useApi()
 const User = useUserStore()
 const BookingOrderData = useBookingOrderStore()

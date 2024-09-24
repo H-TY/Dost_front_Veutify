@@ -20,7 +20,7 @@
         </v-card-subtitle>
       </v-col>
       <v-col class="d-flex pt-2" :class="$route.path === '/booking' ? 'justify-end' : 'justify-space-between'">
-        <v-card-subtitle class="pa-0 align-self-end ">價格
+        <v-card-subtitle class="pa-0 align-self-end">價格
           <span class="text-h5 font-weight-bold ms-1">{{ price }}</span> 元 / 2小時
         </v-card-subtitle>
         <v-btn class="bg-red" :class="[
@@ -38,11 +38,13 @@
 <script setup>
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
+import { useDisplay } from 'vuetify'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
 const user = useUserStore()
 const router = useRouter()
+const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 
 const props = defineProps(['_id', 'image', 'dogName', 'age', 'price', 'booking', 'bookingTime', 'feature', 'sell', 'counter'])
