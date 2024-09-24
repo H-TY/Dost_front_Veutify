@@ -1,7 +1,7 @@
 <template>
   <v-container class="my-8">
     <v-row>
-      <v-col cols="4" v-for="item in items" :key="item._id">
+      <v-col cols="12" sm="4" v-for="item in items" :key="item._id" :class="mobile === true ? 'px-8' : ''">
         <DogsCard v-bind="item"></DogsCard>
       </v-col>
       <v-col cols="12">
@@ -14,6 +14,7 @@
 <script setup>
 import {ref, watch} from 'vue'
 import { definePage } from 'vue-router/auto'
+import { useDisplay } from 'vuetify'
 import { useApi } from '@/composables/axios'
 import { useSnackbar } from 'vuetify-use-dialog'
 import DogsCard from '@/components/dogsCard.vue'
@@ -28,6 +29,7 @@ definePage({
 
 const { backApi, apiAuth } = useApi()
 const createSnackbar = useSnackbar()
+const { mobile } = useDisplay()
 
 const page = ref(1)
 const pages = ref(1)

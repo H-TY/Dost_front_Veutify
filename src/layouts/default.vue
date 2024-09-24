@@ -79,7 +79,8 @@
   </v-app-bar>
 
   <!-- Mobile 版_漢堡按鈕_導覽列項目 -->
-  <v-navigation-drawer v-if="mobile" v-model="drawer">
+  <!-- location="right" 從右側開啟 menu -->
+  <v-navigation-drawer v-if="mobile" v-model="drawer" location="right">
     <v-list nav>
       <!-- 導覽項目 -->
       <template v-for="item in navItems" :key="item.to">

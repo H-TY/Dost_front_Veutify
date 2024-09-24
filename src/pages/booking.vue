@@ -21,13 +21,18 @@
         <v-date-picker width="400" color="primary" v-model="date" show-adjacent-months :allowed-dates="allowedSelectDate" @click="dialogOpen($event)">
         </v-date-picker>
         <!-- 點擊日期，跳出視窗選擇預約時段 -->
-        <v-dialog v-model="dialog" width="auto">
+        <v-dialog v-model="dialog">
           <v-form>
-            <v-sheet class="bg-white d-flex flex-column text-center justify-self-center pa-7" width="350">
+            <v-sheet class="bg-white d-flex flex-column text-center justify-self-center align-self-center pa-7" width="350" height="240">
               <h3>可預約時段</h3>
               <v-divider class=" my-4"></v-divider>
               <v-checkbox class="d-flex justify-center" v-model="selectedTime" v-for="el in Dinfo.bookingTime.join(' ').split(',').sort((a, b) => parseInt(a) - parseInt(b))" :label="el" :value="el" false-icon="mdi-paw-outline" true-icon="mdi-paw"></v-checkbox>
-              <!-- <v-btn class="mt-6 w-25 align-self-center" @click="dialogClose">X</v-btn> -->
+              <v-sheet class="dialogClosePosition rounded-circle bg-transparent d-flex">
+                <v-btn class="rounded-circle d-flex pa-0 bg-white opacity-100" min-width="60" min-height="60" variant="plain" @click="dialogClose" flat>
+                  <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" size="48
+                  " color="red-darken-4" @mouseenter="mouseoverHandle" @mouseleave="mouseoverHandle"></v-icon>
+                </v-btn>
+              </v-sheet>
             </v-sheet>
           </v-form>
         </v-dialog>
@@ -270,6 +275,24 @@ const dialogOpen = ($event) => {
   }
 }
 
+// 關閉彈窗
+const dialogClose = () => {
+  dialog.value = false
+}
+
+// ● 用來觸發滑鼠滑入、滑出的圖示。
+// * 滑鼠事件：
+// mouseenter：當滑鼠進入元素時觸發（不冒泡，滑鼠在父元素也不會觸發事件）。
+// mouseleave：當滑鼠離開元素時觸發（不冒泡）。
+// mouseover：當滑鼠移動到元素上方時觸發（冒泡，滑鼠在父元素也會觸發事件）。
+// mouseout：當滑鼠移動離開元素上方時觸發（冒泡）
+const mouseToggle = ref(false)
+
+const mouseoverHandle = ()=>{
+  mouseToggle.value = !mouseToggle.value
+}
+
+
 // ● 動態選取預約時段
 const selectedTime = ref([])
 
@@ -511,14 +534,17 @@ const addClass = computed(() => {
 }
 
 /* --- 分隔線 --- */
-.customDay{
-  width: 36px;
-  height: 36px;
+/* 在彈窗選擇時段物件添加關閉安鈕的 class 設定 */
+.dialogClosePosition{
+  position: absolute;
+  top:100%;
+  left:50%;
+  transform: translate(-50%, -50%);
 }
 
 
 /* --- 分隔線 --- */
-
+/* 在預約表格上添加自定義的 class */
 .myClass {
   color: #424242;
 }
