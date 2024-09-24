@@ -30,7 +30,7 @@
               <v-sheet class="dialogClosePosition rounded-circle bg-transparent d-flex">
                 <v-btn class="rounded-circle d-flex pa-0 bg-white opacity-100" min-width="60" min-height="60" variant="plain" @click="dialogClose" flat>
                   <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" size="48
-                  " color="red-darken-4" @mouseenter="mouseoverHandle" @mouseleave="mouseoverHandle"></v-icon>
+                  " color="red-darken-4" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickHandleOff"></v-icon>
                 </v-btn>
               </v-sheet>
             </v-sheet>
@@ -294,6 +294,10 @@ const mouseoverHandle = ()=>{
   mouseToggle.value = !mouseToggle.value
 }
 
+const clickHandleOff = ()=>{
+  mouseToggle.value = false
+}
+
 
 // ● 動態選取預約時段
 const selectedTime = ref([])
@@ -397,9 +401,10 @@ watch(dateForm, (newValue, oldValue) => {
       bookingDate.value.value = dateForm.value,
       // 觸發 Stores 裡的函式
       triggerStoresEBOD(),
+      // * 1 是為了將 BookingOrderData.bookingOrderNumber 文字資料型態轉為數字型態，以利後續做數字的加總，編制流水號
       // 因要符合帳單編號的資料類型，故再轉成文字的資料類型 .toString()
-      bookingOrderNumber.value.value = (BookingOrderData.bookingOrderNumber + 1).toString(),
-      console.log('bookingOrderNumber', bookingOrderNumber.value.value)
+      bookingOrderNumber.value.value = (BookingOrderData.bookingOrderNumber * 1 + 1).toString(),
+      console.log('OK_bookingOrderNumber', bookingOrderNumber.value.value)
   }
 })
 
