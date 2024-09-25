@@ -1,5 +1,5 @@
 <template>
-  會員專區123
+  會員專區 - 基本資料
 </template>
 
 <script setup>

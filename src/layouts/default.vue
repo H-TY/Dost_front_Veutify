@@ -55,7 +55,7 @@
               <v-col class="pa-0 d-flex flex-nowrap justify-center align-center h-100" width="100">
                 <template v-for="RLitem in RegLogin" :key="RLitem.to">
                   <v-col class="d-flex justify-center align-center pa-0 px-2">
-                    <v-btn v-if="RLitem.show" :prepend-icon="RLitem.icon" :to="RLitem.to" class="pa-0" :class="RLitem.text == '登入' ? 'bg-green text-light-green-lighten-5' : 'bg-white text-green'" width="100px" variant=" " rounded :ripple="false">{{ RLitem.text }}</v-btn>
+                    <v-btn v-if="RLitem.show" :prepend-icon="RLitem.icon" :to="RLitem.to" class="pa-0" :class="RLitem.text == '登入' ? 'bg-green text-light-green-lighten-5' : 'bg-white text-green'" width="100px" variant="flat" rounded :ripple="false">{{ RLitem.text }}</v-btn>
                   </v-col>
                 </template>
               </v-col>
@@ -88,16 +88,16 @@
       </template>
       <v-divider class="my-4"></v-divider>
       <!-- 註冊 & 登入項目 -->
-      <v-row>
+      <v-row class="px-8">
         <template v-for="RLitem in RegLogin" :key="RLitem.to">
-          <v-col class="d-flex justify-center align-center">
-            <v-btn v-if="RLitem.show" :prepend-icon="RLitem.icon" :to="RLitem.to" variant="plain" :ripple="false">{{ RLitem.text }}</v-btn>
+          <v-col class="d-flex justify-center align-center pa-0 pt-5">
+            <v-btn v-if="RLitem.show" :prepend-icon="RLitem.icon" :to="RLitem.to" :class="RLitem.text == '登入' ? 'bg-green text-light-green-lighten-5' : 'bg-white text-green registBorder'" width="100px" variant="flat" rounded :ripple="false">{{ RLitem.text }}</v-btn>
           </v-col>
         </template>
       </v-row>
       <!-- 登出按鈕 -->
-      <v-col class="d-flex justify-center">
-        <v-btn v-if="user.isLogin" class="bg-deep-orange-darken-2" prepend-icon="mdi-account-arrow-right" variant="outlined" rounded :ripple="false" @click="logout">登出</v-btn>
+      <v-col class="d-flex justify-center pa-0 pt-5">
+        <v-btn v-if="user.isLogin" class="bg-deep-orange-darken-2" prepend-icon="mdi-account-arrow-right" width="100px" variant="outlined" rounded :ripple="false" @click="logout">登出</v-btn>
       </v-col>
     </v-list>
   </v-navigation-drawer>
@@ -114,9 +114,9 @@
   <v-footer class="bg-light-blue-darken-4 flex-column flex-grow-0 px-10" :height="mobile === true ? '48%' : '22%'">
     <v-container class="pa-0" fluid>
       <v-row class="d-flex ma-0 mt-4 ga-6 ga-sm-0">
-        <v-col cols="12" sm="4" class="d-flex  justify-sm-start pa-0 px-xs-12">
+        <v-col cols="12" sm="4" class="d-flex justify-sm-start pa-0 px-xs-12">
           <v-col cols="3" class="d-flex text-start text-subtitle-2 align-center pa-0" style="max-width:80px;">
-            <v-img src="@/assets/img/Dost_QRcode.png" class="rounded-lg border-solid border-xl bg-white" max-width="60px" max-height="60px"></v-img>
+            <v-img src="@/assets/img/Dost_QRcode.png" class="QRborder bg-white" max-width="60px" max-height="60px"></v-img>
           </v-col>
           <v-col class="text-subtitle-2 align-content-center pa-0">
             <v-list class="bg-transparent d-flex flex-column text-caption text-sm-start text-end">
@@ -190,7 +190,7 @@ const navItems = computed(() => {
     { to: '/coolDogs', text: '帥氣狗狗', icon: 'mdi-dog', show: user.isLogin || !user.isLogin },
     { to: '/booking', text: '預約時間', icon: 'mdi-calendar-clock', show: user.isLogin || !user.isLogin },
     { to: '/test', text: '狗狗適性測驗', icon: 'mdi-dog-side', show: user.isLogin || !user.isLogin },
-    { to: '/shop', text: '寵物用品', icon: 'mdi-store', show: user.isLogin || !user.isLogin },
+    // { to: '/shop', text: '寵物用品', icon: 'mdi-store', show: user.isLogin || !user.isLogin },
     // { to: '/cart', text:'購物車', icon:'mdi-cart-variant', show: user.isLogin},
     { to: '/userZone', text: '會員專區', icon: 'mdi-account-box', show: user.isLogin && !user.isAdmin },
     { to: '/admin', text: '管理區', icon: 'mdi-account-tie', show: user.isLogin && user.isAdmin },
@@ -257,4 +257,16 @@ const logout = async () => {
   border-color: white;
   opacity: 0.3;
 }
+
+/* 客製註冊按鈕 css 樣式 */
+.registBorder{
+  border: 1.5px solid rgba(0, 128, 0, 0.5);
+}
+
+/* 自訂 QRcode 的 border 樣式 */
+.QRborder{
+  border: 5px solid white;
+  border-radius: 3px;
+}
+
 </style>

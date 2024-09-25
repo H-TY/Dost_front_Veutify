@@ -1,5 +1,5 @@
 <template>
-  <v-container class="w-75 mt-sm-12 mt-3 mb-7">
+  <v-container class="mt-3 mb-7">
     <v-row>
       <v-col class="text-center" cols="12">
         <h1 class="text-spacing1">歡迎註冊加入</h1>
@@ -11,12 +11,15 @@
         @submit.prevent="submit" 表單不會被送出
         :disabled="isSubmitting" 表單送出中，表單不顯示 / 停用
         -->
-        <v-form class="text-center w-50" @submit.prevent="submit" :disabled="isSubmitting">
+        <v-form class="text-center" :class="mobile ? 'w-50': 'w-40'" @submit.prevent="submit" :disabled="isSubmitting">
           <!-- 表格內容 -->
           <v-text-field type="account" label="帳號" minlength="4" maxlength="20" counter v-model="account.value.value" :error-messages="account.errorMessage.value"></v-text-field>
           <v-text-field type="email" label="信箱" v-model="email.value.value" :error-messages="email.errorMessage.value"></v-text-field>
           <v-text-field type="password" label="密碼" minlength="4" maxlength="20" counter v-model="password.value.value" :error-messages="password.errorMessage.value"></v-text-field>
           <v-text-field type="password" label="確認密碼" minlength="4" maxlength="20" counter v-model="passwordConfirm.value.value" :error-messages="passwordConfirm.errorMessage.value"></v-text-field>
+          <v-sheet class="bg-transparent text-body-2 mb-5">
+            已加入會員？點擊 <router-link class="text-subtitle-1 font-weight-black text-decoration-none text-blue" :to="{ path: '/login' }">登入</router-link> 會員
+          </v-sheet>
           <!-- 註冊送出按鈕 -->
           <!-- :loading="isSubmitting" 表單送出後，按鈕會顯示轉圈 loading 的樣子 -->
           <v-btn class="w-25" type="submit" color="green" :loading="isSubmitting">註冊</v-btn>
@@ -36,6 +39,7 @@ import validator from 'validator'
 // 引進 axios （已將路徑定義至後端 api）
 import { useApi } from '@/composables/axios'
 import { useRouter } from 'vue-router'
+import { useDisplay } from 'vuetify'
 import { definePage } from 'vue-router/auto'
 import { useSnackbar } from 'vuetify-use-dialog'
 
@@ -50,6 +54,7 @@ definePage({
 
 const { backApi } = useApi()
 const router = useRouter()
+const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 
 // 用 yup 將要驗證的資料建立成物件陣列

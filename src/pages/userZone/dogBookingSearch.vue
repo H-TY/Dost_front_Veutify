@@ -11,7 +11,7 @@
       </v-col>
     </v-row>
 
-    <!-- ● 已預約資料表格 -->
+    <!-- ● 已預約資料表 -->
     <v-card class="mt-8" flat>
       <v-card-title>查詢預約結果</v-card-title>
 

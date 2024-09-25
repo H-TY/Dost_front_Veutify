@@ -1,39 +1,65 @@
 <template>
-  <v-navigation-drawer class="border-0" position="relative" theme="light" permanent>
+  <template v-if="mobile">
+    <v-app-bar class="bg-light-blue-darken-4 px-8" height="120" flat>
+      <v-list class="d-flex align-center pa-0 bg-transparent">
+        <v-col class="pa-0 d-flex justify-end pe-4">
+          <v-list-item class="rounded-circle pa-2 bg-white" color="white" width=" 70" height="70" :to="logo.to" :ripple="false">
+            <v-img :src="logo.img" cover></v-img>
+          </v-list-item>
+        </v-col>
+        <v-col>
+          <v-row class="d-flex flex-column">
+            <v-col class="pa-0">
+              <v-list-item :to="logo.to" :ripple="false" min-height="0" class="d-flex align-center pa-0 text-overline" text="會員專區"></v-list-item>
+            </v-col>
+            <v-col class="pa-0">
+              <v-sheet class="bg-transparent accountName d-flex ">
+                {{ User }}
+              </v-sheet>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-list>
+      <v-sheet class="bg-transparent position-absolute right-0">
+        <!-- 漢堡按鈕 / 摺疊按鈕（作為綁定觸發動作用的 icon） -->
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      </v-sheet>
+    </v-app-bar>
+  </template>
+  <v-navigation-drawer class="border-0" position="relative" :location="mobile ? 'right' : 'left'" theme="light" v-model="drawer" :permanent="drawerHandle">
     <template v-slot:image>
       <v-img src="@/assets/img/bg_img/userZone_bg_01-修.png" height="1000" cover></v-img>
     </template>
 
-    <!-- Logo -->
-    <v-list class="d-flex align-center pa-0 ma-4">
-      <v-col class="pa-0 d-flex justify-end pe-4">
-        <v-list-item class="rounded-circle pa-2" color="white" width=" 70" height="70" :to="logo.to" :ripple="false">
-          <v-img :src="logo.img" cover></v-img>
-        </v-list-item>
-      </v-col>
-      <v-col>
-        <v-row class="d-flex flex-column">
-          <v-col class="pa-0">
-            <v-list-item :to="logo.to" :ripple="false" min-height="0" class="align-center justify-center pa-0" text="會員專區"></v-list-item>
-          </v-col>
-          <v-col class="pa-0">
-            <v-sheet class="bg-transparent text-h5 font-weight-bold">
-              {{ User }}
-            </v-sheet>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-list>
+    <!-- Logo + 會員帳號名稱 -->
+    <template v-if="!mobile">
+      <v-list class="d-flex align-center pa-0 ma-4">
+        <v-col class="pa-0 d-flex justify-end pe-4">
+          <v-list-item class="rounded-circle pa-2" color="white" width=" 70" height="70" :to="logo.to" :ripple="false">
+            <v-img :src="logo.img" cover></v-img>
+          </v-list-item>
+        </v-col>
+        <v-col>
+          <v-row class="d-flex flex-column">
+            <v-col class="pa-0">
+              <v-list-item :to="logo.to" :ripple="false" min-height="0" class="d-flex align-center pa-0 text-overline" text="會員專區"></v-list-item>
+            </v-col>
+            <v-col class="pa-0">
+              <v-sheet class="bg-transparent accountName d-flex ">
+                {{ User }}
+              </v-sheet>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-list>
+    </template>
 
     <v-divider></v-divider>
 
     <!-- 導覽項目 -->
     <v-list class="px-6 py-4">
-      <v-list-item v-for="item in navItems" :key="item.to" :to="item.to" :title="item.text" :prepend-icon="item.icon" border-radius="50" color="light-blue-darken-2
-"></v-list-item>
+      <v-list-item v-for="item in navItems" :key="item.to" :to="item.to" :title="item.text" :prepend-icon="item.icon" border-radius="50" color="light-blue-darken-2"></v-list-item>
     </v-list>
-
-    <!-- <v-divider></v-divider> -->
 
     <!-- 登出按鈕 -->
     <v-col class="d-flex justify-center mt-5">
@@ -58,30 +84,39 @@ import { useSnackbar } from 'vuetify-use-dialog'
 
 // 解構出 mobile的斷點
 const { mobile } = useDisplay()
-
 const user = useUserStore()
 const router = useRouter()
 const createSnackbar = useSnackbar()
 
+
+// 漢堡按鈕預設為折疊起來
+const drawer = ref(false)
+
+// 先判斷是否為 mobile
+const drawerHandle = computed (() => {
+  if (mobile.value == true){
+    return drawer.value = false
+  }else{
+    return drawer.value = true
+  }
+})
+
 // 取帳號名稱
 const User = ref(user.account)
 
-
 // Logo
-const logo = computed(() => {
-  return { to: '/userZone', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
-})
+const logo = { to: '/userZone', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
 
 // 導覽列項目
 const navItems = computed(() => {
   return [
     { to: '/', text: '回首頁', icon: 'mdi-home' },
-    { to: '/', text: '會員基本資料', icon: 'mdi-list-box' },
+    { to: '/userZone', text: '會員基本資料', icon: 'mdi-list-box' },
     { to: '/userZone/dogBookingSearch', text: '預約狗狗查詢', icon: 'mdi-dog' },
-    { to: '/', text: '預約住宿查詢', icon: 'mdi-bed' },
+    // { to: '/', text: '預約住宿查詢', icon: 'mdi-bed' },
     { to: '/', text: '狗狗適性測試結果', icon: 'mdi-tooltip-edit' },
-    { to: '/', text: '喜愛商品追蹤', icon: 'mdi-heart' },
-    { to: '/', text: '訂單查詢', icon: 'mdi-text-box-search' },
+    // { to: '/', text: '喜愛商品追蹤', icon: 'mdi-heart' },
+    // { to: '/', text: '訂單查詢', icon: 'mdi-text-box-search' },
     { to: '/', text: '設定', icon: 'mdi-cog-outline' },
   ]
 })
@@ -112,5 +147,12 @@ const logout = async () => {
 /* 導覽列物件 icon 和文字的間距 */
 ::v-deep .v-list-item-title {
   padding-left: 8px;
+}
+
+/* 使用者名稱的文字樣式設定 */
+.accountName{
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 3px;
 }
 </style>
