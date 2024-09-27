@@ -25,7 +25,7 @@ jobs:
           VITE_API: ${{ secrets.VITE_API }}
       # 步驟三：部署
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@v4.6.5
         with:
           branch: gh-pages
           folder: dist
