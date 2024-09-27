@@ -42,6 +42,7 @@ import { useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { definePage } from 'vue-router/auto'
 import { useSnackbar } from 'vuetify-use-dialog'
+import { ref, computed, watch } from 'vue'
 
 definePage({
   meta: {
@@ -89,8 +90,12 @@ const registerFormData = yup.object({
       (value) => {
         return validator.isEmail(value)
       }
-    )
+    ),
+  image: yup
+    .string()
+    .required('大頭照必填'),
 })
+
 
 // ● 順序一定要"先建立驗證表單，後面接建立的驗證欄位"
 // 驗證表單 useForm
@@ -98,14 +103,27 @@ const registerFormData = yup.object({
 // isSubmitting 指表單正在發送的狀態
 // validationSchema 定義驗證規則（定義表單字段的驗證規則和約束）
 const { handleSubmit, isSubmitting } = useForm({
-  validationSchema: registerFormData
+  validationSchema: registerFormData,
 })
+
 
 // 建立欄位 useField（要與定義 registerFormData 的欄位名稱一樣 ）
 const account = useField('account')
 const password = useField('password')
 const passwordConfirm = useField('passwordConfirm')
 const email = useField('email')
+const image = useField('image')
+// console.log(account.value.value)
+// console.log(image.value.value)
+
+
+// watch 監視使用者輸入的帳戶名稱觸發 "大頭照的賦值的函式"
+watch (account.value, (now, old)=>{
+  // console.log ('now=', now, 'old=', old)
+  // 依據 "帳戶名稱" 默認大頭照
+  image.value.value = `https://api.multiavatar.com/${account.value.value}.png`
+})
+
 
 // formData 代表送出表單各欄位的值
 // 將表單送至 "後端的相對路徑" backApi.post('/user',{陣列物件})
@@ -116,6 +134,7 @@ const submit = handleSubmit(async (formData) => {
       account: formData.account,
       password: formData.password,
       email: formData.email,
+      image: formData.image,
     })
     createSnackbar({
       text: '註冊成功',

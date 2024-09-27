@@ -13,6 +13,7 @@ export const useUserStore = defineStore('User', () => {
   // 要從後端取得的資料（要與後端回傳的資料一致）
   const token = ref('')
   const account = ref('')
+  const image = ref('')
   const role = ref(UserRole.USER) //預設值 UserRole.USER
   const cart = ref(0)
 
@@ -34,6 +35,7 @@ export const useUserStore = defineStore('User', () => {
       // 將後端回傳的資料，替換掉原本 pinia 的欄位的資料
       token.value = data.result.token
       account.value = data.result.account
+      image.value = data.result.image
       role.value = data.result.role
       cart.value = data.result.cart
       return '登入成功'
@@ -57,16 +59,37 @@ export const useUserStore = defineStore('User', () => {
       // 且登入後的每一個操作（新增商品、商品放入購物車、結帳...等請求動作），都需要帶(寫)著這個 headers 的證明，故用新設的一個 apiAuth 來簡化 code
       const { data } = await apiAuth.get('/user/profile')
       account.value = data.result.account
+      image.value = data.result.image
       role.value = data.result.role
       cart.value = data.result.cart
     } catch (error) {
       // 如果發生錯誤，將資料清空
       token.value = ''
       account.value = ''
+      image.value = ''
       role.value = UserRole.USER
       cart.value = 0
     }
   }
+
+  // 使用者編輯資料傳至後端
+  const edit = async (values) => {
+    // 先判斷是否為登陸狀態
+    if (!isLogin.value) return
+
+    try {
+      const { data } = await apiAuth.patch('/user/' + account.value, values)
+      console.log('data.result.image', data.result.image)
+      // 將後端回傳的資料，替換掉原本 pinia 的欄位的資料
+      image.value = data.result.image
+      return '上傳圖片成功'
+
+    } catch (error) {
+      console.log(error)
+      return error?.response?.data?.message || '上傳圖片發生錯誤，請稍後再試'
+    }
+  }
+
 
   const logout = async () => {
     try {
@@ -77,6 +100,7 @@ export const useUserStore = defineStore('User', () => {
     // 清空所有資料
     token.value = ''
     account.value = ''
+    image.value = ''
     role.value = UserRole.USER
     cart.value = 0
   }
@@ -85,12 +109,14 @@ export const useUserStore = defineStore('User', () => {
   return {
     token,
     account,
+    image,
     role,
     cart,
     isLogin,
     isAdmin,
     login,
     profile,
+    edit,
     logout,
   }
 }, {

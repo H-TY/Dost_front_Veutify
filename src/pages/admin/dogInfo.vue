@@ -19,6 +19,10 @@
               <v-card-text class="pb-0">
                 <!-- 上傳（圖片）檔案 -->
                 <p>狗狗大頭照：</p>
+                <!-- 
+                  * v-model:raw-model-value="rawFileRecords" 多個不同的可綁定屬性時，可以這樣寫做綁定
+                  * :raw-model-value 是自訂義的名稱，方便辨識其他綁定的屬性
+                -->
                 <vue-file-agent
                   v-model="fileRecords"
                   v-model:raw-model-value="rawFileRecords"
@@ -220,6 +224,8 @@ definePage({
 const { backApi, apiAuth } = useApi()
 const createSnackbar = useSnackbar()
 
+// 宣告上傳的圖片變數
+// 尚未送出至後端，僅是上傳至當前頁面
 const fileAgent = ref(null)
 // 要抓頁面上的東西時的寫法　ref=""，同時在 <script setup> 內也要建立一個同名的 ref 預設值為 null
 // null 表示“空”或“无”，是一个被显式赋值为“没有对象”的值。通常用于指示某个变量尚未保存任何对象或数据。（let obj = null）
@@ -334,6 +340,7 @@ const submit = handleSubmit(async(values)=>{
   // ?. 可選鏈結操作符
   // 當 fileRecords.value[0] 為 undefined 或 null 時，不會拋出錯誤，而是直接返回 undefined，不會繼續嘗試訪問 error 屬性，避免在屬性不存在時拋出 TypeError 錯誤。
   if (fileRecords.value[0]?.error) return
+    // 當為 "新增商品且無已上傳的圖片" 時，停止送出。
   if (dialog.value.id.length === 0 && fileRecords.value.length < 1) return
 
   try {

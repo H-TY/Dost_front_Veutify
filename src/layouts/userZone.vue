@@ -1,31 +1,22 @@
 <template>
   <template v-if="mobile">
-    <v-app-bar class="bg-light-blue-darken-4 px-8" height="120" flat>
-      <v-list class="d-flex align-center pa-0 bg-transparent">
-        <v-col class="pa-0 d-flex justify-end pe-4">
-          <v-list-item class="rounded-circle pa-2 bg-white" color="white" width=" 70" height="70" :to="logo.to" :ripple="false">
-            <v-img :src="logo.img" cover></v-img>
-          </v-list-item>
-        </v-col>
-        <v-col>
-          <v-row class="d-flex flex-column">
-            <v-col class="pa-0">
-              <v-list-item :to="logo.to" :ripple="false" min-height="0" class="d-flex align-center pa-0 text-overline" text="會員專區"></v-list-item>
-            </v-col>
-            <v-col class="pa-0">
-              <v-sheet class="bg-transparent accountName d-flex ">
-                {{ User }}
-              </v-sheet>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-list>
-      <v-sheet class="bg-transparent position-absolute right-0">
-        <!-- 漢堡按鈕 / 摺疊按鈕（作為綁定觸發動作用的 icon） -->
-        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+    <v-container class="pa-0" fluid>
+      <v-sheet class="bg-transparent position-relative" max-height="450px">
+        <v-sheet class="bg-red d-flex justify-center pa-10" max-height="380px">
+          <v-img :src="logo.img" class="accountBgFilter" fit></v-img>
+        </v-sheet>
+        <v-sheet class="bg-transparent userPhotoPosition">
+          <v-sheet class="d-flex justify-center userPhotoBorder">
+            <userPhoto></userPhoto>
+          </v-sheet>
+          <v-sheet class="bg-transparent text-center accountName">
+            {{ user.account }}
+          </v-sheet>
+        </v-sheet>
       </v-sheet>
-    </v-app-bar>
+    </v-container>
   </template>
+
   <v-navigation-drawer class="border-0" position="relative" :location="mobile ? 'right' : 'left'" theme="light" v-model="drawer" :permanent="drawerHandle">
     <template v-slot:image>
       <v-img src="@/assets/img/bg_img/userZone_bg_01-修.png" height="1000" cover></v-img>
@@ -80,6 +71,7 @@ import { useDisplay } from 'vuetify'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
+import userPhoto from '@/components/userPhoto.vue'
 
 
 // 解構出 mobile的斷點
@@ -137,6 +129,25 @@ const logout = async () => {
 
 
 <style scoped>
+/* 帳號大頭照 & 名稱的背景樣式 */
+.accountBgFilter{
+  filter: blur(2px) opacity(30%);
+}
+
+/* 大頭照定位 */
+.userPhotoPosition{
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.userPhotoBorder{
+  background: #FFFDE7;
+  border: 13px solid #FFFDE7;
+  border-radius: 50%;
+}
+
 /* 導覽列物件欄位的設定 */
 ::v-deep .v-list-item__prepend {
   align-items: center;
@@ -153,6 +164,6 @@ const logout = async () => {
 .accountName{
   font-size: 20px;
   font-weight: 700;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
 }
 </style>
