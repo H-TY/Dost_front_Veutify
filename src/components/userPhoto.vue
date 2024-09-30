@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-0 d-flex flex-column">
     <v-sheet class="bg-transparent" @click="openDialog">
-      <v-img :src="User.image" class="rounded-circle" min-width="130" min-height="130" cover></v-img>
+      <v-img :src="userPhotoChange" class="rounded-circle" min-width="130" min-height="130" cover></v-img>
       <v-btn class="iconBtnPosition d-flex justify-center align-center pa-0" flat>
         <v-icon icon="mdi-camera" class="iconStyle"></v-icon>
       </v-btn>
@@ -16,16 +16,7 @@
         <v-card height="370">
           <v-card-title class="text-h6 font-weight-bold text-center pa-0 pt-7">目前大頭照</v-card-title>
           <v-card-text class="pa-0 px-6 py-7 flex-grow-0">
-            <vue-file-agent
-              v-model="fileRecords"
-              v-model:raw-model-value="rawFileRecords"
-              accept="image/jpg,image/jpeg,image/png"
-              max-size="1MB"
-              help-text="選擇檔案或拖曳到這裡"
-              :error-text="{ type:'檔案格式不支援' , size:'檔案大小不能超過 1MB'}"
-              deletable
-              ref="fileAgent"
-            ></vue-file-agent>
+            <vue-file-agent v-model="fileRecords" v-model:raw-model-value="rawFileRecords" accept="image/jpg,image/jpeg,image/png" max-size="1MB" help-text="選擇檔案或拖曳到這裡" :error-text="{ type: '檔案格式不支援', size: '檔案大小不能超過 1MB' }" deletable ref="fileAgent"></vue-file-agent>
           </v-card-text>
           <!-- 送出 & 取消 按鈕 -->
           <v-card-actions class="justify-center pa-0 pb-7">
@@ -45,7 +36,7 @@
 
 
 <script setup>
-import {ref, computed, watch} from 'vue'
+import { ref, computed, watch } from 'vue'
 import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
 import { useUserStore } from '@/stores/user'
@@ -58,11 +49,16 @@ const { apiAuth } = useApi()
 const createSnackbar = useSnackbar()
 
 
+// 宣告使用者大頭照變數
+const userPhotoChange = ref(User.image)
+// console.log(userPhotoChange.value)
+
+
 // 宣告選擇上傳的圖片，但尚未送出至後端（僅是上傳至當前頁面）
 const fileAgent = ref(null)
 
 // 刪除當前所選的大頭照
-const deletePhoto = ()=>{
+const deletePhoto = () => {
   fileAgent.value.deleteFileRecord()
 }
 
@@ -84,11 +80,11 @@ const closeDialog = () => {
 // ● 用來觸發滑鼠滑入、滑出的值，進而控制要顯示的圖示。
 const mouseToggle = ref(false)
 // 滑鼠懸浮於上時
-const mouseoverHandle = ()=>{
+const mouseoverHandle = () => {
   mouseToggle.value = !mouseToggle.value
 }
 // 滑鼠點擊時，關閉彈窗
-const clickHandleOff = ()=>{
+const clickHandleOff = () => {
   closeDialog()
   deletePhoto()
   mouseToggle.value = false
@@ -110,49 +106,54 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
 
 
 
-const submit = handleSubmit ( async (userEditData) => {
+const submit = handleSubmit(async (userEditData) => {
 
   if (fileRecords.value[0]?.error) return
 
   try {
     // 判斷是否有上傳圖片
-    if(fileRecords.value.length > 0){
+    if (fileRecords.value.length > 0) {
       // console.log('fileRecords.value[0].file', fileRecords.value[0].file)
-        userEditData.image = fileRecords.value[0].file
-      }else{
-        createSnackbar({
+      userEditData.image = fileRecords.value[0].file
+    } else {
+      createSnackbar({
         text: '未選擇圖片上傳',
-        snackbarProps:{
+        snackbarProps: {
           color: 'red',
           location: 'center center',
         }
       })
       return
-      }
+    }
 
     // new FormData() 作成後端可以接收的表格資料格式，給後端的 middlewares/upload.js 作驗證以及轉格式
     const fd = new FormData()
     fd.append('image', userEditData.image)
 
     const result = await User.edit(fd)
+    // console.log('result', result)
 
-    if( result === '上傳圖片成功'){
+    if (result.text === '上傳圖片成功') {
+      // 即時更新前端使用者大頭照
+      userPhotoChange.value = result.reImage
+
       createSnackbar({
-        text: result,
-        snackbarProps:{
+        text: result.text,
+        snackbarProps: {
           color: 'green'
         }
       })
     }
+
     closeDialog()
 
   } catch (error) {
     console.log(error)
     createSnackbar({
-        text: result,
-        snackbarProps:{
-          color: 'red'
-        }
+      text: result,
+      snackbarProps: {
+        color: 'red'
+      }
     })
   }
 })
@@ -162,14 +163,14 @@ const submit = handleSubmit ( async (userEditData) => {
 
 <style scoped>
 /* 使用者名稱的文字樣式設定 */
-.accountName{
+.accountName {
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 2px;
 }
 
 /* iconBtn 定位設定 */
-.iconBtnPosition{
+.iconBtnPosition {
   position: absolute;
   background: transparent;
   bottom: 0;
@@ -180,7 +181,7 @@ const submit = handleSubmit ( async (userEditData) => {
   min-height: fit-content;
 }
 
-.iconStyle{
+.iconStyle {
   font-size: 22px;
   background: #FFFDE7;
   color: #BDBDBD;
@@ -196,11 +197,10 @@ const submit = handleSubmit ( async (userEditData) => {
 }
 
 /* 彈窗關閉按鈕設定樣式 */
-.dialogClosePosition{
+.dialogClosePosition {
   position: absolute;
-  top:100%;
-  left:50%;
+  top: 100%;
+  left: 50%;
   transform: translate(-50%, -50%);
 }
-
 </style>

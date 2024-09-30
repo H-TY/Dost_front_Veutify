@@ -79,10 +79,15 @@ export const useUserStore = defineStore('User', () => {
 
     try {
       const { data } = await apiAuth.patch('/user/' + account.value, values)
-      console.log('data.result.image', data.result.image)
+      // console.log('data.result.image', data.result.image)
       // 將後端回傳的資料，替換掉原本 pinia 的欄位的資料
+      // console.log('data.result.image', data.result.image)
       image.value = data.result.image
-      return '上傳圖片成功'
+      return {
+        text: '上傳圖片成功',
+        // 回傳圖片更新資料，供前端即時替換圖片
+        reImage: image.value,
+      }
 
     } catch (error) {
       console.log(error)
