@@ -52,6 +52,9 @@ definePage({
   }
 })
 
+// Logo
+const logo = { to: '/userZone', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
+
 
 const { backApi } = useApi()
 const router = useRouter()
@@ -92,8 +95,9 @@ const registerFormData = yup.object({
       }
     ),
   image: yup
-    .string()
-    .required('大頭照必填'),
+    .string(),
+  accountBgImage: yup
+    .string(),
 })
 
 
@@ -113,6 +117,7 @@ const password = useField('password')
 const passwordConfirm = useField('passwordConfirm')
 const email = useField('email')
 const image = useField('image')
+const accountBgImage = useField('accountBgImage')
 // console.log(account.value.value)
 // console.log(image.value.value)
 
@@ -122,6 +127,7 @@ watch (account.value, (now, old)=>{
   // console.log ('now=', now, 'old=', old)
   // 依據 "帳戶名稱" 默認大頭照
   image.value.value = `https://api.multiavatar.com/${account.value.value}.png`
+  accountBgImage.value.value = logo.img
 })
 
 
@@ -135,6 +141,7 @@ const submit = handleSubmit(async (formData) => {
       password: formData.password,
       email: formData.email,
       image: formData.image,
+      accountBgImage: formData.image,
     })
     createSnackbar({
       text: '註冊成功',

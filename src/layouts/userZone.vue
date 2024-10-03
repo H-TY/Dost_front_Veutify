@@ -5,10 +5,8 @@
       <!-- 帳號名稱 & 大頭照 -->
       <v-sheet class="bg-transparent position-relative">
         <!-- bg 顏色或圖片 -->
-        <v-sheet class="bg-white d-flex justify-center overflow-hidden" max-width="auto" max-height="360px">
-          <v-sheet class="accountBgcss">
-            <!-- <v-img :src="logo.img" class="accountBgFilter"></v-img> -->
-          </v-sheet>
+        <v-sheet class="overflow-hidden" height="340px">
+          <userAccountBg></userAccountBg>
         </v-sheet>
         <v-sheet class="bg-transparent userPhotoPosition">
           <v-sheet class="d-flex justify-center userPhotoBorder">
@@ -94,6 +92,8 @@ import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
 import userPhoto from '@/components/userPhoto.vue'
+import userAccountBg from '@/components/userAccountBg.vue'
+
 
 
 // 解構出 mobile的斷點
@@ -157,7 +157,7 @@ const logout = async () => {
 }
 
 /* 大頭照背景樣式 */
-.accountBgcss{
+/* .accountBgcss{
   width: 450px;
   height: 450px;
   background-image: url('@/assets/Dost_logo.png');
@@ -165,7 +165,7 @@ const logout = async () => {
   background-position: center;
   transform: rotate(30deg) scale(1.5);
   filter: blur(1px) opacity(20%);
-}
+} */
 
 /* 大頭照定位 */
 .userPhotoPosition {
@@ -183,7 +183,7 @@ const logout = async () => {
 
 /* Mobile 版導覽列區塊位置*/
 .mobileNavMargin{
-  margin-top: 108px;
+  margin-top: 100px;
 }
 
 /* Mobile 版導覽列物件按鈕樣式*/

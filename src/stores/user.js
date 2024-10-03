@@ -14,6 +14,7 @@ export const useUserStore = defineStore('User', () => {
   const token = ref('')
   const account = ref('')
   const image = ref('')
+  const accountBgImage = ref('')
   const role = ref(UserRole.USER) //預設值 UserRole.USER
   const cart = ref(0)
 
@@ -36,6 +37,7 @@ export const useUserStore = defineStore('User', () => {
       token.value = data.result.token
       account.value = data.result.account
       image.value = data.result.image
+      accountBgImage.value = data.result.accountBgImage
       role.value = data.result.role
       cart.value = data.result.cart
       return '登入成功'
@@ -60,6 +62,7 @@ export const useUserStore = defineStore('User', () => {
       const { data } = await apiAuth.get('/user/profile')
       account.value = data.result.account
       image.value = data.result.image
+      accountBgImage.value = data.result.accountBgImage
       role.value = data.result.role
       cart.value = data.result.cart
     } catch (error) {
@@ -67,6 +70,7 @@ export const useUserStore = defineStore('User', () => {
       token.value = ''
       account.value = ''
       image.value = ''
+      accountBgImage.value = ''
       role.value = UserRole.USER
       cart.value = 0
     }
@@ -74,19 +78,39 @@ export const useUserStore = defineStore('User', () => {
 
   // 使用者編輯資料傳至後端
   const edit = async (values) => {
+    // 因 values 為 FormData 物件，可以用"迴圈"或使用擴展運算符（...）或 Array.from() 將這些鍵值對轉換為陣列，檢查陣列是否有有效的值。
+    const valuesArray = [...values.entries()]
+    // console.log('valuesArray', valuesArray) // [Array(2)]
+    // console.log('valuesArray[0]', valuesArray[0]) // ['image', File]
+    // console.log('valuesArray[0][0]', valuesArray[0][0]) // image
+
+
     // 先判斷是否為登陸狀態
     if (!isLogin.value) return
 
     try {
       const { data } = await apiAuth.patch('/user/' + account.value, values)
+      // console.log('data.result', data.result)
       // console.log('data.result.image', data.result.image)
+      // console.log('data.result.accountBgImage', data.result.accountBgImage)
       // 將後端回傳的資料，替換掉原本 pinia 的欄位的資料
-      // console.log('data.result.image', data.result.image)
       image.value = data.result.image
+      accountBgImage.value = data.result.accountBgImage
+
+      const replaytext = computed(() => {
+        if (valuesArray[0][0] === 'image') {
+          return image.value.includes('upload') ? '上傳圖片成功' : '恢復預設圖片'
+        } else {
+          return accountBgImage.value.includes('upload') ? '上傳圖片成功' : '恢復預設圖片'
+        }
+      })
+
       return {
-        text: '上傳圖片成功',
+        // 判斷 image.value 或 accountBgImage.valu 是否包含關鍵字 upload
+        text: replaytext.value,
         // 回傳圖片更新資料，供前端即時替換圖片
         reImage: image.value,
+        reAccountBgImage: accountBgImage.value,
       }
 
     } catch (error) {
@@ -106,6 +130,7 @@ export const useUserStore = defineStore('User', () => {
     token.value = ''
     account.value = ''
     image.value = ''
+    accountBgImage.value = ''
     role.value = UserRole.USER
     cart.value = 0
   }
@@ -115,6 +140,7 @@ export const useUserStore = defineStore('User', () => {
     token,
     account,
     image,
+    accountBgImage,
     role,
     cart,
     isLogin,

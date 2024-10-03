@@ -1,22 +1,28 @@
 <template>
-  <v-container fluid class="pa-0 d-flex flex-column">
-    <v-sheet class="bg-transparent" @click="openDialog">
-      <v-img :src="userPhotoChange" class="rounded-circle" min-width="130" min-height="130" cover></v-img>
-      <v-btn class="iconBtnPosition d-flex justify-center align-center pa-0" flat>
-        <v-icon icon="mdi-camera" class="iconStyle"></v-icon>
-      </v-btn>
+  <v-container fluid class="pa-0">
+    <!-- 帳戶背景圖片 -->
+    <v-sheet class="accountBgcss" :class="userAccountBgChange.includes('Dost_logo') ? 'accountBgRotateScale1' : 'accountBgRotateScale2'">
+      <v-img :src="userAccountBgChange"></v-img>
     </v-sheet>
-    <!-- <v-sheet class="bg-transparent text-center mt-2 accountName">
-      {{ User.account }}
-    </v-sheet> -->
+    <v-btn class="iconBtnPosition d-flex justify-center align-center pa-0" flat @click="openDialog">
+        <v-icon icon="mdi-camera" class="iconStyle"></v-icon>
+    </v-btn>
 
-    <!-- 彈窗替換大頭照 -->
+    <!-- 彈窗替換帳戶背景圖 -->
     <v-dialog v-model="dialog" width="320" persistent>
       <v-form @submit.prevent="submit">
         <v-card height="370">
-          <v-card-title class="text-h6 font-weight-bold text-center pa-0 pt-7">目前大頭照</v-card-title>
+          <v-card-title class="text-h6 font-weight-bold text-center pa-0 pt-7">目前背景圖</v-card-title>
           <v-card-text class="pa-0 px-6 py-7 flex-grow-0">
-            <vue-file-agent v-model="fileRecords" v-model:raw-model-value="rawFileRecords" accept="image/jpg,image/jpeg,image/png" max-size="1MB" help-text="選擇檔案或拖曳到這裡" :error-text="{ type: '檔案格式不支援', size: '檔案大小不能超過 1MB' }" deletable ref="fileAgent"></vue-file-agent>
+            <vue-file-agent 
+              v-model="fileRecords" 
+              v-model:raw-model-value="rawFileRecords" 
+              accept="image/jpg,image/jpeg,image/png" 
+              max-size="1MB"
+              help-text="選擇檔案或拖曳到這裡" 
+              :error-text="{ type: '檔案格式不支援', size: '檔案大小不能超過 1MB' }" 
+              deletable 
+              ref="fileAgent"></vue-file-agent>
           </v-card-text>
           <!-- 送出 & 恢復預設 按鈕 -->
           <v-card-actions class="justify-center pa-0 pb-7">
@@ -48,24 +54,28 @@ const User = useUserStore()
 const { apiAuth } = useApi()
 const createSnackbar = useSnackbar()
 
+// Logo
+const logo = { to: '/userZone', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
 
 // 宣告使用者大頭照變數
-const userPhotoChange = ref(User.image)
-// console.log(userPhotoChange.value)
+const userAccountBgChange = ref(User.accountBgImage)
 
 // 宣告選擇上傳的圖片，但尚未送出至後端（僅是上傳至當前頁面）
 const fileAgent = ref(null)
 
 // 恢復預設的大頭照按鈕預設 false，尚未被點擊
 const defaultPhotoBtn = ref(false)
+// watch(defaultPhotoBtn,(A, B) => {
+//   console.log('A:', A, 'B:', B)
+// })
 
 // 恢復預設大頭照按鈕觸發點擊狀態 並 刪除目前已上傳的圖片
 const defaultPhoto = () =>{
   defaultPhotoBtn.value = true
   deletePhoto()
 
-    // 1 秒後，按鈕變回預設值 false
-    setTimeout(() => {
+  // 1 秒後，按鈕變回預設值 false
+  setTimeout(() => {
     defaultPhotoBtn.value = false
   }, 1000);
 }
@@ -86,9 +96,6 @@ const closeDialog = () => {
   dialog.value = false
 }
 
-// watch(dialog, (now, old) => {
-//   console.log('now=', now, 'old=', old)
-// })
 
 // ● 用來觸發滑鼠滑入、滑出的值，進而控制要顯示的圖示。
 const mouseToggle = ref(false)
@@ -113,7 +120,7 @@ const rawFileRecords = ref([])
 const { handleSubmit, isSubmitting, resetForm } = useForm({
   // 初始化表單資料
   initialValues: {
-    image: '帳戶大頭照欄位'
+    accountBgImage: '帳戶背景圖片欄位'
   }
 })
 
@@ -128,15 +135,15 @@ const submit = handleSubmit(async (userEditData) => {
     if (fileRecords.value.length > 0) {
       // console.log('fileRecords.value[0].file', fileRecords.value[0].file)
       // console.log('觸發 上傳圖片')
-      userEditData.image = fileRecords.value[0].file
-      // console.log('userEditData.image1', userEditData.image)
+      userEditData.accountBgImage = fileRecords.value[0].file
+      console.log('userEditData.accountBgImage1', userEditData.accountBgImage)
 
     // 判斷是否按下 "恢復預設按鈕"
     } else if (defaultPhotoBtn.value === true){
       // console.log('觸發 defaultPhotoBtn')
-      userEditData.image = `https://api.multiavatar.com/${User.account}.png`
-
-    // 當 "沒有按下恢復預設按鈕" 且 "沒有上傳圖片時"，跳出提示
+      userEditData.accountBgImage = logo.img
+    
+    // 恢復預設按鈕的值為 false 且 未上傳圖片
     } else if (defaultPhotoBtn.value === false && fileRecords.value.length < 1) {
         createSnackbar({
         text: '未選擇圖片上傳',
@@ -150,14 +157,14 @@ const submit = handleSubmit(async (userEditData) => {
 
     // new FormData() 作成後端可以接收的表格資料格式，給後端的 middlewares/upload.js 作驗證以及轉格式
     const fd = new FormData()
-    fd.append('image', userEditData.image)
+    fd.append('accountBgImage', userEditData.accountBgImage)
 
     const result = await User.edit(fd)
     // console.log('result', result)
 
     if (result.text) {
       // 即時更新前端使用者大頭照
-      userPhotoChange.value = result.reImage
+      userAccountBgChange.value = result.reAccountBgImage
 
       createSnackbar({
         text: result.text,
@@ -184,11 +191,18 @@ const submit = handleSubmit(async (userEditData) => {
 
 
 <style scoped>
-/* 使用者名稱的文字樣式設定 */
-.accountName {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 2px;
+/* 大頭照背景樣式 */
+.accountBgcss{
+  background-size: contain;
+  filter: blur(1px) opacity(20%);
+}
+
+.accountBgRotateScale1{
+  transform: rotate(30deg) scale(1.2);
+}
+
+.accountBgRotateScale2{
+  transform: scale(1.2);
 }
 
 /* iconBtn 定位設定 */
@@ -197,7 +211,7 @@ const submit = handleSubmit(async (userEditData) => {
   background: transparent;
   bottom: 0;
   right: 0;
-  transform: translate(-30%, -120%);
+  transform: translate(-60%, -50%);
   border-radius: 50%;
   min-width: fit-content;
   min-height: fit-content;
@@ -225,4 +239,5 @@ const submit = handleSubmit(async (userEditData) => {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 </style>
