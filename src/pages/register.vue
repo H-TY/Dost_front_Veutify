@@ -108,6 +108,10 @@ const registerFormData = yup.object({
 // validationSchema 定義驗證規則（定義表單字段的驗證規則和約束）
 const { handleSubmit, isSubmitting } = useForm({
   validationSchema: registerFormData,
+  initialValues: {
+    // 預設默認帳戶背景圖片
+    accountBgImage: logo.img,
+  }
 })
 
 
@@ -127,7 +131,6 @@ watch (account.value, (now, old)=>{
   // console.log ('now=', now, 'old=', old)
   // 依據 "帳戶名稱" 默認大頭照
   image.value.value = `https://api.multiavatar.com/${account.value.value}.png`
-  accountBgImage.value.value = logo.img
 })
 
 
@@ -141,7 +144,7 @@ const submit = handleSubmit(async (formData) => {
       password: formData.password,
       email: formData.email,
       image: formData.image,
-      accountBgImage: formData.image,
+      accountBgImage: formData.accountBgImage,
     })
     createSnackbar({
       text: '註冊成功',
