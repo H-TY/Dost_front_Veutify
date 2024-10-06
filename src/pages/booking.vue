@@ -42,8 +42,17 @@
         <v-form class="w-90" cols="12" sm="6" @submit.prevent="submit" :disabled="isSubmitting">
           <v-text-field label="預約人姓名" :class="addClass" v-model="name.value.value" :error-messages="name.errorMessage.value"></v-text-field>
           <v-text-field label="預約人電話" :class="addClass" v-model="phone.value.value" :error-messages="phone.errorMessage.value"></v-text-field>
-          <v-text-field readonly>預約狗狗：
-            <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ Dinfo.dogName }}</v-sheet></v-text-field>
+          <v-row>
+            <v-col cols=4 class="pa-0 ps-3">
+              <v-sheet class="bg-transparent my-2" elevation="2" rounded>
+                <v-img :src="dogImg" height="70" cover></v-img>
+              </v-sheet>
+            </v-col>
+            <v-col>
+              <v-text-field readonly>預約狗狗：
+                <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ Dinfo.dogName }}</v-sheet></v-text-field>
+            </v-col>
+          </v-row>
           <v-text-field readonly>預約日期：
             <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ dateForm }}</v-sheet>
           </v-text-field>
@@ -120,7 +129,7 @@ const userName = computed(() => {
 
 // 綁定時間，讓日期和表格時間一致
 // 綁定選取的日期，並預設空字串
-const date = ref(new Date(''))
+const date = ref(null)
 // console.log(date.value)
 
 //當前日期
@@ -128,7 +137,11 @@ const nowDate = ref(new Date())
 
 // 取出日期並將日期當地化
 const dateForm = computed(() => {
-  return isNaN(date.value.getTime()) ? '左側選擇日期' : date.value.toLocaleDateString()
+  if (date.value === null || isNaN(date.value.getTime())) {
+    return '左側選擇日期'
+  } else {
+    return date.value.toLocaleDateString()
+  }
 })
 
 // 限制允許選取的時間為當天以後的日期（不含當天）
@@ -171,6 +184,12 @@ const Dinfo = ref({
   counter: 0,
 })
 
+// 圖片變更，自動計算
+const dogImg = computed(() => {
+  return Dinfo.value.image
+})
+
+
 // 路徑解析查询参数中的 id
 // console.log(route.query.id)
 
@@ -178,11 +197,14 @@ const Dinfo = ref({
 const urlHash = ref(null)
 
 // 監聽 hash 的變化
+// 如果有變化，清空選擇的日期和時段
 watch(urlHash, (newId, oldId) => {
+  // console.log('哈希newId:', newId, '哈希oldId:', oldId)
   if (newId !== oldId) {
-    return selectedTime.value = []
+    return selectedTime.value = [],
+      date.value = null,
+      image.value.value = Dinfo.value.image
   }
-  console.log('哈希newId:', newId, '哈希oldId:', oldId)
 })
 
 // 更新成當前頁面的 hash 值
@@ -271,8 +293,8 @@ const dialogOpen = ($event) => {
   // console.log('$event.target.innerText:', $event.target.innerText)
   // console.log(`dateForm.value.slice(-2).replace('/',''):`, dateForm.value.slice(-2).replace('/',''))
   // console.log('dateForm.value.slice(-2)', dateForm.value.slice(-2))
-  if($event.target.innerText == dateForm.value.slice(-2).replace('/','')){
-  dialog.value = true
+  if ($event.target.innerText == dateForm.value.slice(-2).replace('/', '')) {
+    dialog.value = true
   }
 }
 
@@ -289,11 +311,11 @@ const dialogClose = () => {
 // mouseout：當滑鼠移動離開元素上方時觸發（冒泡）
 const mouseToggle = ref(false)
 
-const mouseoverHandle = ()=>{
+const mouseoverHandle = () => {
   mouseToggle.value = !mouseToggle.value
 }
 
-const clickHandleOff = ()=>{
+const clickHandleOff = () => {
   mouseToggle.value = false
 }
 
@@ -313,7 +335,7 @@ const Total = computed(() => {
 
 // 定義預約表格
 const bookingFormSchema = yup.object({
-  bookingOrderNumber:yup
+  bookingOrderNumber: yup
     .string()
     .required('預約訂單編號必填'),
   name: yup
@@ -350,9 +372,10 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
   validationSchema: bookingFormSchema,
   // initialValues 設定表單各欄位的初始值
   initialValues: {
-    bookingOrderNumber:'',
+    bookingOrderNumber: '',
     name: userName.value,
     phone: '',
+    image: '',
     dogName: '',
     bookingDate: '',
     bookingTime: [],
@@ -365,6 +388,7 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
 const bookingOrderNumber = useField('bookingOrderNumber')
 const name = useField('name')
 const phone = useField('phone')
+const image = useField('image')
 const dogName = useField('dogName')
 const bookingDate = useField('bookingDate')
 const bookingTime = useField('bookingTime')
@@ -379,30 +403,46 @@ const accountName = useField('accountName')
 watch(dateForm, (newValue, oldValue) => {
   if (newValue !== oldValue) {
     return accountName.value.value = userName.value,
-      dogName.value.value = Dinfo.value.dogName
+      dogName.value.value = Dinfo.value.dogName,
+      image.value.value = Dinfo.value.image
   }
 })
 
 
-// 宣告要觸發的 Stores 裡的函式
-const triggerStoresEBOD = async () => {
-  await BookingOrderData.endBookingOrderData()
+
+// 宣告要觸發的 Stores 裡的函式，經計算後傳來當天最新的訂單編號
+// 先自己調動觸發 triggerStoresEBOD() ，找出後端最新的訂單編號
+const triggerStoresEBOD = () => {
+  BookingOrderData.endBookingOrderData()
 }
+triggerStoresEBOD()
+
+
+// 宣告後端訂單資料庫最新編號
+// computed() 當後端資料有修改時，自動重新計算
+const endMaxBOD = computed(() => {
+  // BookingOrderData.bookingOrderNumber 抓取的是 stores 的 bookingOrderNumber 的值
+  return BookingOrderData.bookingOrderNumber
+})
+
+// 監視當日最新訂單編號是否有變動
+// watch(endMaxBOD, (A, B) => {
+//   console.log('A', A, 'B', B)
+// })
 
 // 監聽綁定預約時間
 // 監聽選取的日期，當選取的日期不同時，取消原選擇的預約時段，並同時傳遞更新的預約日期給裏表格(要送至後端的表格資訊)
 // 外表格的綁定不是用 v-model，而是借由此函式監聽觸發更改日期並回傳值給裏表格
-// 訂單編號依據當天的日期依序排列編號
-// 點擊日期觸發 triggerStoresEBOD() 時，會找出後端最新的訂單編號，依此繼續編號
-watch(dateForm, (newValue, oldValue) => {
+// 編列訂單編號
+watch(dateForm, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
     return selectedTime.value = [],
       bookingDate.value.value = dateForm.value,
-      // 觸發 Stores 裡的函式
-      triggerStoresEBOD(),
-      // * 1 是為了將 BookingOrderData.bookingOrderNumber 文字資料型態轉為數字型態，以利後續做數字的加總，編制流水號
+
+      // 訂單編號依據當天的日期依序排列編號
+      // * 1 是為了將 endMaxBOD.value 文字資料型態轉為數字型態，以利後續做數字的加總，編制流水號
       // 因要符合帳單編號的資料類型，故再轉成文字的資料類型 .toString()
-      bookingOrderNumber.value.value = (BookingOrderData.bookingOrderNumber * 1 + 1).toString(),
+      bookingOrderNumber.value.value = (endMaxBOD.value * 1 + 1).toString(),
       console.log('OK_bookingOrderNumber', bookingOrderNumber.value.value)
   }
 })
@@ -439,6 +479,7 @@ const submit = handleSubmit(async (values) => {
     fd.append('bookingOrderNumber', values.bookingOrderNumber)
     fd.append('name', values.name)
     fd.append('phone', values.phone)
+    fd.append('image', values.image)
     fd.append('dogName', values.dogName)
     fd.append('bookingDate', values.bookingDate)
     fd.append('bookingTime', values.bookingTime)
@@ -458,7 +499,8 @@ const submit = handleSubmit(async (values) => {
 
     resetForm()
     // 因不是綁在表格上，故 resetForm() 僅對有手動輸入表格的資料有效；其他欄位需另外手動設定重置
-    dateForm.value = NaN
+    // 清空選擇的日期、時段、總金額欄位
+    date.value = null
     selectedTime.value = []
     Total.value = 0
 
@@ -541,10 +583,10 @@ const addClass = computed(() => {
 
 /* --- 分隔線 --- */
 /* 在彈窗選擇時段物件添加關閉安鈕的 class 設定 */
-.dialogClosePosition{
+.dialogClosePosition {
   position: absolute;
-  top:100%;
-  left:50%;
+  top: 100%;
+  left: 50%;
   transform: translate(-50%, -50%);
 }
 

@@ -133,8 +133,8 @@
           <v-btn class="align-self-center" icon="mdi-youtube" color="light-blue"></v-btn>
           <v-divider class="align-self-center d-sm-none cdivider"></v-divider>
         </v-col>
-        <v-col cols="12" sm="4" class="text-subtitle-2 justify-end align-content-center d-flex flex-nowrap pa-0 px-xs-12" max-width="300px">
-          <v-text-field class="ms-sm-10" max-width="400px" placeholder="Enter your e-mail to subscription" type="input" prepend-inner-icon="mdi-email" clearable></v-text-field>
+        <v-col cols="12" sm="4" class="text-subtitle-2 justify-end align-content-center d-flex flex-nowrap pa-0 px-xs-12">
+          <v-text-field :max-width="mobile === true ? '300px' : '240px'" placeholder="Enter your e-mail" type="input" prepend-inner-icon="mdi-email" clearable></v-text-field>
           <v-btn class="align-self-center ms-5">訂閱</v-btn>
         </v-col>
       </v-row>

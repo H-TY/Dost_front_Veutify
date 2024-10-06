@@ -19,7 +19,22 @@
         <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line></v-text-field>
       </template>
 
-      <v-data-table v-model:sort-by="sortBy" :headers="headers" :items="items" :search="search">
+      <!-- 設定 v-model:sort-by="sortBy" 可以預設排序欄位，但會讓其他表頭排序功能失效 -->
+      <v-data-table :headers="headers" :items="items" :search="search">
+        <!-- 下單日期欄位 -->
+        <template #['item.createdAt']='{ value }'>
+          <!-- 使用 .split(' ') 依據"空白"的字符作為分割成新的陣列
+              假如 value = "Hello new world" --→ ["Hello", "new", "world"]
+          -->
+          {{ value.split(' ')[0] }}
+        </template>
+        <!-- 狗狗圖片欄位 -->
+        <template #['item.image']='{ value }'>
+          <v-sheet class="bg-transparent my-2" elevation="2" rounded>
+            <v-img :src="value" width="70" height="70" cover></v-img>
+          </v-sheet>
+        </template>
+        <!-- 預約時段欄位 -->
         <template #['item.bookingTime']='{ value }'>
           <v-list>
             <!--
@@ -30,6 +45,14 @@
               -->
             <v-list-item v-for="(el, index) in value.join(' ').split(',').sort((a, b) => parseInt(a) - parseInt(b))" :key="index">{{ el }}</v-list-item>
           </v-list>
+        </template>
+        <!-- 預約預約總時數欄位 -->
+        <template #['item.totalBookingTime']='{ value }'>
+          {{ value ? value + ' 小時' : '無資料' }}
+        </template>
+        <!-- 預約總金額欄位 -->
+        <template #['item.totalPrice']='{ value }'>
+          {{ value }} 元
         </template>
       </v-data-table>
     </v-card>
@@ -63,14 +86,19 @@ const User = ref(user.account)
 
 const search = ref('')
 const items = ref([])
-const sortBy = [{key: 'bookingOrderNumber', order:'desc'}]
+console.log(items.value)
+
+// asc 升冪（由小至大排序）；desc 降冪（由大至小排序）
+// const sortBy = [{key: 'bookingOrderNumber', order:'desc'}]
+
 const headers = [
   { align: 'center', title: '訂單編號', key: 'bookingOrderNumber' },
   { align: 'center', title: '下單日期', key: 'createdAt', value: item => new Date(item.createdAt).toLocaleString() },
-  { align: 'center', title: '帳號名稱', key: 'accountName' },
+  // { align: 'center', title: '帳號名稱', key: 'accountName' },
   { align: 'center', title: '預約人', key: 'name' },
   { align: 'center', title: '電話', key: 'phone' },
   { align: 'center', title: '預約狗狗', key: 'dogName' },
+  { align: 'center', title: '圖片', key: 'image' },
   { align: 'center', title: '預約日期', key: 'bookingDate' },
   { align: 'center', title: '預約時段', key: 'bookingTime' },
   { align: 'center', title: '預約總時數', key: 'totalBookingTime' },
@@ -81,6 +109,7 @@ const loadItems = async () => {
   try {
     const { data } = await apiAuth.get('/order', {
       params: {
+        // 傳至後端的搜尋關鍵字"帳戶名稱"
         search: User.value
       }
     })
