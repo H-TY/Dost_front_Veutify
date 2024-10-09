@@ -2,14 +2,15 @@
   <!-- Mobile 版 -->
   <template v-if="mobile">
     <v-container class="pa-0" fluid>
-      <!-- 帳號名稱 & 大頭照 -->
+      <!-- 使用者帳戶版面 -->
       <v-sheet class="bg-transparent position-relative">
-        <!-- bg 顏色或圖片 -->
+        <!-- 帳戶背景圖 -->
         <v-sheet class="overflow-hidden" height="340px">
           <userAccountBg></userAccountBg>
         </v-sheet>
-        <v-sheet class="bg-transparent userPhotoPosition">
-          <v-sheet class="d-flex justify-center userPhotoBorder">
+        <!-- 大頭照 & 帳戶名稱 -->
+        <v-sheet class="bg-transparent mobileUserPhotoPosition">
+          <v-sheet class="d-flex justify-center mobileUserPhotoBorder">
             <userPhoto></userPhoto>
           </v-sheet>
           <v-sheet class="bg-transparent text-center accountName">
@@ -17,12 +18,22 @@
           </v-sheet>
         </v-sheet>
       </v-sheet>
+      <!-- 導覽項目 -->
       <v-sheet class="bg-transparent mobileNavMargin">
         <v-row class="px-5 ma-0">
           <template v-for="item in navItems" :key="item.to">
             <v-col cols="6" class="text-center pa-5">
-              <v-btn class="mobileNavCss bg-white":to="item.to" size="80" variant="flat" flat active-color="green-darken-1">
-                <v-icon class="text-light-blue-darken-4" :icon="item.icon" size="40"></v-icon>
+              <v-btn 
+                class="mobileNavCss bg-white"
+                :to="item.to" 
+                size="80" 
+                variant="flat" 
+                flat 
+                active-color="green-darken-1">
+                <v-icon 
+                  class="text-light-blue-darken-4" 
+                  :icon="item.icon" 
+                  size="40"></v-icon>
               </v-btn>
               <v-sheet class="bg-transparent mt-3 text-blue-darken-4" >
                 {{ item.text }}
@@ -37,44 +48,48 @@
   <!-- PC 版導覽列 -->
   <template v-if="!mobile">
     <v-navigation-drawer class="border-0" position="relative" v-model="drawer" :permanent="drawerHandle">
-      <template v-slot:image>
-        <v-img src="@/assets/img/bg_img/userZone_bg_01-修.png" height="1000" cover></v-img>
-      </template>
-
-      <!-- Logo + 會員帳號名稱 -->
-      <template v-if="!mobile">
-        <v-list class="d-flex align-center pa-0 ma-4">
-          <v-col class="pa-0 d-flex justify-end pe-4">
-            <v-list-item class="rounded-circle pa-2" color="white" width=" 70" height="70" :to="logo.to" :ripple="false">
-              <v-img :src="logo.img" cover></v-img>
-            </v-list-item>
-          </v-col>
-          <v-col>
-            <v-row class="d-flex flex-column">
-              <v-col class="pa-0">
-                <v-list-item :to="logo.to" :ripple="false" min-height="0" class="d-flex align-center pa-0 text-overline" text="會員專區"></v-list-item>
-              </v-col>
-              <v-col class="pa-0">
-                <v-sheet class="bg-transparent accountName d-flex ">
-                  {{ userAccountName }}
-                </v-sheet>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-list>
-      </template>
-
+      <!-- 使用者帳戶版面 -->
+      <!-- 帳戶背景圖 -->
+      <v-sheet class="bg-transparent w-100 fill-height position-absolute">
+        <v-sheet class="overflow-hidden PCuserBgPosition BgOverlay">
+          <userAccountBg></userAccountBg>
+        </v-sheet>
+      </v-sheet>
+      <!-- 大頭照 & 帳戶名稱 -->
+      <v-sheet class="bg-transparent PCuserPhotoPosition pa-5">
+        <v-sheet class="PCuserPhoto">
+          <userPhoto></userPhoto>
+        </v-sheet>
+        <v-sheet class="bg-transparent text-center accountName mt-3">
+          {{ User.account }}
+        </v-sheet>
+      </v-sheet>
+      
       <v-divider></v-divider>
 
-      <!-- 導覽項目 -->
-      <v-list class="px-6 py-4">
-        <v-list-item v-for="item in navItems" :key="item.to" :to="item.to" :title="item.text" :prepend-icon="item.icon" border-radius="50" color="light-blue-darken-2"></v-list-item>
+      <!-- 導覽項目 & 登出 -->
+      <v-list class="px-6 py-4 Zindex">
+        <!-- 導覽項目 -->
+        <v-list-item 
+          v-for="item in navItems" 
+          :key="item.to" 
+          :to="item.to" 
+          :title="item.text" 
+          :prepend-icon="item.icon" 
+          border-radius="50" 
+          color="light-blue-darken-2"></v-list-item>
+        <!-- 登出按鈕 -->
+        <v-col class="d-flex justify-center mt-15">
+          <v-btn 
+          v-if="User.isLogin" 
+          prepend-icon="mdi-account-arrow-right" 
+          class="bg-deep-orange-darken-2" 
+          variant="outlined" 
+          rounded 
+          :ripple="false" 
+          @click="logout">登出</v-btn>
+        </v-col>
       </v-list>
-
-      <!-- 登出按鈕 -->
-      <v-col class="d-flex justify-center mt-5">
-        <v-btn v-if="User.isLogin" prepend-icon="mdi-account-arrow-right" class="bg-deep-orange-darken-2 bottom-0 mb-11" position="absolute" variant="outlined" rounded :ripple="false" @click="logout">登出</v-btn>
-      </v-col>
     </v-navigation-drawer>
   </template>
 
@@ -156,29 +171,19 @@ const logout = async () => {
   filter: blur(1px) opacity(20%);
 }
 
-/* 大頭照背景樣式 */
-/* .accountBgcss{
-  width: 450px;
-  height: 450px;
-  background-image: url('@/assets/Dost_logo.png');
-  background-size: contain;
-  background-position: center;
-  transform: rotate(30deg) scale(1.5);
-  filter: blur(1px) opacity(20%);
-} */
+/* Mobile 版大頭照外框 */
+.mobileUserPhotoBorder {
+  background: #FFFDE7;
+  border: 13px solid #FFFDE7;
+  border-radius: 50%;
+}
 
-/* 大頭照定位 */
-.userPhotoPosition {
+/* Mobile 版大頭照定位 */
+.mobileUserPhotoPosition {
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-.userPhotoBorder {
-  background: #FFFDE7;
-  border: 13px solid #FFFDE7;
-  border-radius: 50%;
 }
 
 /* Mobile 版導覽列區塊位置*/
@@ -192,6 +197,53 @@ const logout = async () => {
   border: 4px solid #E1F5FE;
   border-radius: 50%;
   opacity: 100%;
+}
+
+/* PC 版帳戶大頭照樣式 & 定位 */
+.PCuserPhotoPosition{
+  position: relative;
+  padding: 20px
+}
+
+/* PC 版大頭照外框 */
+.PCuserPhoto {
+  margin: auto;
+  width: 130px;
+  border-radius: 50%;
+}
+
+/* PC 版帳號背景圖遮色片 */
+/* 須設定 寬和高 */
+.BgOverlay {
+  width: 100%;
+  height: 100%;
+}
+/* 用偽元素設定要遮色的細節 */
+.BgOverlay::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  /* 預設由上至下的漸變遮色片 */
+  /* 指定漸層方向 to left, to right, to bottom */
+  background: linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 45%); 
+  z-index: 1;
+  /* 因為有覆蓋遮色片，故要設定 pointer-events: none; 讓下面的元素能觸發事件（例如鼠標點擊、滑鼠懸停等） */
+  pointer-events: none;
+}
+
+/* PC 版帳號背景圖樣式 & 定位 */
+.PCuserBgPosition {
+  height: 300px;
+  display: flex;
+  align-items: flex-end;
+  position: absolute;
+  bottom: 0px;
+}
+
+/* 設定 PC 版_導覽項目的層級 */
+.Zindex{
+  z-index: 2;
 }
 
 /* 導覽列物件欄位的設定 */

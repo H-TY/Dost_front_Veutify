@@ -1,13 +1,19 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useUserStore } from '@/stores/user'
 import UserRole from '@/enums/UserRole'
 // 引進 axios （已將路徑定義至後端 api）
 import { useApi } from '@/composables/axios'
 
 
+
 export const useBookingOrderStore = defineStore('BookingOrderData', () => {
 
   const { apiAuth } = useApi()
+  const UserStore = useUserStore()
+  // console.log('UserStore.isLogin', UserStore.isLogin)
+  // 判斷是否為登入狀態
+  if (!UserStore.isLogin) return
 
   // 宣告現在日期
   const nowDate = ref(new Date())
@@ -38,8 +44,10 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
   const dogName = ref('')
   const bookingDate = ref('')
   const bookingTime = ref('')
+  const orderStatus = ref('')
 
-  // 讀取後端的 order 資料
+
+  // 讀取後端的 order 最新的訂單編號
   const endBookingOrderData = async () => {
     try {
       // console.log('Store觸發')
@@ -79,7 +87,30 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
       })
     }
   }
-  // endBookingOrderData()
+
+
+  // 訂單修改
+  const edit = async (values) => {
+    // console.log('values', values)
+    try {
+      const { data } = await apiAuth.patch('/order/' + values.id, values)
+      // console.log('data.result', data.result)
+      // console.log('data.result.orderStatus', data.result.orderStatus)
+      // 將後端回傳的資料，替換掉原本 pinia 的欄位的資料
+      orderStatus.value = data.result.orderStatus
+
+      return {
+        text: '修改訂單成功',
+        // 回傳前端更新的訂單狀態，供前端即時更新狀態
+        reOrderStatus: orderStatus.value,
+      }
+
+
+    } catch (error) {
+      console.log(error)
+      return error?.response?.data?.message || '訂單修改發生錯誤，請稍後再試'
+    }
+  }
 
 
   // 要 return 出去，前端才收的到資料
@@ -90,5 +121,6 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
     bookingDate,
     bookingTime,
     endBookingOrderData,
+    edit,
   }
 })

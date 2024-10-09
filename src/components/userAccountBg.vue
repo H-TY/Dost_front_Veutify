@@ -1,16 +1,20 @@
 <template>
-  <v-container fluid class="pa-0">
+  <v-container fluid class="pa-0 fill-height">
     <!-- 帳戶背景圖片 -->
     <v-sheet class="accountBgcss" :class="userAccountBgChange.includes('Dost_logo') ? 'accountBgRotateScale1' : 'accountBgRotateScale2'">
-      <v-img :src="userAccountBgChange"></v-img>
+      <v-img :src="userAccountBgChange" class="w-100 fill-height photoCss" cover></v-img>
     </v-sheet>
-    <v-btn class="iconBtnPosition d-flex justify-center align-center pa-0" flat @click="openDialog">
-        <v-icon icon="mdi-camera" class="iconStyle"></v-icon>
+    <v-btn 
+      class="d-flex justify-center align-center pa-0" 
+      :class="mobile ? 'mobileIconBtnPosition': 'PCiconBtnPosition'"
+      flat 
+      @click="openDialog">
+        <v-icon icon="mdi-camera" :class="mobile ? 'mobileIconStyle' : 'PCiconStyle'"></v-icon>
     </v-btn>
 
     <!-- 彈窗替換帳戶背景圖 -->
     <v-dialog v-model="dialog" width="320" persistent>
-      <v-form @submit.prevent="submit">
+      <v-form @submit.prevent="submit" :disabled="isSubmitting">
         <v-card height="370">
           <v-card-title class="text-h6 font-weight-bold text-center pa-0 pt-7">目前背景圖</v-card-title>
           <v-card-text class="pa-0 px-6 py-7 flex-grow-0">
@@ -43,6 +47,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useDisplay } from 'vuetify'
 import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
 import { useUserStore } from '@/stores/user'
@@ -52,6 +57,8 @@ import { useSnackbar } from 'vuetify-use-dialog'
 
 const User = useUserStore()
 const { apiAuth } = useApi()
+// 解構出 mobile的斷點
+const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 
 // Logo
@@ -191,8 +198,16 @@ const submit = handleSubmit(async (userEditData) => {
 
 
 <style scoped>
+/* 大頭照樣式 */
+.photoCss{
+  top: 12px;
+  left: 12px;
+}
+
 /* 大頭照背景樣式 */
 .accountBgcss{
+  width: 100%;
+  height: 100%;
   background-size: contain;
   filter: blur(1px) opacity(20%);
 }
@@ -205,21 +220,44 @@ const submit = handleSubmit(async (userEditData) => {
   transform: scale(1.2);
 }
 
-/* iconBtn 定位設定 */
-.iconBtnPosition {
+/* mobile版 iconBtn 定位設定 */
+.mobileIconBtnPosition {
   position: absolute;
   background: transparent;
-  bottom: 0;
+  top: 0;
   right: 0;
-  transform: translate(-60%, -50%);
+  transform: translate(-60%, 60%);
   border-radius: 50%;
   min-width: fit-content;
   min-height: fit-content;
 }
 
-.iconStyle {
+/* PC版 iconBtn 定位設定 */
+.PCiconBtnPosition {
+  position: absolute;
+  background: transparent;
+  bottom: 0;
+  right: 0;
+  transform: translate(-60%, -60%);
+  border-radius: 50%;
+  min-width: fit-content;
+  min-height: fit-content;
+}
+
+/* mobile版 iconStyle 樣式設定 */
+.mobileIconStyle {
   font-size: 22px;
   background: #FFFDE7;
+  color: #BDBDBD;
+  border: 2px solid #BDBDBD;
+  border-radius: 50%;
+  padding: 16px;
+}
+
+/* PC版 iconStyle 樣式設定 */
+.PCiconStyle {
+  font-size: 22px;
+  background: #ffffff;
   color: #BDBDBD;
   border: 2px solid #BDBDBD;
   border-radius: 50%;

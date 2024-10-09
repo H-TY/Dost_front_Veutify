@@ -1,9 +1,11 @@
 <template>
-  <v-container fluid class="pa-0 d-flex flex-column">
+  <v-container fluid class="pa-0 d-flex flex-column w-100 fill-height">
     <v-sheet class="bg-transparent" @click="openDialog">
       <v-img :src="userPhotoChange" class="rounded-circle" min-width="130" min-height="130" cover></v-img>
-      <v-btn class="iconBtnPosition d-flex justify-center align-center pa-0" flat>
-        <v-icon icon="mdi-camera" class="iconStyle"></v-icon>
+      <v-btn 
+      class="d-flex justify-center align-center pa-0" :class="mobile ? 'mobileIconBtnPosition':'PCiconBtnPosition'"
+      flat>
+        <v-icon icon="mdi-camera" :class="mobile ? 'mobileIconStyle' : 'PCiconStyle'"></v-icon>
       </v-btn>
     </v-sheet>
     <!-- <v-sheet class="bg-transparent text-center mt-2 accountName">
@@ -12,7 +14,7 @@
 
     <!-- 彈窗替換大頭照 -->
     <v-dialog v-model="dialog" width="320" persistent>
-      <v-form @submit.prevent="submit">
+      <v-form @submit.prevent="submit" :disabled="isSubmitting">
         <v-card height="370">
           <v-card-title class="text-h6 font-weight-bold text-center pa-0 pt-7">目前大頭照</v-card-title>
           <v-card-text class="pa-0 px-6 py-7 flex-grow-0">
@@ -37,6 +39,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useDisplay } from 'vuetify'
 import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
 import { useUserStore } from '@/stores/user'
@@ -46,6 +49,8 @@ import { useSnackbar } from 'vuetify-use-dialog'
 
 const User = useUserStore()
 const { apiAuth } = useApi()
+// 解構出 mobile的斷點
+const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 
 
@@ -191,19 +196,32 @@ const submit = handleSubmit(async (userEditData) => {
   letter-spacing: 2px;
 }
 
-/* iconBtn 定位設定 */
-.iconBtnPosition {
+/* mobile 版 iconBtn 定位設定 */
+.mobileIconBtnPosition {
   position: absolute;
   background: transparent;
   bottom: 0;
   right: 0;
-  transform: translate(-30%, -120%);
+  transform: translate(-20%, -110%);
   border-radius: 50%;
   min-width: fit-content;
   min-height: fit-content;
 }
 
-.iconStyle {
+/* PC 版 iconBtn 定位設定 */
+.PCiconBtnPosition{
+  position: absolute;
+  background: transparent;
+  bottom: 0;
+  right: 0;
+  transform: translate(-185%, -170%);
+  border-radius: 50%;
+  min-width: fit-content;
+  min-height: fit-content;
+}
+
+/* mobile 版 iconBtn 樣式設定 */
+.mobileIconStyle {
   font-size: 22px;
   background: #FFFDE7;
   color: #BDBDBD;
@@ -211,6 +229,17 @@ const submit = handleSubmit(async (userEditData) => {
   border-radius: 50%;
   padding: 16px;
 }
+
+/* PC 版 iconBtn 樣式設定 */
+.PCiconStyle {
+  font-size: 22px;
+  background: #ffffff;
+  color: #BDBDBD;
+  border: 2px solid #BDBDBD;
+  border-radius: 50%;
+  padding: 16px;
+}
+
 
 ::v-deep .v-btn__overlay .v-btn__underlay {
   display: none;

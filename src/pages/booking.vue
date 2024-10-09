@@ -29,7 +29,7 @@
               <v-checkbox class="d-flex justify-center" v-model="selectedTime" v-for="el in Dinfo.bookingTime.join(' ').split(',').sort((a, b) => parseInt(a) - parseInt(b))" :label="el" :value="el" false-icon="mdi-paw-outline" true-icon="mdi-paw"></v-checkbox>
               <v-sheet class="dialogClosePosition rounded-circle bg-transparent d-flex">
                 <v-btn class="rounded-circle d-flex pa-0 bg-white opacity-100" min-width="60" min-height="60" variant="plain" @click="dialogClose" flat>
-                  <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" size="48" color="red-darken-4" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickHandleOff"></v-icon>
+                  <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" size="48" color="red-darken-4" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickmouseToggleOff"></v-icon>
                 </v-btn>
               </v-sheet>
             </v-sheet>
@@ -315,7 +315,7 @@ const mouseoverHandle = () => {
   mouseToggle.value = !mouseToggle.value
 }
 
-const clickHandleOff = () => {
+const clickmouseToggleOff = () => {
   mouseToggle.value = false
 }
 
@@ -366,6 +366,9 @@ const bookingFormSchema = yup.object({
   accountName: yup
     .string()
     .required('帳戶名稱必填'),
+  orderStatus: yup
+    .boolean()
+    .required('訂單狀態必填'),
 })
 
 const { handleSubmit, isSubmitting, resetForm } = useForm({
@@ -382,6 +385,7 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
     totalBookingTime: 0,
     totalPrice: 0,
     accountName: '',
+    orderStatus: true,
   }
 })
 
@@ -395,6 +399,8 @@ const bookingTime = useField('bookingTime')
 const totalBookingTime = useField('totalBookingTime')
 const totalPrice = useField('totalPrice')
 const accountName = useField('accountName')
+const orderStatus = useField('orderStatus')
+
 
 
 
@@ -486,7 +492,7 @@ const submit = handleSubmit(async (values) => {
     fd.append('totalBookingTime', values.totalBookingTime)
     fd.append('totalPrice', values.totalPrice)
     fd.append('accountName', values.accountName)
-
+    fd.append('orderStatus', values.orderStatus)
 
     await apiAuth.post('/order', fd)
 
