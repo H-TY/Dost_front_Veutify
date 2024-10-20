@@ -43,8 +43,8 @@
         </template>
         <!-- 狗狗圖片欄位 -->
         <template #['item.image']='{ value }'>
-          <v-sheet class="bg-transparent my-2" elevation="2" rounded>
-            <v-img :src="value" width="70" height="70" cover></v-img>
+          <v-sheet class="bg-transparent my-2" width="70" height="70" rounded="lg" elevation="2">
+            <v-img :src="value" class="w-100 h-100" rounded="lg" cover></v-img>
           </v-sheet>
         </template>
         <!-- 預約時段欄位 -->
