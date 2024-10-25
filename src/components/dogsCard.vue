@@ -25,9 +25,9 @@
         </v-card-subtitle>
         <v-btn class="bg-red" :class="[
           $route.path === '/booking' ? 'd-none' : 'd-flex',
-          props.booking === '預約已滿' ? 'bg-grey' : '']" 
-          :text="props.booking === '預約已滿' ? '預約已滿' : '預約'" 
-          :disabled="props.booking === '預約已滿'" 
+          booking === '預約已滿' ? 'bg-grey' : '']" 
+          :text="booking === '預約已滿' ? '預約已滿' : '預約'" 
+          :disabled="booking === '預約已滿'" 
           @click="bookingAddId"></v-btn>
       </v-col>
     </v-sheet>
@@ -47,6 +47,8 @@ const router = useRouter()
 const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 
+// 定義父組件傳遞給當前組件的數據，類似於組件的「輸入參數」。
+// 指定了當前組件可以接收哪些 props。這些 props 是來自父組件的屬性，並且在當前組件中可以使用它們。
 const props = defineProps(['_id', 'image', 'dogName', 'age', 'price', 'booking', 'bookingTime', 'feature', 'sell', 'counter'])
 
 
@@ -55,6 +57,7 @@ const props = defineProps(['_id', 'image', 'dogName', 'age', 'price', 'booking',
 const bookingAddId = () => {
   router.push({
     path: '/booking',
+    // 這邊 props._id 的 props 必須寫出來
     query: { id: props._id }, // 直接使用 props 中的 id
   });
 }

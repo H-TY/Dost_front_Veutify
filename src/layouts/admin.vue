@@ -40,7 +40,7 @@
       :title="item.text" 
       :prepend-icon="item.icon" 
       border-radius="50" 
-      color="light-blue-darken-1"></v-list-item>
+      color="light-blue-darken-2"></v-list-item>
     </v-list>
 
     <v-divider></v-divider>
@@ -76,6 +76,7 @@ import { useDisplay } from 'vuetify'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
+import AdminNavItems from '@/components/AdminNavItems'
 
 
 // 解構出 mobile的斷點
@@ -84,6 +85,8 @@ const { mobile } = useDisplay()
 const user = useUserStore()
 const router = useRouter()
 const createSnackbar = useSnackbar()
+const {logo, navItems} = AdminNavItems()
+
 
 // 在導覽列 v-navigation-drawer 增添綁定動作事件 @mouseover @mouseleave
 // 再監聽動作事件判定導覽列是開啟或關閉狀態
@@ -92,16 +95,6 @@ const isExpanded = ref(false)
 //   console.log('nweE:', nweE, 'oldE:', oldE)
 // })
 
-
-// Logo
-const logo = { to: '/admin', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
-
-// 導覽列項目
-const navItems = [
-  { to: '/', text: '返回首頁', icon: 'mdi-home' },
-  { to: '/admin/dogInfo', text: '狗狗資訊', icon: 'mdi-dog' },
-  { to: '/admin/manageBooking', text: '預約管理', icon: 'mdi-list-box' },
-]
 
 // 登出函式
 const logout = async () => {

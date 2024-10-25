@@ -329,6 +329,12 @@ const submit = handleSubmit(async (orderEditData) => {
   border: 1px solid #613f0096;
 }
 
+.cancelBtnCss:hover{
+  color: white;
+  background: #613f0096;
+  border: none;
+}
+
 /* 在彈窗選擇時段物件添加關閉安鈕的 class 設定 */
 .dialogClosePosition {
   position: absolute;

@@ -47,7 +47,7 @@
 
   <!-- PC 版導覽列 -->
   <template v-if="!mobile">
-    <v-navigation-drawer class="border-0" position="relative" v-model="drawer" :permanent="drawerHandle">
+    <v-navigation-drawer class="border-0 shadow-lg" position="relative" v-model="drawer" :permanent="drawerHandle">
       <!-- 使用者帳戶版面 -->
       <!-- 帳戶背景圖 -->
       <v-sheet class="bg-transparent w-100 fill-height position-absolute">
@@ -65,19 +65,21 @@
         </v-sheet>
       </v-sheet>
       
-      <v-divider></v-divider>
+      <!-- 水平線 -->
+      <!-- <v-divider></v-divider> -->
 
       <!-- 導覽項目 & 登出 -->
-      <v-list class="px-6 py-4 Zindex">
+      <v-list class="ps-6 py-4 Zindex text-grey-darken-2">
         <!-- 導覽項目 -->
         <v-list-item 
           v-for="item in navItems" 
           :key="item.to" 
           :to="item.to" 
           :title="item.text" 
-          :prepend-icon="item.icon" 
-          border-radius="50" 
-          color="light-blue-darken-2"></v-list-item>
+          :prepend-icon="item.icon"
+          class="rounded-s-pill"
+          active-class="selectedStatus"
+          ></v-list-item>
         <!-- 登出按鈕 -->
         <v-col class="d-flex justify-center mt-15">
           <v-btn 
@@ -268,5 +270,21 @@ const logout = async () => {
 /* 此頁面所有 btn 樣式 */
 ::v-deep .v-btn--active > .v-btn__overlay{
   opacity: 0%;
+}
+
+
+/* 原默認導覽物件選擇狀態設為 none */
+::v-deep .v-list-item--variant-text .v-list-item__overlay {
+  background: none;
+}
+/* 自訂導覽物件選擇狀態 */
+.selectedStatus{
+  color:#0288D1;
+  border: 3px solid #fcd796;
+  border-top: 0px;
+  /* border-bottom: 0px; */
+  /* border-left: 0px; */
+  border-right: 0px;
+  background-color: #FFFDE7;
 }
 </style>
