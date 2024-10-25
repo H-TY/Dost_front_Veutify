@@ -1,0 +1,1 @@
+const n=()=>({logo:{to:"/admin",img:new URL(""+new URL("Dost_logo-CIekf1rM.png",import.meta.url).href,import.meta.url).href},navItems:[{to:"/",text:"返回首頁",icon:"mdi-home"},{to:"/admin/dogInfo",text:"狗狗資訊",icon:"mdi-dog"},{to:"/admin/manageBooking",text:"預約管理",icon:"mdi-list-box"}]});export{n as A};
