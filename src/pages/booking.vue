@@ -56,7 +56,7 @@
           <v-text-field readonly>預約日期：
             <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ dateForm }}</v-sheet>
           </v-text-field>
-          <v-text-field readonly>預約時間：
+          <v-text-field readonly>預約時段：
             <v-list class="my-0 pa-0 bg-transparent" :items="selectedTime.sort((a, b) => parseInt(a) - parseInt(b))"></v-list>
           </v-text-field>
           <v-text-field readonly>預約總時數：
@@ -69,11 +69,23 @@
         </v-form>
       </v-col>
     </v-row>
+
+    <!-- ● 送出訂單成功後，彈出已下單的資訊 -->
+    <v-dialog v-model="dialogOrderInfo">
+      <OrderInfoCard
+        :bigTitle="'已預約資訊'"
+        :orderInfoData="orderInfoData.infor"
+        :orderInfoDataImg="orderInfoData.img"
+        :dialogClose="dialogClose"
+        :submit="submit" 
+        :isSubmitting="isSubmitting"
+      ></OrderInfoCard>
+    </v-dialog>
   </v-container>
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue'
 import { useDisplay } from 'vuetify'
 import { definePage } from 'vue-router/auto'
 import { useRoute, useRouter } from 'vue-router'
@@ -84,6 +96,7 @@ import { useSnackbar } from 'vuetify-use-dialog'
 import DogsCard from '@/components/dogsCard.vue'
 import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
+import OrderInfoCard from '@/components/orderInfoCard'
 
 // ● 引進 Swiper 套件以及相關檔案
 // Swiper_Centered auto
@@ -95,7 +108,6 @@ import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 // import required modules
 import { Pagination, Navigation, History, HashNavigation } from 'swiper/modules'
-import { ru } from 'vuetify/locale'
 
 
 const route = useRoute()
@@ -103,7 +115,7 @@ const router = useRouter()
 const { mobile } = useDisplay()
 const { backApi, apiAuth } = useApi()
 const User = useUserStore()
-const BookingOrderData = useBookingOrderStore()
+const BookingOrderStore = useBookingOrderStore()
 const createSnackbar = useSnackbar()
 const modules = [Pagination, Navigation, HashNavigation, History]
 
@@ -111,7 +123,7 @@ const modules = [Pagination, Navigation, HashNavigation, History]
 definePage({
   meta: {
     title: 'Dost | 預約時間',
-    login: true,
+    login: false,
     admin: false
   }
 })
@@ -120,8 +132,9 @@ definePage({
 // 取帳戶名稱
 const userName = computed(() => {
   if (!User.isLogin) {
-    router.push('/login')
-    return
+    // router.push('/login')
+    // return
+    return "Guest"
   }
   return User.account
 })
@@ -298,9 +311,21 @@ const dialogOpen = ($event) => {
   }
 }
 
+// ● 已預約的訂單資訊陣列
+const orderInfoData = reactive({})
+
+// 已預約的訂單資訊彈窗效果預設關閉
+const dialogOrderInfo = ref(false)
+
+// 送出預約表單成功後，彈出已預約的訂單資訊
+const openDialogOrderInfo = () => {
+  dialogOrderInfo.value = true
+}
+
 // 關閉彈窗
 const dialogClose = () => {
   dialog.value = false
+  dialogOrderInfo.value = false
 }
 
 // ● 用來觸發滑鼠滑入、滑出的圖示。
@@ -335,9 +360,6 @@ const Total = computed(() => {
 
 // 定義預約表格
 const bookingFormSchema = yup.object({
-  bookingOrderNumber: yup
-    .string()
-    .required('預約訂單編號必填'),
   name: yup
     .string()
     .required('預約人名字必填'),
@@ -375,7 +397,6 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
   validationSchema: bookingFormSchema,
   // initialValues 設定表單各欄位的初始值
   initialValues: {
-    bookingOrderNumber: '',
     name: userName.value,
     phone: '',
     image: '',
@@ -389,7 +410,6 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
   }
 })
 
-const bookingOrderNumber = useField('bookingOrderNumber')
 const name = useField('name')
 const phone = useField('phone')
 const image = useField('image')
@@ -404,7 +424,6 @@ const orderStatus = useField('orderStatus')
 
 
 
-
 // 監聽綁定使用者和狗狗名字
 watch(dateForm, (newValue, oldValue) => {
   if (newValue !== oldValue) {
@@ -415,41 +434,13 @@ watch(dateForm, (newValue, oldValue) => {
 })
 
 
-
-// 宣告要觸發的 Stores 裡的函式，經計算後傳來當天最新的訂單編號
-// 先自己調動觸發 triggerStoresEBOD() ，找出後端最新的訂單編號
-const triggerStoresEBOD = () => {
-  BookingOrderData.endBookingOrderData()
-}
-triggerStoresEBOD()
-
-
-// 宣告後端訂單資料庫最新編號
-// computed() 當後端資料有修改時，自動重新計算
-const endMaxBOD = computed(() => {
-  // BookingOrderData.bookingOrderNumber 抓取的是 stores 的 bookingOrderNumber 的值
-  return BookingOrderData.bookingOrderNumber
-})
-
-// 監視當日最新訂單編號是否有變動
-// watch(endMaxBOD, (A, B) => {
-//   console.log('A', A, 'B', B)
-// })
-
 // 監聽綁定預約時間
 // 監聽選取的日期，當選取的日期不同時，取消原選擇的預約時段，並同時傳遞更新的預約日期給裏表格(要送至後端的表格資訊)
 // 外表格的綁定不是用 v-model，而是借由此函式監聽觸發更改日期並回傳值給裏表格
-// 編列訂單編號
 watch(dateForm, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
     return selectedTime.value = [],
-      bookingDate.value.value = dateForm.value,
-
-      // 訂單編號依據當天的日期依序排列編號
-      // * 1 是為了將 endMaxBOD.value 文字資料型態轉為數字型態，以利後續做數字的加總，編制流水號
-      // 因要符合帳單編號的資料類型，故再轉成文字的資料類型 .toString()
-      bookingOrderNumber.value.value = (endMaxBOD.value * 1 + 1).toString(),
-      console.log('OK_bookingOrderNumber', bookingOrderNumber.value.value)
+      bookingDate.value.value = dateForm.value
   }
 })
 
@@ -479,10 +470,26 @@ watch(Total, (newValue, oldValue) => {
 // ★ FormData 直接傳至後端處理會失敗，需再經過 multer 的套件解析 form-data，才能傳入後端
 const submit = handleSubmit(async (values) => {
   try {
+    // ★ 按下送出表單按鈕時，先判斷是否為登入狀態
+    // 非登入狀態，跳出需登入的提示，關閉提示後，自動轉跳至登入頁面
+    if(!User.isLogin) {
+      console.log('User.isLogin',User.isLogin)
+      createSnackbar({
+        text: '請先登入會員',
+        snackbarProps: {
+          color: 'red'
+        }
+      })
+      router.push('/login')
+      return
+    }
+    
+    // console.log('有觸發')
+
+    // 建立符合後端可接收格式的表格
     const fd = new FormData()
 
     // 要將東西放進去的語法 fd.append(key, value)
-    fd.append('bookingOrderNumber', values.bookingOrderNumber)
     fd.append('name', values.name)
     fd.append('phone', values.phone)
     fd.append('image', values.image)
@@ -494,10 +501,31 @@ const submit = handleSubmit(async (values) => {
     fd.append('accountName', values.accountName)
     fd.append('orderStatus', values.orderStatus)
 
-    await apiAuth.post('/order', fd)
+    const result = await BookingOrderStore.createBookingOrder(fd)
+    // console.log('result.data.result', result.data.result)
+
+    // 因為要包2個東西，所以用 {} 一起包住，視為一個物件
+    const resOrderInfor = {
+      infor: [{ title:'訂單編號', value: result.data.result.bookingOrderNumber },
+              { title:'預約人', value: result.data.result.accountName },
+              { title:'電話', value: result.data.result.phone },
+              { title:'預約狗狗', value: result.data.result.dogName },
+              { title:'預約日期', value: result.data.result.bookingDate },
+              // { title:'預約時段', value: result.data.result.bookingTime },
+              { title:'預約總金額', value: result.data.result.totalPrice + ' 元' }],
+      img: result.data.result.image
+    }
+
+    // Object.assign(A, B) 把 B 合併進 A 物件
+    // 因是物件合併物件，就不會要取 infor 陣列的值時，需要這樣寫 orderInfoData[0]infor
+    // 後端回傳的資訊放進預設的空陣列
+    Object.assign(orderInfoData, resOrderInfor)
+
+    // 成功預約後，跳出已預約訂單資訊
+    openDialogOrderInfo()
 
     createSnackbar({
-      text: '預約成功',
+      text: result.text,
       snackbarProps: {
         color: 'green'
       }
@@ -508,7 +536,6 @@ const submit = handleSubmit(async (values) => {
     // 清空選擇的日期、時段、總金額欄位
     date.value = null
     selectedTime.value = []
-    Total.value = 0
 
   } catch (error) {
     console.log(error)

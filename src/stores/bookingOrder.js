@@ -15,29 +15,6 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
   // 判斷是否為登入狀態
   if (!UserStore.isLogin) return
 
-  // 宣告現在日期
-  const nowDate = ref(new Date())
-
-  // 修改現在日期的格式，變成純粹的一串數字
-  // 訂單編號的設定：當天日期轉為一串數字 + 流水號(從 001 開始)
-  const reNowDate = computed(() => {
-    // 找出年份 .getFullYear()，並 .toString() 轉成文字
-    const nowDateYear = nowDate.value.getFullYear().toString()
-
-    // 找出月份 .getMonth()，並 .toString() 轉成文字
-    // 資料類型須為文字/字符/字符串 .padStart(2, '0') 用零補足至 2 位數
-    const nowDateMonth = (nowDate.value.getMonth() + 1).toString().length > 1 ? (nowDate.value.getMonth() + 1).toString() : (nowDate.value.getMonth() + 1).toString().toString().padStart(2, '0')
-
-    // 找出日期 .getDate()，並 .toString() 轉成文字
-    const nowDateDay = nowDate.value.getDate().toString().length > 1 ? nowDate.value.getDate().toString() : nowDate.value.getDate().toString().padStart(2, '0')
-
-    // 將年、月、日組合
-    return nowDateYear + nowDateMonth + nowDateDay
-  })
-  // console.log('reNowDate:', reNowDate.value)
-
-
-
   // 預設要回傳的資料
   const bookingOrderNumber = ref(null)
   const image = ref('')
@@ -47,49 +24,55 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
   const orderStatus = ref('')
 
 
-  // 讀取後端的 order 最新的訂單編號
-  const endBookingOrderData = async () => {
+  // 建立訂單
+  const createBookingOrder = async (fd) => {
     try {
-      // console.log('Store觸發')
-      const { data } = await apiAuth.get('/order', {
-        params: {
-          // 設定要搜尋的關鍵字，用來搜尋後端訂單資料庫的訂單編號
-          // 訂單編號的設定：當天日期轉為一串數字 + 流水號(從 001 開始)
-          search: reNowDate.value
-        }
-      })
-      // console.log('data.result.data', data.result.data)
+      // 宣告現在日期
+      // 修改格式和轉成文字資料類型，傳入後端做尋找當日最新訂單用
+      const nowDate = ref(new Date())
 
-      // 若沒有資料可以抓取需做判斷， console.log(data.result.data) 輸出是 [] ，故用長度段 data.result.data.length == 0，回傳 當天日期並加上流水號 '000'
-      // 若有資料可以抓取，用 .map() 抓出所有的 bookingOrderNumber 的值，組成新的陣列
-      // Number() 將資料類型轉成"數字類型"
-      // Math.max() 找出最大值，只能用數字做比較，且無法用於陣列，故需用 ... 將陣列展開
-      // 資料類型須為文字/字符/字符串.padStart(2, '0') 用零補足至 2 位數
-      // .padEnd(number.toString().length + 3, '0') 在數字後自動補 3 個零，第一個參數計算出字串長度再加上要補零的位數
-      const maxBookingOrderNumber = computed(() => {
-        if (data.result.data.length == 0) {
-          // 搜尋後端訂單資料庫的訂單編號無當天訂單資料時，回傳前端 當天日期數字+000 的數字，以利前端用 +1 計算
-          return reNowDate.value + '000'
-        } else {
-          return Math.max(...data.result.data.map(el => Number(el.bookingOrderNumber)))
+      // 修改現在日期的格式，變成純粹的一串數字
+      // 訂單編號的設定：當天日期轉為一串數字 + 流水號(從 001 開始)
+      const reNowDate = computed(() => {
+        // 找出年份 .getFullYear()，並 .toString() 轉成文字
+        const nowDateYear = nowDate.value.getFullYear().toString()
+
+        // 找出月份 .getMonth()，並 .toString() 轉成文字
+        // 資料類型須為文字/字符/字符串 .padStart(2, '0') 用零補足至 2 位數
+        const nowDateMonth = (nowDate.value.getMonth() + 1).toString().length > 1 ? (nowDate.value.getMonth() + 1).toString() : (nowDate.value.getMonth() + 1).toString().toString().padStart(2, '0')
+
+        // 找出日期 .getDate()，並 .toString() 轉成文字
+        const nowDateDay = nowDate.value.getDate().toString().length > 1 ? nowDate.value.getDate().toString() : nowDate.value.getDate().toString().padStart(2, '0')
+
+        // 將年、月、日組合
+        return nowDateYear + nowDateMonth + nowDateDay
+      })
+
+      // data 後端回傳的資料
+      // 第一個參數要放傳至後端的路徑
+      // 第二個參數要放傳至後端的 fd 表格資料
+      // 第三個才放查詢參數 params 傳至後端做正則表達式的查詢關鍵字
+      const { data } = await apiAuth.post('/order', fd, {
+        params: {
+          // 修改格式後的日期，傳入後端做尋找當日最新訂單用
+          reNowDate: reNowDate.value
         }
       })
-      bookingOrderNumber.value = maxBookingOrderNumber.value
-      // console.log('SbookingOrderNumber', bookingOrderNumber.value)
+      // console.log('data', data)
+
+      return {
+        text: data.message,
+        // 回傳前端更新的訂單狀態，供前端即時更新狀態
+        data,
+      }
 
     } catch (error) {
       console.log(error)
-      createSnackbar({
-        text: error?.response?.data?.message || '發生錯誤',
-        snackbarProps: {
-          color: 'red'
-        }
-      })
     }
   }
 
 
-  // 訂單修改
+  // ● 訂單修改
   const edit = async (values) => {
     // console.log('values', values)
     try {
@@ -105,7 +88,6 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
         reOrderStatus: orderStatus.value,
       }
 
-
     } catch (error) {
       console.log(error)
       return error?.response?.data?.message || '訂單修改發生錯誤，請稍後再試'
@@ -120,7 +102,8 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
     dogName,
     bookingDate,
     bookingTime,
-    endBookingOrderData,
+    orderStatus,
+    createBookingOrder,
     edit,
   }
 })
