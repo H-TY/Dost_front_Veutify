@@ -48,7 +48,7 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
         return nowDateYear + nowDateMonth + nowDateDay
       })
 
-      // data 後端回傳的資料
+      // data 為後端回傳的資料
       // 第一個參數要放傳至後端的路徑
       // 第二個參數要放傳至後端的 fd 表格資料
       // 第三個才放查詢參數 params 傳至後端做正則表達式的查詢關鍵字
@@ -58,7 +58,7 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
           reNowDate: reNowDate.value
         }
       })
-      // console.log('data', data)
+      console.log('data', data)
 
       return {
         text: data.message,

@@ -72,14 +72,7 @@
 
     <!-- ● 送出訂單成功後，彈出已下單的資訊 -->
     <v-dialog v-model="dialogOrderInfo">
-      <OrderInfoCard
-        :bigTitle="'已預約資訊'"
-        :orderInfoData="orderInfoData.infor"
-        :orderInfoDataImg="orderInfoData.img"
-        :dialogClose="dialogClose"
-        :submit="submit" 
-        :isSubmitting="isSubmitting"
-      ></OrderInfoCard>
+      <OrderInfoCard :bigTitle="'已預約資訊'" :orderInfoData="orderInfoData.infor" :orderInfoDataImg="orderInfoData.img" :dialogClose="dialogClose" :submit="submit" :isSubmitting="isSubmitting"></OrderInfoCard>
     </v-dialog>
   </v-container>
 </template>
@@ -116,6 +109,7 @@ const { mobile } = useDisplay()
 const { backApi, apiAuth } = useApi()
 const User = useUserStore()
 const BookingOrderStore = useBookingOrderStore()
+console.log('BookingOrderStore', BookingOrderStore)
 const createSnackbar = useSnackbar()
 const modules = [Pagination, Navigation, HashNavigation, History]
 
@@ -472,8 +466,8 @@ const submit = handleSubmit(async (values) => {
   try {
     // ★ 按下送出表單按鈕時，先判斷是否為登入狀態
     // 非登入狀態，跳出需登入的提示，關閉提示後，自動轉跳至登入頁面
-    if(!User.isLogin) {
-      console.log('User.isLogin',User.isLogin)
+    if (!User.isLogin) {
+      console.log('User.isLogin', User.isLogin)
       createSnackbar({
         text: '請先登入會員',
         snackbarProps: {
@@ -483,7 +477,7 @@ const submit = handleSubmit(async (values) => {
       router.push('/login')
       return
     }
-    
+
     // console.log('有觸發')
 
     // 建立符合後端可接收格式的表格
@@ -506,13 +500,13 @@ const submit = handleSubmit(async (values) => {
 
     // 因為要包2個東西，所以用 {} 一起包住，視為一個物件
     const resOrderInfor = {
-      infor: [{ title:'訂單編號', value: result.data.result.bookingOrderNumber },
-              { title:'預約人', value: result.data.result.accountName },
-              { title:'電話', value: result.data.result.phone },
-              { title:'預約狗狗', value: result.data.result.dogName },
-              { title:'預約日期', value: result.data.result.bookingDate },
-              // { title:'預約時段', value: result.data.result.bookingTime },
-              { title:'預約總金額', value: result.data.result.totalPrice + ' 元' }],
+      infor: [{ title: '訂單編號', value: result.data.result.bookingOrderNumber },
+      { title: '預約人', value: result.data.result.accountName },
+      { title: '電話', value: result.data.result.phone },
+      { title: '預約狗狗', value: result.data.result.dogName },
+      { title: '預約日期', value: result.data.result.bookingDate },
+      // { title:'預約時段', value: result.data.result.bookingTime },
+      { title: '預約總金額', value: result.data.result.totalPrice + ' 元' }],
       img: result.data.result.image
     }
 
@@ -538,7 +532,10 @@ const submit = handleSubmit(async (values) => {
     selectedTime.value = []
 
   } catch (error) {
-    console.log(error)
+    console.log('error', error)
+    console.log('error?.response?.data?.message', error?.response?.data?.message)
+
+
     createSnackbar({
       text: error?.response?.data?.message || '發生錯誤',
       snackbarProps: {
