@@ -12,8 +12,6 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
   const { apiAuth } = useApi()
   const UserStore = useUserStore()
   // console.log('UserStore.isLogin', UserStore.isLogin)
-  // 判斷是否為登入狀態
-  if (!UserStore.isLogin) return
 
   // 預設要回傳的資料
   const bookingOrderNumber = ref(null)
@@ -26,6 +24,10 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
 
   // 建立訂單
   const createBookingOrder = async (fd) => {
+    // 若在初始化的開始就有觸發 return，停止後續的執行，會導致後面初始化不完全，需再刷新頁面做初始化，故將此判斷移動至函式內
+    // 判斷是否為登入狀態
+    if (!UserStore.isLogin) return
+
     try {
       // 宣告現在日期
       // 修改格式和轉成文字資料類型，傳入後端做尋找當日最新訂單用
@@ -58,7 +60,7 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
           reNowDate: reNowDate.value
         }
       })
-      console.log('data', data)
+      // console.log('data', data)
 
       return {
         text: data.message,
@@ -75,7 +77,12 @@ export const useBookingOrderStore = defineStore('BookingOrderData', () => {
   // ● 訂單修改
   const edit = async (values) => {
     // console.log('values', values)
+
+    // 判斷是否為登入狀態
+    if (!UserStore.isLogin) return
+
     try {
+
       const { data } = await apiAuth.patch('/order/' + values.id, values)
       // console.log('data.result', data.result)
       // console.log('data.result.orderStatus', data.result.orderStatus)

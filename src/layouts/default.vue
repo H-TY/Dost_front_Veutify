@@ -167,6 +167,7 @@ import { useSnackbar } from 'vuetify-use-dialog'
 const { mobile } = useDisplay()
 
 const user = useUserStore()
+// console.log('useUserStore()', user)
 const router = useRouter()
 const createSnackbar = useSnackbar()
 

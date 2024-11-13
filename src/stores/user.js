@@ -85,7 +85,7 @@ export const useUserStore = defineStore('User', () => {
     // console.log('valuesArray[0][0]', valuesArray[0][0]) // image
 
 
-    // 先判斷是否為登陸狀態
+    // 先判斷是否為登入狀態
     if (!isLogin.value) return
 
     try {
