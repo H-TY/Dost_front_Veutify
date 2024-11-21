@@ -1,6 +1,6 @@
 <template>
   <!-- Logo & 導覽列 -->
-  <v-app-bar class="bg-light-blue-darken-4 align-center" :height="mobile === true ? '120' : '190'">
+  <v-app-bar class="bg-light-blue-darken-4 align-center" :height="mobile === true ? '110' : '200'">
 
     <!-- Mobile 版導覽列 -->
     <!-- v-if 若為手機的斷點尺寸時，顯示以下 code -->
@@ -34,8 +34,8 @@
     <!-- PC 版導覽列 -->
     <!-- v-else 若不是手機的斷點尺寸時，顯示以下 code -->
     <template v-else>
-      <v-container class="pt-0 pa-0 w-100 h-100">
-        <v-row class="pt-5 w-100">
+      <v-container class="p-0 py-4 px-3 w-100 d-flex flex-column align-center">
+        <v-row class="w-100">
           <!-- Logo -->
           <v-col class="d-flex justify-center align-center">
             <v-btn class="bg-white rounded-circle" color="white" :to="logo.to" :ripple="false" size="100">
@@ -44,24 +44,24 @@
           </v-col>
         </v-row>
         <!-- 導覽項目 -->
-        <v-row class="mt-5 ma-0 rounded flex-nowrap">
-          <v-col class="pa-0 d-flex justify-center align-center">
+        <v-row class="mt-5 ma-0 w-100">
+          <v-col class="pa-0 d-flex justify-space-evenly align-center flex-nowrap w-100">
             <template v-for="item in navItems" :key="item.to">
-              <v-btn v-if="item.show" class="px-0" width="150" :prepend-icon="item.icon" :to="item.to" variant="plain" :ripple="false">{{ item.text }}</v-btn>
+              <v-btn v-if="item.show" class=" " :to="item.to" variant="plain" :ripple="false">
+                <v-icon :icon="item.icon" :class="sm?'':'me-1'" :size="sm? 24:20"></v-icon>{{sm? '' : item.text}}
+              </v-btn>
             </template>
-            <v-col class="pa-0 d-flex d-flex justify-center align-center">|</v-col>
+            |
             <!-- 導覽列_右側_註冊 & 登入 按鈕 -->
-            <v-row>
-              <v-col class="pa-0 d-flex flex-nowrap justify-center align-center h-100" width="100">
-                <template v-for="RLitem in RegLogin" :key="RLitem.to">
-                  <v-col class="d-flex justify-center align-center pa-0 px-2">
-                    <v-btn v-if="RLitem.show" :prepend-icon="RLitem.icon" :to="RLitem.to" class="pa-0" :class="RLitem.text == '登入' ? 'bg-green text-light-green-lighten-5' : 'bg-white text-green'" width="100px" variant="flat" rounded :ripple="false">{{ RLitem.text }}</v-btn>
-                  </v-col>
-                </template>
-              </v-col>
-            </v-row>
+            <template v-for="RLitem in RegLogin" :key="RLitem.to">
+              <v-btn v-if="RLitem.show" :to="RLitem.to" class="pa-0 align-center" :class="[RLitem.text == '登入' ? 'bg-green text-light-green-lighten-5' : 'bg-white text-green'], [sm? 'rounded-circle': 'rounded-pill px-4 ms-4']" variant="flat" :style="sm ? {'min-width': '36px'} : {}" :ripple="false">
+                <v-icon :icon="RLitem.icon" :class="sm?'':'me-1'"></v-icon>{{sm? '' : RLitem.text}}
+              </v-btn>
+            </template>
             <!-- 登出按鈕 -->
-            <v-btn v-if="user.isLogin" class="bg-deep-orange-darken-2" prepend-icon="mdi-account-arrow-right" variant=" " rounded :ripple="false" @click="logout">登出</v-btn>
+            <v-btn v-if="user.isLogin" class="pa-0 bg-deep-orange-darken-2" :class="sm? 'rounded-circle': 'rounded-pill px-4 ms-4'" :style="sm ? {'min-width': '36px'} : {}" :ripple="false" @click="logout">
+              <v-icon icon="mdi-account-arrow-right" :class="sm?'':'me-1'"></v-icon>{{sm? '' : '登出'}}
+            </v-btn>
           </v-col>
         </v-row>
         <!-- PC版_購物車懸浮按鈕 -->
@@ -164,7 +164,10 @@ import { useSnackbar } from 'vuetify-use-dialog'
 
 
 // 解構出 mobile的斷點
-const { mobile } = useDisplay()
+const { mobile, sm, md } = useDisplay()
+// console.log('mobile', mobile)
+// console.log('sm', sm)
+// console.log('md', md)
 
 const user = useUserStore()
 // console.log('useUserStore()', user)

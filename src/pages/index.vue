@@ -104,48 +104,54 @@ const topOrderdata = reactive([])
 // ● 向後端請求訂單最多的前 3 名狗狗
 // 用 watchEffect 監聽訂單變動情形，有變動時會自動更新狀態
 watchEffect(async () => {
+  try {
+  
+    // 只計算 4 個月內的有效訂單
+    const nowDate = ref(new Date())
 
-  // 只計算 4 個月內的有效訂單
-  const nowDate = ref(new Date())
+    // 要傳至後端作為搜尋訂單編號用的關鍵字
+    const reNowDate = computed(() => {
+      // 找出年份 .getFullYear()，並 .toString() 轉成文字
+      const nowDateYear = nowDate.value.getFullYear().toString()
 
-  // 要傳至後端作為搜尋訂單編號用的關鍵字
-  const reNowDate = computed(() => {
-    // 找出年份 .getFullYear()，並 .toString() 轉成文字
-    const nowDateYear = nowDate.value.getFullYear().toString()
+      // 找出月份 .getMonth()，並 .toString() 轉成文字
+      // 資料類型須為文字/字符/字符串 .padStart(2, '0') 用零補足至 2 位數
+      const nowDateMonth = (nowDate.value.getMonth() + 1).toString().length > 1 ? (nowDate.value.getMonth() + 1).toString() : (nowDate.value.getMonth() + 1).toString().toString().padStart(2, '0')
 
-    // 找出月份 .getMonth()，並 .toString() 轉成文字
-    // 資料類型須為文字/字符/字符串 .padStart(2, '0') 用零補足至 2 位數
-    const nowDateMonth = (nowDate.value.getMonth() + 1).toString().length > 1 ? (nowDate.value.getMonth() + 1).toString() : (nowDate.value.getMonth() + 1).toString().toString().padStart(2, '0')
-
-    // 將年、月、日組合
-    return nowDateYear + nowDateMonth
-  })
-  // console.log('reNowDate', reNowDate.value)
-
-  // 後端回傳數量最多的前 3 筆訂單資料
-  const { data } = await backApi.get('/order/topOrder', {
-    params: {
-      reNowDate: reNowDate.value
-    }
-  })
-  // console.log('data.result', data.result)
-
-  const reData = data.result
-    .map(el => {
-      return { dogName: el.dogName, img: el.image, counter: el.counter }
+      // 將年、月、日組合
+      return nowDateYear + nowDateMonth
     })
-    // 以 counter 做降冪排序
-    .sort((a, b) => {
-      return b.counter - a.counter
-    })
-  // 修改第二筆的資料排序，放至第一位
-  // 在頁面上由左而右顯示的樣子 2nd 1st 3rd
-  const [secondData] = reData.splice(1, 1)
-  reData.unshift(secondData)
-  // console.log('reData', reData)
+    // console.log('reNowDate', reNowDate.value)
 
-  // 將回傳的資料放入 topOrderdata 的陣列中
-  topOrderdata.push(...reData)
+    // 後端回傳數量最多的前 3 筆訂單資料
+    const { data } = await backApi.get('/order/topOrder', {
+      params: {
+        reNowDate: reNowDate.value
+      }
+    }, { timeout: 10 })
+    console.log('data.result', data.result)
+
+    const reData = data.result
+      .map(el => {
+        return { dogName: el.dogName, img: el.image, counter: el.counter }
+      })
+      // 以 counter 做降冪排序
+      .sort((a, b) => {
+        return b.counter - a.counter
+      })
+    // 修改第二筆的資料排序，放至第一位
+    // 在頁面上由左而右顯示的樣子 2nd 1st 3rd
+    const [secondData] = reData.splice(1, 1)
+    reData.unshift(secondData)
+    // console.log('reData', reData)
+
+    // 將回傳的資料放入 topOrderdata 的陣列中
+    topOrderdata.push(...reData)
+    
+  } catch (error) {
+    console.log('請求訂單最多的前 3 名狗狗_error', error)
+  
+  }
 })
 // console.log('topOrderdata', topOrderdata)
 

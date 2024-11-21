@@ -1,5 +1,5 @@
 <template>
-  <v-container class="my-8">
+  <v-container class="mt-8">
     <v-row>
       <v-col cols="12" sm="4" v-for="item in items" :key="item._id" :class="mobile === true ? 'px-8' : ''">
         <DogsCard v-bind="item"></DogsCard>
