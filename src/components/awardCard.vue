@@ -8,8 +8,8 @@
         <slot name="img">預設 img 位置</slot>
       </v-sheet>
       <!-- <v-sheet class="bg-transparent mt-5 namePosition">
-      <slot name="dogName">預設 dogName 位置</slot>
-    </v-sheet> -->
+        <slot name="dogName">預設 dogName 位置</slot>
+      </v-sheet> -->
       <v-sheet class="shadowPosition" :class="getShadowColor(index)" :width="mobile ? 102 : 120" :height="mobile ? 102 : 120">
         <v-sheet class="bg-transparent namePosition">
           <slot name="dogName">預設 dogName 位置</slot>

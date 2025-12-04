@@ -141,7 +141,7 @@
       <v-divider class="w-100 my-4"></v-divider>
       <v-row class="text-center ma-0">
         <v-col class="text-subtitle-2 align-content-center pa-0 text-sm-start" cols="12" sm="6">
-          2024 / 8 / 27　前端網頁設計課程 — <strong>期末專題作業</strong>
+          前端網頁設計課程 — <strong>期末專題作業</strong>
         </v-col>
         <v-col class="text-subtitle-2 align-content-center pa-0 text-sm-end" cols="12" sm="6">
           資料、圖片、影片來源：
