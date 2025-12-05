@@ -78,6 +78,8 @@ export const useUserStore = defineStore('User', () => {
 
   // 使用者編輯資料傳至後端
   const edit = async (values) => {
+    // console.log('values', values)
+    
     // 因 values 為 FormData 物件，可以用"迴圈"或使用擴展運算符（...）或 Array.from() 將這些鍵值對轉換為陣列，檢查陣列是否有有效的值。
     const valuesArray = [...values.entries()]
     // console.log('valuesArray', valuesArray) // [Array(2)]
@@ -96,12 +98,12 @@ export const useUserStore = defineStore('User', () => {
       // 將後端回傳的資料，替換掉原本 pinia 的欄位的資料
       image.value = data.result.image
       accountBgImage.value = data.result.accountBgImage
-
+      
       const replaytext = computed(() => {
-        if (valuesArray[0][0] === 'image') {
-          return image.value.includes('upload') ? '上傳圖片成功' : '恢復預設圖片'
+        if (data.result.image) {
+          return image.value.includes('database-1') ? '上傳圖片成功' : '恢復預設圖片'
         } else {
-          return accountBgImage.value.includes('upload') ? '上傳圖片成功' : '恢復預設圖片'
+          return accountBgImage.value.includes('database-1') ? '上傳圖片成功' : '恢復預設圖片'
         }
       })
 

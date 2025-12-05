@@ -47,11 +47,14 @@ import { useApi } from '@/composables/axios'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
+
 const User = useUserStore()
 const { apiAuth } = useApi()
 // 解構出 mobile的斷點
 const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
+
+
 
 
 // 宣告使用者大頭照變數
@@ -118,7 +121,8 @@ const rawFileRecords = ref([])
 const { handleSubmit, isSubmitting, resetForm } = useForm({
   // 初始化表單資料
   initialValues: {
-    image: '帳戶大頭照欄位'
+    fromCP: 'userPhoto',
+    image: '帳戶大頭照欄位',
   }
 })
 
@@ -155,6 +159,7 @@ const submit = handleSubmit(async (userEditData) => {
 
     // new FormData() 作成後端可以接收的表格資料格式，給後端的 middlewares/upload.js 作驗證以及轉格式
     const fd = new FormData()
+    fd.append('fromCP', userEditData.fromCP)
     fd.append('image', userEditData.image)
 
     const result = await User.edit(fd)

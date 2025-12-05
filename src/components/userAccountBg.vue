@@ -127,6 +127,7 @@ const rawFileRecords = ref([])
 const { handleSubmit, isSubmitting, resetForm } = useForm({
   // 初始化表單資料
   initialValues: {
+    fromCP: 'userAccountBg',
     accountBgImage: '帳戶背景圖片欄位'
   }
 })
