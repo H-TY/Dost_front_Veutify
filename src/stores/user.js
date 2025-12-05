@@ -77,12 +77,10 @@ export const useUserStore = defineStore('User', () => {
   }
 
   // 使用者編輯資料傳至後端
-  const edit = async (values) => {
-    // console.log('values', values)
-    
-    // 因 values 為 FormData 物件，可以用"迴圈"或使用擴展運算符（...）或 Array.from() 將這些鍵值對轉換為陣列，檢查陣列是否有有效的值。
+  const edit = async (values) => {    
+    // 因 values 為 FormData 物件，直接 console.log(values)，看不到東西，需用"迴圈"或使用擴展運算符（...）或 Array.from() 將這些鍵值對轉換為陣列，檢查陣列是否有有效的值。
     const valuesArray = [...values.entries()]
-    // console.log('valuesArray', valuesArray) // [Array(2)]
+    console.log('valuesArray', valuesArray) // [Array(2)]
     // console.log('valuesArray[0]', valuesArray[0]) // ['image', File]
     // console.log('valuesArray[0][0]', valuesArray[0][0]) // image
 
@@ -92,18 +90,23 @@ export const useUserStore = defineStore('User', () => {
 
     try {
       const { data } = await apiAuth.patch('/user/' + account.value, values)
-      // console.log('data.result', data.result)
+      console.log('data.result', data.result)
       // console.log('data.result.image', data.result.image)
       // console.log('data.result.accountBgImage', data.result.accountBgImage)
       // 將後端回傳的資料，替換掉原本 pinia 的欄位的資料
       image.value = data.result.image
       accountBgImage.value = data.result.accountBgImage
+
+      // 用來判斷是 使用者"頭像" 還是 "背景圖" 上傳圖片成功、恢復預設圖片
+      const renewUserItem = data.result.renewUserItem
       
       const replaytext = computed(() => {
-        if (data.result.image) {
+        if (renewUserItem === 'userPhoto' ) {
           return image.value.includes('database-1') ? '上傳圖片成功' : '恢復預設圖片'
-        } else {
+        } else if(renewUserItem === 'userAccountBg') {
           return accountBgImage.value.includes('database-1') ? '上傳圖片成功' : '恢復預設圖片'
+        }else {
+          return '其他：上傳圖片成功'
         }
       })
 

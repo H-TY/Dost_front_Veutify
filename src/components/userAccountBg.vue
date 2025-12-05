@@ -165,6 +165,7 @@ const submit = handleSubmit(async (userEditData) => {
 
     // new FormData() 作成後端可以接收的表格資料格式，給後端的 middlewares/upload.js 作驗證以及轉格式
     const fd = new FormData()
+    fd.append('fromCP', userEditData.fromCP)
     fd.append('accountBgImage', userEditData.accountBgImage)
 
     const result = await User.edit(fd)
