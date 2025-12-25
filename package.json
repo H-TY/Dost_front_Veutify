@@ -12,6 +12,7 @@
     "@mdi/font": "7.4.47",
     "axios": "^1.7.3",
     "core-js": "^3.37.1",
+    "gsap": "^3.14.2",
     "pinia-plugin-persistedstate": "^3.2.1",
     "roboto-fontface": "*",
     "swiper": "^11.1.9",

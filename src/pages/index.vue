@@ -1,47 +1,165 @@
 <template>
-  <v-container fluid class="pa-0">
+  <div id="home" class="home">
     <!-- ● Banner區 -->
-    <v-sheet class="bg-transparent">
-      <BannerSwiper></BannerSwiper>
-    </v-sheet>
+    <div id="banner" class="banner">
+      <v-container fluid class="pa-0">
+        <BannerSwiper></BannerSwiper>
+
+        <div class="banner-txt">
+
+          <h1>
+            嘿～～<br />今天要不要被狗狗療育一下？
+          </h1>
+
+          <h4>
+            DOST
+            <span>｜寵物狗狗陪伴</span>
+          </h4>
+          <p>
+            摸摸、陪伴、慢慢來
+            <br />這裡有剛剛好的溫柔
+          </p>
+          <v-btn to="/booking">
+            預約狗狗陪伴
+            <div class="arrow-box">
+              <v-icon icon="mdi mdi-chevron-right"></v-icon>
+              <v-icon icon="mdi mdi-chevron-right"></v-icon>
+              <v-icon icon="mdi mdi-chevron-right"></v-icon>
+            </div>
+          </v-btn>
+        </div>
+      </v-container>
+    </div>
+
+    <!-- ● 品牌故事 -->
+    <section id="story" class="story">
+      <div class="dog-foot-box">
+        <div class="box">
+          <img src="../assets/img/decorate/dog_foot-1.avif" alt="狗狗腳印">
+          <img src="../assets/img/decorate/dog_foot-1.avif" alt="狗狗腳印">
+          <img src="../assets/img/decorate/dog_foot-1.avif" alt="狗狗腳印">
+          <img src="../assets/img/decorate/dog_foot-1.avif" alt="狗狗腳印">
+        </div>
+      </div>
+
+      <v-container fluid>
+        <!-- 如需修改或新增標題，前往下方的 sectionTitleData 陣列 -->
+        <sectionTitle v-bind="sectionTitleData[0]"></sectionTitle>
+
+        <div class="content">
+          <v-row>
+            <v-col cols="12" sm="6" md="5" lg="auto" class="txt-box">
+              <p>
+                有時候，
+                <br />生活真的有一點累。
+                <br />
+                <br />但你知道嗎？
+                <br />有一群狗狗，
+                <br />正在很認真地等你出現。
+                <br />
+                <br />在 DOST，
+                <br />狗狗不會問你怎麼了，
+                <br />只會把頭輕輕靠過來。
+              </p>
+            </v-col>
+
+            <v-col cols="12" sm="6" md="7" lg="auto" class="img-box">
+              <img src="@/assets/img/decorate/home/story-2.avif" alt="品牌故事_圖片">
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col cols="12" sm="6" md="5" lg="auto" class="txt-box">
+              <p>
+                你可以跟牠說話，
+                <br />也可以什麼都不說。
+                <br />牠們都會乖乖陪著你。
+                <br />
+                <br />我們希望，
+                <br />這裡能成為你生活裡
+                <br />最不需要逞強的地方。
+              </p>
+            </v-col>
+
+            <v-col cols="12" sm="6" md="7" lg="auto" class="img-box">
+              <img src="@/assets/img/decorate/home/story-3.avif" alt="品牌故事_圖片">
+            </v-col>
+          </v-row>
+        </div>
+      </v-container>
+    </section>
 
     <!-- ● 熱門狗狗區 -->
-    <v-sheet class="justify-center bg-transparent my-12 px-10">
-      <v-sheet class="text-center font-weight-black bg-transparent my-12" :class="mobile ? 'text-h4' : 'text-h3'">人氣狗狗大集合！</v-sheet>
-      <v-row :class="mobile ? '' : 'mt-5'">
-        <v-col class=" d-flex justify-center" v-for="(el, index) in topOrderdata" :key="index" :class="mobile ? 'my-5' : ''">
-          <AwardCard :index="index">
-            <template #icon>
-              <v-icon :class="[getCrownColor(index), mobile ? getMobileCrownPosition(index) : '']" icon="mdi-crown"></v-icon>
-            </template>
-            <template #dogName>
-              <p class="awardTextCss" :class="mobile ? 'text-h6' : 'text-h5'">{{ el.dogName }}</p>
-            </template>
-            <template #img>
-              <img :src="el.img" class="h-100"></img>
-            </template>
-          </AwardCard>
-        </v-col>
-      </v-row>
-    </v-sheet>
+    <section id="top-area" class="top-area">
+      <v-container fluid>
+        <sectionTitle v-bind="sectionTitleData[1]"></sectionTitle>
+
+        <div class="content">
+          <div class="w-100 ga-5 ga-sm-0 d-flex flex-column flex-sm-row justify-center align-center">
+            <div v-for="(item, index) in topOrderdata" :key="index" class="dog-card" :class="{ show: item.expend, 'order-sm-1': index === 1, 'order-sm-2': index === 0, 'order-sm-3': index === 2 }" @click="toggleExpend(index)">
+              <div class="crown-box">
+                <img :src="generateImg(index)" alt="獎牌圖示">
+              </div>
+              <div class="img-box">
+                <img :src="item.img" alt="狗狗圖片">
+              </div>
+              <div class="txt-box">
+                <h4>{{ item.dogName }}</h4>
+                <p>溫柔第一名
+                  <br />最會靜靜靠著你
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </v-container>
+    </section>
+
+    <!-- ● 服務項目 -->
+    <section id="service" class="service">
+      <v-container fluid>
+        <div class="content">
+          <v-row class="box">
+            <v-col sm="4" md="5" lg="6">
+              <div class="img-box">
+                <img src="../assets/img/decorate/service/img-1.avif" alt="服務項目背景圖片">
+              </div>
+            </v-col>
+            <v-col sm="8" md="7" lg="6" class="service-card-box">
+              <sectionTitle v-bind="sectionTitleData[2]"></sectionTitle>
+
+              <div v-for="(el, index) in serviceData" :key="el.title" class="service-card">
+                <div class="icon-box">
+                  <v-icon :icon="el.icon"></v-icon>
+                </div>
+                <h4>{{ el.title }}</h4>
+                <div class="card-txt">
+                  <p v-for="txt in el.desc">{{ txt }}</p>
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+        </div>
+      </v-container>
+    </section>
 
     <v-divider class="my-10 w-80 mx-auto"></v-divider>
 
     <!-- ● 影音生活區 -->
-    <v-sheet class="bg-transparent px-10">
+    <section>
       <v-sheet class="text-center font-weight-black bg-transparent my-12" :class="mobile ? 'text-h4' : 'text-h3'">
         狗狗生活札記
       </v-sheet>
       <v-sheet class="bg-transparent d-flex pa-0">
-        <v-row>
-          <v-col cols="12" sm="5" class="pa-0 d-flex" :class="mobile ? 'pa-3 justify-center' : 'pa-0 pe-7 align-center'">
+        <v-row class="ma-0">
+          <v-col cols="12" sm="5" class="pa-0 d-flex" :class="mobile ? 'pa-3 justify-center' : 'pa-0 align-center'">
             <v-sheet class="bg-transparent d-flex flex-column">
               <h1 class="mb-3 text-center" :class="mobile ? 'text-h5' : 'text-h4'">可愛影片～療癒身心～</h1>
               大等西加，走突這不一說害遠雲然我看急行政足沒，氣專陽們藝來接怎出工力；下去那從立，後它家備。我易預完麼關全不態花內手智列手古衣的三實人是爸選聲。線政裡開到何法成去步全度車商己能親國一這使愛樂題有了……配來怎！間的光你？玩用節子集講初般情來界法引！
             </v-sheet>
           </v-col>
           <v-col cols="12" sm="7" class="pa-0">
-            <v-responsive aspect-ratio="16/9">
+            <v-responsive aspect-ratio="16/9" class="w-100">
               <video class="w-100 rounded-xl" controls>
                 <source src="@/assets/video/01_Dog_1280x720.mp4" type="video/mp4">
                 Your browser does not support the video tag.
@@ -50,11 +168,11 @@
           </v-col>
         </v-row>
       </v-sheet>
-    </v-sheet>
+    </section>
 
     <!-- ● 照片區 -->
-    <v-sheet class="bg-transparent px-10 my-13">
-      <v-row class="d-flex" :class="mobile ? 'flex-column-reverse' : ''">
+    <section>
+      <v-row class="ma-0 d-flex" :class="mobile ? 'flex-column-reverse' : ''">
         <v-col cols="12" sm="7" class="pa-0">
           <v-sheet class="bg-transparent">
             <!-- <PhotoCardSwiper></PhotoCardSwiper> -->
@@ -68,21 +186,21 @@
           </v-sheet>
         </v-col>
       </v-row>
-    </v-sheet>
+    </section>
 
-    <!-- ● 關於我們 / 品牌故事 -->
-
-
-  </v-container>
+  </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, watchEffect } from 'vue'
+import { ref, reactive, computed, watchEffect, onMounted } from 'vue'
 import { definePage } from 'vue-router/auto'
 import { useDisplay } from 'vuetify'
 import { useApi } from '@/composables/axios'
+import gsap from '@/plugins'
+import { serviceData } from '@/plugins/data_json/serviceData' // 具名匯入
+import sectionTitle from '@/components/sectionTitle.vue'
 import BannerSwiper from '@/components/bannerSwiper.vue'
-import AwardCard from '@/components/awardCard.vue'
+// import AwardCard from '@/components/awardCard.vue'
 import PhotoCardSwiper from '@/components/photoCardSwiper.vue'
 import PhotoCard from '@/components/photoCard.vue'
 
@@ -95,17 +213,33 @@ definePage({
   }
 })
 
+// 欄位區域的標題
+const sectionTitleData = [
+  {
+    title: "品牌故事",
+    enTitle: "brand story",
+  },
+  {
+    title: "人氣狗狗",
+    enTitle: "top dogs",
+  },
+  {
+    title: "主要服務",
+    enTitle: "service",
+  },
+]
+
 // 解構出 mobile 的斷點
 const { mobile } = useDisplay()
 const { backApi } = useApi()
 
-const topOrderdata = reactive([])
-
 // ● 向後端請求訂單最多的前 3 名狗狗
 // 用 watchEffect 監聽訂單變動情形，有變動時會自動更新狀態
+const topOrderdata = reactive([])
+
 watchEffect(async () => {
   try {
-  
+
     // 只計算 4 個月內的有效訂單
     const nowDate = ref(new Date())
 
@@ -133,7 +267,8 @@ watchEffect(async () => {
 
     const reData = data.result
       .map(el => {
-        return { dogName: el.dogName, img: el.image, counter: el.counter }
+        // expend 給後續卡片做開合狀態的設定，目前預設為 false 關閉
+        return { dogName: el.dogName, img: el.image, counter: el.counter, expend: false }
       })
       // 以 counter 做降冪排序
       .sort((a, b) => {
@@ -141,90 +276,58 @@ watchEffect(async () => {
       })
     // 修改第二筆的資料排序，放至第一位
     // 在頁面上由左而右顯示的樣子 2nd 1st 3rd
-    const [secondData] = reData.splice(1, 1)
-    reData.unshift(secondData)
+    // const [secondData] = reData.splice(1, 1)
+    // reData.unshift(secondData)
     // console.log('reData', reData)
 
     // 將回傳的資料放入 topOrderdata 的陣列中
     topOrderdata.push(...reData)
-    
+
   } catch (error) {
     console.log('請求訂單最多的前 3 名狗狗_error', error)
-  
+
   }
 })
 // console.log('topOrderdata', topOrderdata)
 
-
-// 動態綁定 class 皇冠顏色
-const getCrownColor = (index) => {
-  if (index === 0) {
-    return 'crownColorA'
-  } else if (index === 1) {
-    return 'crownColorB'
-  } else if (index === 2) {
-    return 'crownColorC'
-  }
+// 動態生成圖片
+function generateImg(index) {
+  return new URL(`../assets/img/decorate/top_area/img-${index + 1}.avif`, import.meta.url).href
 }
 
-// moble狀態下，動態綁定 class 皇冠位置
-const getMobileCrownPosition = (index) => {
-  if (index === 1) {
-    return 'mobileCrownPositionA'
-  } else {
-    return 'mobileCrownPositionB'
-  }
+//● dog-card 點擊展開
+function toggleExpend(index) {
+  topOrderdata.forEach((el, i) => {
+    if (i === index) {
+      el.expend = !el.expend
+    } else {
+      el.expend = false
+    }
+  })
 }
+
+
+onMounted(() => {
+
+  // 因有用到 Vutify 的元件(v-container、v-col ... 等)，故需要 requestAnimationFrame() 才能抓取到掛載後的正確位置
+  requestAnimationFrame(() => {
+    // ● 動畫觸發設定
+    // 因 .box 有多個 img，後續需要用迴圈個別設定 gsap
+    const footImgs = gsap.utils.toArray(".dog-foot-box .box img")
+
+    footImgs.forEach((el) => {
+      gsap.to(el, {
+        scrollTrigger: {
+          trigger: el,
+          start: "top 80%",
+          // end: "bottom center",
+          toggleClass: "anim",
+          // markers: true,
+        }
+      })
+    })
+  })
+})
+
 
 </script>
-
-
-<style scoped>
-/* 獎牌文字樣式設定 */
-.awardTextCss {
-  font-weight: 600;
-  letter-spacing: 2px;
-  color: white;
-  text-shadow: 2px 2px 2px rgba(78, 78, 78, 0.5);
-}
-
-/* 皇冠樣式設定 */
-.crownColorA {
-  font-size: 50px;
-  color: #CFD8DC;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(31%, -75%) rotate(-35deg);
-  z-index: 2;
-}
-
-.crownColorB {
-  font-size: 70px;
-  color: #FDD835;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(0%, -75%) rotate(-35deg);
-  z-index: 2;
-}
-
-.crownColorC {
-  font-size: 50px;
-  color: #d35f12;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(31%, -75%) rotate(-35deg);
-  z-index: 2;
-}
-
-/* mobile 狀態下，皇冠的位置 */
-.mobileCrownPositionA {
-  transform: translate(-20%, -85%) rotate(-35deg);
-}
-
-.mobileCrownPositionB {
-  transform: translate(-10%, -82%) rotate(-35deg);
-}
-</style>

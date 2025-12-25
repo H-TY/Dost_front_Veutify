@@ -5,16 +5,30 @@
  */
 
 // Plugins
-import vuetify from './vuetify'
-import pinia from '@/stores'
-import router from '@/router'
+import vuetify from "./vuetify";
+import pinia from "@/stores";
+import router from "@/router";
+
 // UI方塊跳出提示
-import VuetifyUseDialog from 'vuetify-use-dialog'
+import VuetifyUseDialog from "vuetify-use-dialog";
+
 // 引用上傳檔案套件(可拖曳並預覽圖片和顯示檔案大小)
-import VueFileAgentNext from '@boindil/vue-file-agent-next'
-import '@boindil/vue-file-agent-next/dist/vue-file-agent-next.css'
+import VueFileAgentNext from "@boindil/vue-file-agent-next";
+import "@boindil/vue-file-agent-next/dist/vue-file-agent-next.css";
 
+// 引用 GSAP 核心以及其套件
+import { gsap } from "gsap";
+// 啟用 ScrollSmoother 必須搭配 ScrollTrigger 套件
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 
+// 讓 JS 模組全域皆可以使用，不用另外再寫一次
+// 告訴 GSAP：「這些是我之後可能會用到的功能模組」
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+// 要輸出，才能被其他文件引進使用
+export default gsap;
+
+// 讓 Vue 應用程式的全域皆可以使用。
 export function registerPlugins(app) {
   app
     .use(vuetify)
@@ -26,10 +40,8 @@ export function registerPlugins(app) {
         showCloseButton: false,
         snackbarProps: {
           timeout: 2000,
-        }
-      }
+        },
+      },
     })
-    .use(VueFileAgentNext)
+    .use(VueFileAgentNext);
 }
-
-

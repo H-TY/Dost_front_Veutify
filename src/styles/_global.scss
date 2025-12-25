@@ -1,0 +1,326 @@
+// 引進函式
+@use '_mixins' as *;
+
+// ● 顏色設定
+$mainColor: #01579b; // 主要顏色
+$secColor: #bcc770; // 次要顏色
+$thirdColor: #fff; //
+$forthColor: #fffcda; // 輔助顏色
+
+$bg: $thirdColor; // 整個網頁背景顏色
+$areaBg: #fffde7; // 內容區背景顏色
+
+$text: #333; // 文字顏色
+$gtext: #707070;
+$noticeColor: #fed347; // 通知背景顏色
+
+$btnGreen: darken($secColor, 15%);
+$btnRed: #f44336;
+$btnLBlue: #1998d3;
+
+$LINE: #06c655;
+$FB: #1877f7;
+$IG: linear-gradient(to left bottom, #9d37ba, #fed677);
+
+// color bakeup #4caf50
+
+// ● 文字格式設定
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+	font-weight: 500;
+	letter-spacing: normal;
+	line-height: normal;
+	margin: 0;
+	padding: 0;
+}
+
+h1 {
+	font-size: calc(2.3rem + 0.4vw);
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+h2 {
+	font-size: calc(1.8rem + 0.4vw);
+	font-weight: 700;
+}
+
+h3 {
+	font-size: calc(1.65rem + 0.3vw);
+	font-weight: 500;
+}
+
+h4 {
+	font-size: calc(1.5rem + 0.3vw);
+}
+
+h5 {
+	font-size: calc(1.3rem + 0.2vw);
+}
+
+h6 {
+	font-size: calc(1.1rem + 0.2vw);
+}
+
+p,
+a,
+span,
+li {
+	font-size: calc(1rem + 0.1vw);
+	font-weight: 400;
+}
+
+p {
+	line-height: 1.6;
+}
+
+a {
+	display: inline-block;
+	text-decoration: none;
+}
+
+ul {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	li {
+		width: fit-content;
+		list-style: none;
+	}
+}
+
+img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+}
+
+hr {
+	width: 100%;
+	border-color: $text;
+}
+
+// 欄位區塊標題設定（md以上顯示 title-l；未滿 md 顯示 title-m）
+.section-title-m {
+	width: fit-content;
+	padding-left: 1.5rem;
+	position: relative;
+	isolation: isolate;
+
+	@include rsp-up(md) {
+		display: none;
+	}
+
+	&::before {
+		content: '';
+		width: 1rem;
+		height: 100%;
+		background: lighten($mainColor, 52%);
+		position: absolute;
+		top: 50%;
+		left: 0%;
+		transform: translate(0%, -50%);
+		z-index: -1;
+	}
+
+	h2 {
+		color: darken($mainColor, 5%);
+		letter-spacing: 2px;
+		position: relative;
+		isolation: isolate;
+
+		&::before,
+		&::after {
+			content: '';
+			width: 30px;
+			height: 30px;
+			background: url(../assets/img/decorate/dog_foot-1.avif) no-repeat center/contain;
+			filter: hue-rotate(180deg);
+			opacity: 0.4;
+			position: absolute;
+			top: -5%;
+			right: -35%;
+			transform: translate(0%, 0%) rotate(10deg);
+			z-index: -1;
+		}
+
+		&::after {
+			width: 24px;
+			height: 24px;
+			// background: url(../assets/img/decorate/dog_foot-2.avif) no-repeat center/contain;
+			top: unset;
+			bottom: -37%;
+			right: -42%;
+			transform: translate(0%, 0%) rotate(40deg);
+		}
+	}
+
+	span {
+		color: lighten($gtext, 15%);
+		text-transform: capitalize;
+	}
+}
+
+.section-title-l {
+	width: fit-content;
+	padding-left: 1.5rem;
+	position: relative;
+	// isolation: isolate;
+
+	@include rsp-down-excl(md) {
+		display: none;
+	}
+
+	&::before {
+		content: '';
+		width: 100%;
+		height: 1rem;
+		background: lighten($mainColor, 52%);
+		position: absolute;
+		top: 85%;
+		left: 6%;
+		transform: translate(0%, -50%);
+		z-index: 0;
+	}
+
+	h2 {
+		color: darken($mainColor, 5%);
+		letter-spacing: 2px;
+		position: relative;
+		isolation: isolate;
+
+		&::before,
+		&::after {
+			content: '';
+			width: 40px;
+			height: 40px;
+			background: url(../assets/img/decorate/dog_foot-1.avif) no-repeat center/contain;
+			filter: hue-rotate(180deg);
+			opacity: 0.4;
+			position: absolute;
+			top: -50%;
+			left: -25%;
+			transform: translate(0%, 0%) rotate(-20deg);
+			z-index: -1;
+		}
+
+		&::after {
+			width: 30px;
+			height: 30px;
+			background: url(../assets/img/decorate/dog_foot-2.avif) no-repeat center/contain;
+			opacity: 0.25;
+			top: unset;
+			left: unset;
+			bottom: 0%;
+			right: -35%;
+			transform: translate(0%, 0%) rotate(30deg);
+		}
+	}
+
+	span {
+		display: inline-block;
+		font-size: calc(4.5rem + 2.5vw);
+		font-weight: 500;
+		color: darken($mainColor, 5%);
+		line-height: 0.8;
+		text-transform: capitalize;
+		writing-mode: sideways-rl;
+		white-space: nowrap;
+		mix-blend-mode: difference;
+		opacity: 0.15;
+		position: absolute;
+		top: 4rem;
+		// left: calc(-1.4rem - 3vw);
+		left: 0.2rem;
+	}
+}
+
+// ● section 設定
+section {
+	position: relative;
+	padding: 120px 0;
+
+	@include rsp-down(lg) {
+		padding: 100px 0;
+	}
+
+	@include rsp-down(mobile) {
+		padding: 70px 0;
+	}
+
+	&:nth-of-type(1) {
+		padding-top: 100px;
+	}
+}
+
+// btn 設定
+.v-btn {
+	&.v-btn--size-default {
+		// 系統預設變數宣告
+		--v-btn-size: unset;
+		--v-btn-height: unset;
+	}
+
+	.v-btn__content {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+}
+
+// ● animation 動畫設定
+@keyframes scale_jump {
+	0% {
+		transform: scale(1) var(--anim-position);
+	}
+
+	30% {
+		transform: translate(0%, -3px);
+	}
+
+	50% {
+		transform: scale(1.2) translate(0%, -10px);
+	}
+
+	70% {
+		transform: translate(0%, -3px);
+	}
+
+	100% {
+		transform: scale(1) var(--anim-position);
+	}
+}
+
+@keyframes blink {
+	0% {
+		opacity: 0.1;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0.1;
+	}
+}
+
+@keyframes disappear {
+	0% {
+		opacity: var(--opacity);
+	}
+
+	80%,
+	100% {
+		opacity: 0.5;
+	}
+}

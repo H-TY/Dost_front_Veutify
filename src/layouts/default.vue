@@ -1,18 +1,21 @@
 <template>
   <!-- Logo & 導覽列 -->
-  <v-app-bar class="bg-light-blue-darken-4 align-center" :height="mobile === true ? '110' : '200'">
+  <v-app-bar :height="reNavbarHeight">
 
     <!-- Mobile 版導覽列 -->
     <!-- v-if 若為手機的斷點尺寸時，顯示以下 code -->
     <template v-if="mobile">
-      <v-container class="py-0 px-8">
-        <v-row>
+      <div ref="navbarHeightRef" class="w-100 mx-auto">
+        <v-container fluid class="d-flex flex-row align-center justify-space-between">
           <!-- Logo -->
-          <v-col class="d-flex justify-star align-center">
-            <v-btn class="bg-white rounded-circle" color="white" :to="logo.to" variant="text" :ripple="false" size="60">
-              <v-img :src="logo.img" width="40"></v-img>
-            </v-btn>
-          </v-col>
+          <div class="navbar-logo d-flex align-center justify-center">
+            <div class="navbar-logo-bg">
+              <v-btn :to="logo.to">
+                <img :src="logo.img"></img>
+              </v-btn>
+            </div>
+          </div>
+
           <!-- Mobile版_購物車懸浮按鈕 -->
           <!-- user.cart > 0 時，才會顯示購物車按鈕 -->
           <template v-if="user.cart > 0">
@@ -23,83 +26,104 @@
               </v-badge>
             </v-btn>
           </template>
+
           <!-- 漢堡按鈕 / 摺疊按鈕（作為綁定觸發動作用的 icon） -->
-          <v-col class="d-flex justify-end align-center">
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-          </v-col>
-        </v-row>
-      </v-container>
+          <div class="hamburger-btn" @click.stop="drawer = !drawer">
+            <div class="navbar-icon" :class="{ closeIcon: drawer }">
+              <hr>
+              <hr>
+              <hr>
+            </div>
+          </div>
+        </v-container>
+      </div>
     </template>
 
     <!-- PC 版導覽列 -->
     <!-- v-else 若不是手機的斷點尺寸時，顯示以下 code -->
     <template v-else>
-      <v-container class="p-0 py-4 px-3 w-100 d-flex flex-column align-center">
-        <v-row class="w-100">
-          <!-- Logo -->
-          <v-col class="d-flex justify-center align-center">
-            <v-btn class="bg-white rounded-circle" color="white" :to="logo.to" :ripple="false" size="100">
-              <v-img class="opacity-100" :src="logo.img" width="70" cover></v-img>
+      <div ref="navbarHeightRef" class="mx-auto">
+        <v-container fluid class="d-flex flex-column align-center justify-center">
+        <!-- Logo -->
+        <div class="navbar-logo d-flex align-center justify-center">
+          <div class="navbar-logo-bg">
+            <v-btn :to="logo.to">
+              <img :src="logo.img"></img>
             </v-btn>
-          </v-col>
-        </v-row>
+          </div>
+        </div>
         <!-- 導覽項目 -->
-        <v-row class="mt-5 ma-0 w-100">
-          <v-col class="pa-0 d-flex justify-space-evenly align-center flex-nowrap w-100">
+        <div class="navbar-box">
+          <div class="navbar-items">
             <template v-for="item in navItems" :key="item.to">
-              <v-btn v-if="item.show" class=" " :to="item.to" variant="plain" :ripple="false">
-                <v-icon :icon="item.icon" :class="sm?'':'me-1'" :size="sm? 24:20"></v-icon>{{sm? '' : item.text}}
+              <v-btn v-if="item.show" :to="item.to">
+                <v-icon :icon="item.icon"></v-icon>
+                {{mdAndDown? '' : item.text}}
               </v-btn>
             </template>
-            |
+            ｜
             <!-- 導覽列_右側_註冊 & 登入 按鈕 -->
-            <template v-for="RLitem in RegLogin" :key="RLitem.to">
-              <v-btn v-if="RLitem.show" :to="RLitem.to" class="pa-0 align-center" :class="[RLitem.text == '登入' ? 'bg-green text-light-green-lighten-5' : 'bg-white text-green'], [sm? 'rounded-circle': 'rounded-pill px-4 ms-4']" variant="flat" :style="sm ? {'min-width': '36px'} : {}" :ripple="false">
-                <v-icon :icon="RLitem.icon" :class="sm?'':'me-1'"></v-icon>{{sm? '' : RLitem.text}}
+            <div class="RL-box">
+              <template v-for="RLitem in RegLogin" :key="RLitem.to">
+                <v-btn v-if="RLitem.show" :to="RLitem.to" :class="{loginState: user.isLogin, adminState: user.isAdmin}">
+                  <v-icon :icon="RLitem.icon"></v-icon>
+                  {{mdAndDown? '' : RLitem.text}}
+                </v-btn>
+              </template>
+
+              <!-- 登出按鈕 -->
+              <v-btn v-if="user.isLogin" class="logoOut-btn" @click="logout">
+                <v-icon icon="mdi-account-arrow-right"></v-icon>{{mdAndDown? '' : '登出'}}
               </v-btn>
-            </template>
-            <!-- 登出按鈕 -->
-            <v-btn v-if="user.isLogin" class="pa-0 bg-deep-orange-darken-2" :class="sm? 'rounded-circle': 'rounded-pill px-4 ms-4'" :style="sm ? {'min-width': '36px'} : {}" :ripple="false" @click="logout">
-              <v-icon icon="mdi-account-arrow-right" :class="sm?'':'me-1'"></v-icon>{{sm? '' : '登出'}}
-            </v-btn>
-          </v-col>
-        </v-row>
+            </div>
+          </div>
+        </div>
+        
         <!-- PC版_購物車懸浮按鈕 -->
         <!-- user.cart > 0 時，才會顯示購物車按鈕 -->
         <template v-if="user.cart > 0">
-          <v-btn class="me-4" position="fixed" location="right" :to="cart.to" variant="flat" :ripple="false" color="transparent">
+          <v-btn class="me-4" position="fixed" location="right" :to="cart.to" color="transparent">
             <!-- badge 徽章 指的是 icon 右上角的紅點或數字的狀態提示 -->
             <v-badge offset-x="2" offset-y="2" color="pink-lighten-1" :content="user.cart" v-if="cart.to === '/cart' && user.cart > 0">
               <v-icon class="bg-white rounded-circle text-h5" size="46" color="pink-lighten-1" :icon="cart.icon"></v-icon>
             </v-badge>
           </v-btn>
         </template>
-      </v-container>
+        </v-container>
+      </div>
     </template>
   </v-app-bar>
 
-  <!-- Mobile 版_漢堡按鈕_導覽列項目 -->
+  <!-- Mobile 版_點擊漢堡按鈕_展開導覽列項目 -->
   <!-- location="right" 從右側開啟 menu -->
   <v-navigation-drawer v-if="mobile" v-model="drawer" location="right">
-    <v-list nav>
-      <!-- 導覽項目 -->
-      <template v-for="item in navItems" :key="item.to">
-        <v-list-item class="px-10" v-if="item.show" :prepend-icon="item.icon" :to="item.to" :title="item.text"></v-list-item>
-      </template>
-      <v-divider class="my-4"></v-divider>
-      <!-- 註冊 & 登入項目 -->
-      <v-row class="px-8">
-        <template v-for="RLitem in RegLogin" :key="RLitem.to">
-          <v-col class="d-flex justify-center align-center pa-0 pt-5">
-            <v-btn v-if="RLitem.show" :prepend-icon="RLitem.icon" :to="RLitem.to" :class="RLitem.text == '登入' ? 'bg-green text-light-green-lighten-5' : 'bg-white text-green registBorder'" width="100px" variant="flat" rounded :ripple="false">{{ RLitem.text }}</v-btn>
-          </v-col>
+    <div class="navbar-box">
+      <div class="navbar-items">
+        <template v-for="item in navItems" :key="item.to">
+          <v-btn v-if="item.show" :to="item.to">
+            <v-icon :icon="item.icon"></v-icon>
+            {{item.text}}
+          </v-btn>
         </template>
-      </v-row>
-      <!-- 登出按鈕 -->
-      <v-col class="d-flex justify-center pa-0 pt-5">
-        <v-btn v-if="user.isLogin" class="bg-deep-orange-darken-2" prepend-icon="mdi-account-arrow-right" width="100px" variant="outlined" rounded :ripple="false" @click="logout">登出</v-btn>
-      </v-col>
-    </v-list>
+            
+        <v-divider></v-divider>
+
+        <!-- 導覽列_右側_註冊 & 登入 按鈕 -->
+        <div class="RL-box">
+          <template v-for="RLitem in RegLogin" :key="RLitem.to">
+              <v-btn v-if="RLitem.show" :to="RLitem.to" :class="{loginState: user.isLogin, adminState: user.isAdmin}">
+                <v-icon :icon="RLitem.icon"></v-icon>
+                {{RLitem.text}}
+              </v-btn>
+          </template>
+
+          <!-- 登出按鈕 -->
+          <v-btn v-if="user.isLogin" class="logoOut-btn" @click="logout">
+            <v-icon icon="mdi-account-arrow-right"></v-icon>登出
+          </v-btn>
+        </div>
+      </div>
+    </div>
   </v-navigation-drawer>
 
   <!-- 
@@ -111,44 +135,43 @@
   </v-main>
 
   <!-- ● footer 欄位 -->
-  <v-footer class="bg-light-blue-darken-4 flex-column flex-grow-0 px-10" :height="mobile === true ? '48%' : '22%'">
+  <v-footer>
     <v-container class="pa-0" fluid>
-      <v-row class="d-flex ma-0 mt-4 ga-6 ga-sm-0">
-        <v-col cols="12" sm="4" class="d-flex justify-sm-start pa-0 px-xs-12">
-          <v-col cols="3" class="d-flex text-start text-subtitle-2 align-center pa-0" style="max-width:80px;">
-            <v-img src="@/assets/img/Dost_QRcode.png" class="QRborder bg-white" max-width="60px" max-height="60px"></v-img>
-          </v-col>
-          <v-col class="text-subtitle-2 align-content-center pa-0">
-            <v-list class="bg-transparent d-flex flex-column text-caption text-sm-start text-end">
-              <v-list-item class="pa-0" min-height="0">DOST</v-list-item>
-              <v-list-item class="pa-0" min-height="0">02-1234 1234</v-list-item>
-              <v-list-item class="pa-0" min-height="0">243新北市泰山區貴子里致遠新村55之1號</v-list-item>
-            </v-list>
-          </v-col>
+      <v-row class="contact-box">
+        <v-col cols="12" md="6" lg="4" class="contact-txt d-flex flex-row justiyy-center align-center">
+          <div class="QRcode-img">
+            <v-img src="@/assets/img/Dost_QRcode.png"></v-img>
+          </div>
+          <v-list>
+            <v-list-item ><p>DOST</p></v-list-item>
+            <v-list-item>02-1234 1234</v-list-item>
+            <v-list-item>243新北市泰山區貴子里致遠新村55之1號</v-list-item>
+          </v-list>
         </v-col>
-        <v-col cols="12" sm="4" class="text-end text-subtitle-2 d-flex align-content-center justify-space-around ga-7 gap-sm-1 pa-0 px-xs-12 px-sm-12">
-          <v-divider class="align-self-center d-sm-none cdivider"></v-divider>
-          <v-btn class="align-self-center" icon="mdi-facebook" color="light-blue"></v-btn>
-          <v-btn class="align-self-center" icon="mdi-twitter" color="light-blue"></v-btn>
-          <v-btn class="align-self-center" icon="mdi-youtube" color="light-blue"></v-btn>
-          <v-divider class="align-self-center d-sm-none cdivider"></v-divider>
-        </v-col>
-        <v-col cols="12" sm="4" class="text-subtitle-2 justify-end align-content-center d-flex flex-nowrap pa-0 px-xs-12">
-          <v-text-field :max-width="mobile === true ? '300px' : '240px'" placeholder="Enter your e-mail" type="input" prepend-inner-icon="mdi-email" clearable></v-text-field>
-          <v-btn class="align-self-center ms-5">訂閱</v-btn>
+        <v-col cols="12" md="6" lg="8" class="h-100 d-flex flex-column flex-sm-row flex-md-column flex-lg-row justify-center align-center">
+          <v-col cols="12" sm="4" md="12" lg="6" class="social-box">
+            <v-btn icon="mdi-facebook"></v-btn>
+            <v-btn icon="mdi-twitter"></v-btn>
+            <v-btn icon="mdi-youtube"></v-btn>
+          </v-col>
+          <v-col cols="12" sm="8" md="12" lg="6" class="subscribe-box">
+            <v-text-field  type="input" placeholder="Enter your e-mail" prepend-inner-icon="mdi-email" clearable></v-text-field>
+            <v-btn>訂閱</v-btn>
+          </v-col>
         </v-col>
       </v-row>
-      <v-divider class="w-100 my-4"></v-divider>
-      <v-row class="text-center ma-0">
-        <v-col class="text-subtitle-2 align-content-center pa-0 text-sm-start" cols="12" sm="6">
+
+      <v-divider></v-divider>
+
+      <v-row class="indicate-box">
+        <v-col cols="12" sm="6">
           前端網頁設計課程 — <strong>期末專題作業</strong>
         </v-col>
-        <v-col class="text-subtitle-2 align-content-center pa-0 text-sm-end" cols="12" sm="6">
+        <v-col cols="12" sm="6">
           資料、圖片、影片來源：
-          <a href="https://unsplash.com/" class="text-decoration-none text-subtitle-1 font-weight-black acolor" target="_blank">unsplash</a>
+          <a href="https://unsplash.com/" target="_blank">unsplash</a>
           ｜
-          <a href="https://www.freepik.com/" class="text-decoration-none text-subtitle-1 font-weight-black acolor" target="_blank">Freepik</a>
-
+          <a href="https://www.freepik.com/" target="_blank">Freepik</a>
         </v-col>
       </v-row>
     </v-container>
@@ -156,59 +179,63 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
-// 解構出 mobile的斷點
-const { mobile, sm, md } = useDisplay()
-// console.log('mobile', mobile)
-// console.log('sm', sm)
-// console.log('md', md)
 
+// ● 解構出 mobile的斷點
+const { width, mobile, sm, md, mdAndDown } = useDisplay()
+// console.log('useDisplay()', useDisplay())
 const user = useUserStore()
 // console.log('useUserStore()', user)
 const router = useRouter()
 const createSnackbar = useSnackbar()
 
-// 漢堡按鈕預設為折疊起來
+
+// ● 漢堡按鈕預設為折疊起來
 const drawer = ref(false)
 
-// Logo
+
+// ● Logo
 const logo = computed(() => {
   return { to: '/', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
 })
 
-// 購物車
+
+// ● 購物車
 const cart = computed(() => {
   return { to: '/cart', text: '購物車', icon: 'mdi-cart-variant' }
 })
 
-// 導覽列項目
+
+// ● 導覽列項目
 const navItems = computed(() => {
   return [
-    { to: '/', text: 'About Me', icon: 'mdi-alpha-d-box', show: user.isLogin || !user.isLogin },
+    { to: '/', text: 'Home', icon: 'mdi-home', show: user.isLogin || !user.isLogin },
     { to: '/coolDogs', text: '帥氣狗狗', icon: 'mdi-dog', show: user.isLogin || !user.isLogin },
     { to: '/booking', text: '預約時間', icon: 'mdi-calendar-clock', show: user.isLogin || !user.isLogin },
     { to: '/test', text: '狗狗適性測驗', icon: 'mdi-dog-side', show: user.isLogin || !user.isLogin },
     // { to: '/shop', text: '寵物用品', icon: 'mdi-store', show: user.isLogin || !user.isLogin },
     // { to: '/cart', text:'購物車', icon:'mdi-cart-variant', show: user.isLogin},
+  ]
+})
+
+
+// ● 導覽列_註冊 & 登入
+const RegLogin = computed(() => {
+  return [
+    { to: '/register', text: '註冊', icon: 'mdi-account-plus', show: !user.isLogin && !user.isAdmin },
+    { to: '/login', text: '登入', icon: 'mdi-account-circle', show: !user.isLogin && !user.isAdmin },
     { to: '/userZone', text: '會員專區', icon: 'mdi-account-box', show: user.isLogin && !user.isAdmin },
     { to: '/admin', text: '管理區', icon: 'mdi-account-tie', show: user.isLogin && user.isAdmin },
   ]
 })
 
-// 導覽列_註冊 & 登入
-const RegLogin = computed(() => {
-  return [
-    { to: '/register', text: '註冊', icon: 'mdi-account-plus', show: !user.isLogin && !user.isAdmin },
-    { to: '/login', text: '登入', icon: 'mdi-account-circle', show: !user.isLogin && !user.isAdmin },
-  ]
-})
-
+// ● 登出函式
 const logout = async () => {
   await user.logout()
   createSnackbar({
@@ -220,57 +247,38 @@ const logout = async () => {
   return router.push('/')
 }
 
+// ● 抓取目前 navbar 高度，隨螢幕寬度改變高度
+const navbarHeightRef = ref(null)
+const reNavbarHeight = ref(50)
+
+// 更新 navbar 高度函式
+function updateNH() {
+  // 在 onMounted 使用「微小延遲」比 nextTick 更可靠，Vuetify 官方也建議使用
+  requestAnimationFrame(() => {
+    if(!navbarHeightRef.value) return;
+    // console.log(navbarHeightRef.value.clientHeight)
+    reNavbarHeight.value = navbarHeightRef.value.clientHeight
+  })
+}
+
+// 監聽螢幕寬度，更新 navbar 高度
+watch(width, ()=>{
+  updateNH()
+})
+
+// onMounted 生命週期指 DOM 掛載完成，之後才會觸發裡面的程式碼
+onMounted(() => {
+  updateNH()
+}) 
+
+
+// // ● navbar 向下移動指定距離，添加 class 樣式（且在需要操作元素的標籤新增 :class="{move: isScrolled}" ）
+// const isScrolled = ref(false)
+
+// window.addEventListener('scroll', ()=>{
+//   isScrolled.value = window.scrollY > 50
+// })
+
 </script>
 
 
-
-<style scoped>
-/* 移除導覽列的陰影、背景色 */
-.v-app-bar.v-toolbar:not(.v-toolbar--flat) {
-  box-shadow: none;
-}
-
-.v-app-bar.v-toolbar {
-  background: none;
-}
-
-.v-toolbar {
-  background: none;
-}
-
-/* footer 區塊，設定 <a> 連結顏色 */
-.acolor {
-  color: #81D4FA;
-  /* 常規狀態下的顏色 */
-}
-
-.acolor:hover {
-  color: #FB8C00;
-  /* 滑鼠懸停時的顏色 */
-}
-
-.acolor:visited {
-  color: #b3b3b3;
-  /* 訪問過的連結顏色 */
-}
-
-/* 讓分隔線 v-divider 變粗 */
-.cdivider {
-  border-width: 1px;
-  /* 你可以設定你需要的粗細 */
-  border-color: white;
-  opacity: 0.3;
-}
-
-/* 客製註冊按鈕 css 樣式 */
-.registBorder{
-  border: 1.5px solid rgba(0, 128, 0, 0.5);
-}
-
-/* 自訂 QRcode 的 border 樣式 */
-.QRborder{
-  border: 5px solid white;
-  border-radius: 3px;
-}
-
-</style>

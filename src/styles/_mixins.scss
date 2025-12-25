@@ -1,0 +1,71 @@
+// styles/_mixins.scss
+
+@use './_breakpoints' as *;
+
+// ● 裝置螢幕寬度 <= 指定尺寸
+@mixin rsp-down($el) {
+	$width: map-get($grid-breakpoints, $el);
+
+	@if $width {
+		@media (max-width: $width) {
+			@content;
+		}
+	} @else {
+		@warn "(max-width) `#{$el}`在 $grid-breakpoints 沒有匹配的斷點值。";
+	}
+}
+
+// ● 裝置螢幕寬度 < 指定尺寸
+// excl 不包含的英文縮寫，這邊用於表示 "不包含當前的寬度尺寸"
+@mixin rsp-down-excl($el) {
+	$width: map-get($grid-breakpoints, $el);
+	// @debug $width;
+
+	@if $width {
+		@media (max-width: #{$width - 0.02}) {
+			@content;
+		}
+	} @else {
+		@warn "(max-width-不包含當前尺寸) `#{$el}`在 $grid-breakpoints 沒有匹配的斷點值。";
+	}
+}
+
+// ● 裝置螢幕寬度 >= 指定尺寸
+@mixin rsp-up($el) {
+	$width: map-get($grid-breakpoints, $el);
+
+	@if $width {
+		@media (min-width: $width) {
+			@content;
+		}
+	} @else {
+		@warn "(min-width) `#{$el}`在 $grid-breakpoints 沒有匹配的斷點值。";
+	}
+}
+
+// ● 裝置螢幕寬度 > 指定尺寸
+@mixin rsp-up-excl($el) {
+	$width: map-get($grid-breakpoints, $el);
+
+	@if $width {
+		@media (min-width: #{$width - 0.02}px) {
+			@content;
+		}
+	} @else {
+		@warn "(min-width-不包含當前尺寸) `#{$el}`在 $grid-breakpoints 沒有匹配的斷點值。";
+	}
+}
+
+// ● 指定區間
+@mixin rsp-rang($el-min, $el-max) {
+	$minWidth: map-get($grid-breakpoints, $el-min);
+	$maxWidth: map-get($grid-breakpoints, $el-max);
+
+	@if $minWidth != null and $maxWidth != null {
+		@media (min-width: $minWidth) and (max-width: $maxWidth) {
+			@content;
+		}
+	} @else {
+		@warn "(指定區間)`#{$el-min}` 或 `#{$el-max}`在 $grid-breakpoints 沒有匹配的斷點值。";
+	}
+}

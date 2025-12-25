@@ -1,9 +1,0 @@
-Fonts used in this design:
-
-Font: Orkney
-Author: Hanken Design Co.
-Url: https://www.fontsquirrel.com/fonts/orkney
-
-Font: Arista Pro
-Author: Zetafonts
-Url: https://www.fontsquirrel.com/fonts/arista-pro
