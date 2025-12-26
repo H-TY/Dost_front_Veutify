@@ -1028,11 +1028,13 @@ body {
 			}
 
 			.img-box {
-				height: 100%;
+				width: 100%;
+				// height: 100%;
+				align-self: stretch;
 
 				img {
-					@include rsp-up(lg) {
-						max-height: 97vh;
+					@include rsp-up(xl) {
+						height: 925px;
 					}
 				}
 			}
@@ -1040,17 +1042,94 @@ body {
 			.service-card-box {
 				height: 100%;
 				display: flex;
-				gap: 1rem;
+				gap: 3.2rem;
 				flex-direction: column;
 				justify-content: start;
 				align-items: start;
-				padding: 1.5rem calc(1.5rem + 3vw);
+				padding: 1.5rem calc(0.5rem + 3.5vw);
 			}
 
 			.service-card {
-				@include rsp-up(md) {
-					// padding-left: calc(2rem + 2vw);
-					padding-left: 2rem;
+				@include rsp-up(sm) {
+					padding-left: calc(0.5rem + 1.2vw);
+				}
+
+				.card-title {
+					display: flex;
+					flex-direction: row;
+					justify-content: start;
+					align-items: center;
+					margin-bottom: 1rem;
+
+					@include rsp-down-excl(sm) {
+						flex-direction: column;
+					}
+
+					h4 {
+						color: darken($secColor, 30%);
+						letter-spacing: 1px;
+						margin-top: 1rem;
+						z-index: 1;
+
+						@include rsp-up(sm) {
+							padding-left: 8px;
+							margin: unset;
+						}
+					}
+
+					.icon-box {
+						width: 60px;
+						height: 60px;
+						aspect-ratio: 1;
+						background: $secColor;
+						border-radius: 50%;
+						padding: 0.7rem;
+						position: relative;
+						isolation: isolate;
+
+						&::before,
+						&::after {
+							content: '';
+							width: 140%;
+							height: 140%;
+							border-radius: 50%;
+							border: 4px dotted $secColor;
+
+							// 圓錐漸層函數 conic-gradient(顏色1 起始角度 結束角度, 顏色2 起始角度 結束角度, ...)
+							mask-image: conic-gradient(black 0deg 55deg, transparent 55deg 360deg);
+							-webkit-mask-image: conic-gradient(black 0deg 55deg, transparent 55deg 360deg);
+
+							opacity: 0.5;
+							position: absolute;
+							top: 0;
+							left: 0;
+							transform: var(--anim-position);
+							z-index: -1;
+
+							// 宣告變數：位置
+							--anim-position: translate(0%, -30%);
+
+							// 動畫設定
+							animation: rotateCircle 2s infinite linear;
+						}
+
+						&::after {
+							border-width: 10px;
+							opacity: 0.7;
+							mask-image: conic-gradient(transparent 0deg 75deg, black 75deg 100deg, transparent 100deg 360deg);
+							-webkit-mask-image: conic-gradient(transparent 0deg 75deg, black 75deg 100deg, transparent 100deg 360deg);
+						}
+
+						img {
+							object-fit: contain;
+						}
+					}
+				}
+
+				.card-txt {
+					@include rsp-up(sm) {
+						padding-left: 12px;
+					}
 				}
 			}
 		}

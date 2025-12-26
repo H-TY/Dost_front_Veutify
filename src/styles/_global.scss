@@ -324,3 +324,13 @@ section {
 		opacity: 0.5;
 	}
 }
+
+// 原地中心轉動
+@keyframes rotateCircle {
+	0% {
+		transform: var(--anim-position) rotate(0deg);
+	}
+	100% {
+		transform: var(--anim-position) rotate(360deg);
+	}
+}

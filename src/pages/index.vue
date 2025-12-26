@@ -120,7 +120,7 @@
       <v-container fluid>
         <div class="content">
           <v-row class="box">
-            <v-col sm="4" md="5" lg="6">
+            <v-col sm="4" md="5" lg="6" class="d-flex">
               <div class="img-box">
                 <img src="../assets/img/decorate/service/img-1.avif" alt="服務項目背景圖片">
               </div>
@@ -129,10 +129,13 @@
               <sectionTitle v-bind="sectionTitleData[2]"></sectionTitle>
 
               <div v-for="(el, index) in serviceData" :key="el.title" class="service-card">
-                <div class="icon-box">
-                  <v-icon :icon="el.icon"></v-icon>
+                <div class="card-title">
+                  <div class="icon-box">
+                    <!-- <v-icon :icon="el.icon"></v-icon> -->
+                    <img :src="el.img" :alt="el.title + '圖示'">
+                  </div>
+                  <h4>{{ el.title }}</h4>
                 </div>
-                <h4>{{ el.title }}</h4>
                 <div class="card-txt">
                   <p v-for="txt in el.desc">{{ txt }}</p>
                 </div>
@@ -192,11 +195,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watchEffect, onMounted } from 'vue'
+import { ref, reactive, computed, watchEffect, onMounted, nextTick } from 'vue'
 import { definePage } from 'vue-router/auto'
 import { useDisplay } from 'vuetify'
 import { useApi } from '@/composables/axios'
 import gsap from '@/plugins'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { serviceData } from '@/plugins/data_json/serviceData' // 具名匯入
 import sectionTitle from '@/components/sectionTitle.vue'
 import BannerSwiper from '@/components/bannerSwiper.vue'
@@ -291,6 +295,10 @@ watchEffect(async () => {
 // console.log('topOrderdata', topOrderdata)
 
 // 動態生成圖片
+// 原因：Vite 的 @ 別名 只會在編譯時靜態解析。
+// 動態字串（template literal + 變數）在編譯階段無法解析：
+// img-${index + 1}.avif 是運行時才知道
+// Vite 編譯器不知道 @ 應該對應哪個檔案 → 會報錯
 function generateImg(index) {
   return new URL(`../assets/img/decorate/top_area/img-${index + 1}.avif`, import.meta.url).href
 }
@@ -306,27 +314,73 @@ function toggleExpend(index) {
   })
 }
 
+// 讓 GSAP 可以抓到正確位置（確定圖片完全載入）
 
-onMounted(() => {
 
-  // 因有用到 Vutify 的元件(v-container、v-col ... 等)，故需要 requestAnimationFrame() 才能抓取到掛載後的正確位置
-  requestAnimationFrame(() => {
-    // ● 動畫觸發設定
-    // 因 .box 有多個 img，後續需要用迴圈個別設定 gsap
-    const footImgs = gsap.utils.toArray(".dog-foot-box .box img")
+// * onMounted：
+// Vue 組件的 DOM 已經被放進頁面，但是 DOM 可能還沒有完成更新內部的資料或屬性(某些由 v-for 或 v-if 動態生成的元素還沒出現)。
 
-    footImgs.forEach((el) => {
-      gsap.to(el, {
-        scrollTrigger: {
-          trigger: el,
-          start: "top 80%",
-          // end: "bottom center",
-          toggleClass: "anim",
-          // markers: true,
-        }
+// * nextTick：
+// 保證 Vue 更新完成，DOM 節點、資料綁定、class/style 都已經準備好。
+
+// * requestAnimationFrame：
+// 保證瀏覽器重繪完成，元素位置、尺寸、offset 都是正確的，適合做動畫初始化或 ScrollTrigger 計算。
+onMounted(async () => {
+  await nextTick();
+
+  // 因 .box 有多個 img，後續需要用迴圈個別設定 gsap
+  const footImgs = gsap.utils.toArray(".dog-foot-box .box img")
+
+  // gsap ScrollTrigger 初始化函式
+  function initScrollTrigger() {
+    // 因有用到 Vutify 的元件(v-container、v-col ... 等)，故需要 requestAnimationFrame() 才能抓取到掛載後的正確位置
+    requestAnimationFrame(() => {
+      footImgs.forEach(el => {
+        gsap.to(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: "top 80%",
+            toggleClass: "anim",
+            // markers: true
+          }
+        })
       })
+      // 確保 ScrollTrigger 第一次抓到正確位置
+      ScrollTrigger.refresh()
     })
+  }
+
+  // 用來計算圖片是否已經全部載入
+  let loadedCount = 0
+
+  footImgs.forEach(img => {
+    // complete + naturalWidth → 處理 "已經載入完成的圖片（快取）"
+    if (img.complete && img.naturalWidth > 0) {
+      loadedCount++
+    } else {
+      // 事件監聽 load → 只處理 "尚未載入的圖片"。
+      // { once: true } 事件只觸發一次，避免重複累計。
+      // 無論圖片成功或失敗，載入圖片數量都 +1，避免卡住計數(無法滿足完整載入圖片數量)，導致永遠無法初始化 scrollTrigger。
+      img.addEventListener("load", onLoad, { once: true })
+      img.addEventListener("error", onLoad, { once: true })
+    }
   })
+
+  function onLoad() {
+    loadedCount++
+    if (loadedCount === footImgs.length) {
+      initScrollTrigger()
+    }
+  }
+
+  // ★ 這段是防止 "所有圖片已經在頁面☆快取中☆載入完成" 的情況，就不會觸發 onLoad。
+  // 本質上是「重複初始化 ScrollTrigger 的安全機制」。
+  if (loadedCount === footImgs.length) {
+    initScrollTrigger()
+  }
+
+
+
 })
 
 

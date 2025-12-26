@@ -22,9 +22,13 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 
-// 讓 JS 模組全域皆可以使用，不用另外再寫一次
+// 讓 JS 模組全域皆可以使用，不用另外再寫一次註冊
 // 告訴 GSAP：「這些是我之後可能會用到的功能模組」
+// 要注意！雖然這邊已經註冊 plugin，但僅在 gsap 裡使用，例如：
+// gsap.to({ scrollTrigger: {})，程式會知道要怎麼使用 scrollTrigger
+// 若是要單獨使用 plugin 的變數，例如：ScrollTrigger.refresh()，需在要應用的檔案裡做引進的動作 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
 // 要輸出，才能被其他文件引進使用
 export default gsap;
 
