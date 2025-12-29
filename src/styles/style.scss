@@ -431,7 +431,7 @@ body {
 	// 移除預設樣式
 	padding: unset !important;
 
-	background: $areaBg;
+	background: $bg;
 	margin-top: calc(var(--v-layout-top) - 50px);
 
 	@include rsp-down-excl(mobile) {
@@ -630,7 +630,7 @@ body {
 				top: 50%;
 				left: 50%;
 				transform: translate(-50%, -50%);
-				z-index: 0;
+				z-index: 1;
 
 				@include rsp-down-excl(xxl) {
 					display: none;
@@ -996,6 +996,7 @@ body {
 
 		.service {
 			overflow-x: clip;
+			// padding: 0;
 
 			.v-container {
 				padding: 0;
@@ -1065,7 +1066,8 @@ body {
 						flex-direction: column;
 					}
 
-					h4 {
+					h5 {
+						font-weight: 600;
 						color: darken($secColor, 30%);
 						letter-spacing: 1px;
 						margin-top: 1rem;
@@ -1096,8 +1098,8 @@ body {
 							border: 4px dotted $secColor;
 
 							// 圓錐漸層函數 conic-gradient(顏色1 起始角度 結束角度, 顏色2 起始角度 結束角度, ...)
-							mask-image: conic-gradient(black 0deg 55deg, transparent 55deg 360deg);
-							-webkit-mask-image: conic-gradient(black 0deg 55deg, transparent 55deg 360deg);
+							mask-image: conic-gradient(black 0deg 70deg, transparent 70deg 360deg);
+							-webkit-mask-image: conic-gradient(black 0deg 70deg, transparent 70deg 360deg);
 
 							opacity: 0.5;
 							position: absolute;
@@ -1110,14 +1112,14 @@ body {
 							--anim-position: translate(0%, -30%);
 
 							// 動畫設定
-							animation: rotateCircle 2s infinite linear;
+							animation: rotateCircle 3s infinite linear;
 						}
 
 						&::after {
-							border-width: 10px;
+							border-width: 12px;
 							opacity: 0.7;
-							mask-image: conic-gradient(transparent 0deg 75deg, black 75deg 100deg, transparent 100deg 360deg);
-							-webkit-mask-image: conic-gradient(transparent 0deg 75deg, black 75deg 100deg, transparent 100deg 360deg);
+							mask-image: conic-gradient(transparent 0deg 66deg, black 66deg 100deg, transparent 100deg 360deg);
+							-webkit-mask-image: conic-gradient(transparent 0deg 66deg, black 66deg 100deg, transparent 100deg 360deg);
 						}
 
 						img {
@@ -1130,6 +1132,35 @@ body {
 					@include rsp-up(sm) {
 						padding-left: 12px;
 					}
+				}
+			}
+		}
+
+		.env {
+			.content {
+				column-count: 4; /* 欄數 */
+				column-gap: var(--gap); /* 欄間距 */
+
+				// 變數宣告
+				--gap: 12px;
+
+				.box {
+					break-inside: avoid; /* 避免被拆行 */
+					margin-bottom: var(--gap); /* 下方間距 */
+				}
+
+				img {
+					border-radius: 8px;
+				}
+
+				.env-txt {
+					// height: 20vh;
+					// background: $thirdColor;s
+					border-radius: 8px;
+					padding: 2rem 1rem;
+					display: flex;
+					justify-content: start;
+					align-items: center;
 				}
 			}
 		}

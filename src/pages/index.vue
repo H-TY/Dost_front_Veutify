@@ -134,7 +134,7 @@
                     <!-- <v-icon :icon="el.icon"></v-icon> -->
                     <img :src="el.img" :alt="el.title + '圖示'">
                   </div>
-                  <h4>{{ el.title }}</h4>
+                  <h5>{{ el.title }}</h5>
                 </div>
                 <div class="card-txt">
                   <p v-for="txt in el.desc">{{ txt }}</p>
@@ -142,6 +142,27 @@
               </div>
             </v-col>
           </v-row>
+        </div>
+      </v-container>
+    </section>
+
+    <!-- ● 環境 -->
+    <section id="env" class="env">
+      <v-container fluid>
+        <sectionTitle v-bind="sectionTitleData[3]"></sectionTitle>
+
+        <div class="content">
+          <template v-for="(el, index) in envData" :key="index">
+            <div class="box">
+              <!-- 如果包含 .avif，就當作圖片 -->
+              <div v-if="el.includes('.avif')" class="env-img">
+                <img :src="el" alt="環境照片" />
+              </div>
+
+              <!-- 否則當作文字 -->
+              <p v-else v-html="el" class="env-txt"></p>
+            </div>
+          </template>
         </div>
       </v-container>
     </section>
@@ -173,24 +194,6 @@
       </v-sheet>
     </section>
 
-    <!-- ● 照片區 -->
-    <section>
-      <v-row class="ma-0 d-flex" :class="mobile ? 'flex-column-reverse' : ''">
-        <v-col cols="12" sm="7" class="pa-0">
-          <v-sheet class="bg-transparent">
-            <!-- <PhotoCardSwiper></PhotoCardSwiper> -->
-            <PhotoCard></PhotoCard>
-          </v-sheet>
-        </v-col>
-        <v-col cols="12" sm="5" class="position-relative pa-0 d-flex mt-5" :class="mobile ? 'pa-3 justify-center' : 'pa-0 ps-7 align-center'">
-          <v-sheet class="bg-transparent d-flex flex-column">
-            <h1 class="mb-3 text-center" :class="mobile ? 'text-h5' : 'text-h4'">滿滿的精采歡樂回憶！</h1>
-            大等西加，走突這不一說害遠雲然我看急行政足沒，氣專陽們藝來接怎出工力；下去那從立，後它家備。我易預完麼關全不態花內手智列手古衣的三實人是爸選聲。線政裡開到何法成去步全度車商己能親國一這使愛樂題有了……配來怎！間的光你？玩用節子集講初般情來界法引！
-          </v-sheet>
-        </v-col>
-      </v-row>
-    </section>
-
   </div>
 </template>
 
@@ -201,12 +204,16 @@ import { useDisplay } from 'vuetify'
 import { useApi } from '@/composables/axios'
 import gsap from '@/plugins'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { serviceData } from '@/plugins/data_json/serviceData' // 具名匯入
 import sectionTitle from '@/components/sectionTitle.vue'
 import BannerSwiper from '@/components/bannerSwiper.vue'
 // import AwardCard from '@/components/awardCard.vue'
 import PhotoCardSwiper from '@/components/photoCardSwiper.vue'
 import PhotoCard from '@/components/photoCard.vue'
+
+// 引進生成的 data_json 檔案
+import { serviceData } from '@/plugins/data_json/serviceData' // 具名匯入
+import { envData } from '@/plugins/data_json/envData'
+
 
 
 definePage({
@@ -228,14 +235,19 @@ const sectionTitleData = [
     enTitle: "top dogs",
   },
   {
-    title: "主要服務",
+    title: "服務介紹",
     enTitle: "service",
+  },
+  {
+    title: "店內環境",
+    enTitle: "environment",
   },
 ]
 
 // 解構出 mobile 的斷點
 const { mobile } = useDisplay()
 const { backApi } = useApi()
+
 
 // ● 向後端請求訂單最多的前 3 名狗狗
 // 用 watchEffect 監聽訂單變動情形，有變動時會自動更新狀態
@@ -314,8 +326,6 @@ function toggleExpend(index) {
   })
 }
 
-// 讓 GSAP 可以抓到正確位置（確定圖片完全載入）
-
 
 // * onMounted：
 // Vue 組件的 DOM 已經被放進頁面，但是 DOM 可能還沒有完成更新內部的資料或屬性(某些由 v-for 或 v-if 動態生成的元素還沒出現)。
@@ -378,7 +388,6 @@ onMounted(async () => {
   if (loadedCount === footImgs.length) {
     initScrollTrigger()
   }
-
 
 
 })
