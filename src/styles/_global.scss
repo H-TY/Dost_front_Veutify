@@ -358,3 +358,18 @@ section {
 		transform: var(--anim-position) rotate(360deg);
 	}
 }
+
+// 左右移動
+@keyframes right_left {
+	0% {
+		transform: translateX(0);
+	}
+
+	50% {
+		transform: translateX(8px);
+	}
+
+	100% {
+		transform: translateX(0);
+	}
+}

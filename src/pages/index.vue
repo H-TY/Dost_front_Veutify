@@ -131,7 +131,13 @@
               <div v-for="(el, index) in serviceData" :key="el.title" class="service-card">
                 <div class="card-title">
                   <div class="icon-box">
-                    <!-- <v-icon :icon="el.icon"></v-icon> -->
+                    <div class="dot-box">
+                      <div class="dot"></div>
+                      <div class="dot"></div>
+                      <div class="dot"></div>
+                      <div class="dot"></div>
+                      <div class="dot"></div>
+                    </div>
                     <img :src="el.img" :alt="el.title + '圖示'">
                   </div>
                   <h5>{{ el.title }}</h5>
@@ -167,31 +173,34 @@
       </v-container>
     </section>
 
-    <v-divider class="my-10 w-80 mx-auto"></v-divider>
 
-    <!-- ● 影音生活區 -->
-    <section>
-      <v-sheet class="text-center font-weight-black bg-transparent my-12" :class="mobile ? 'text-h4' : 'text-h3'">
-        狗狗生活札記
-      </v-sheet>
-      <v-sheet class="bg-transparent d-flex pa-0">
-        <v-row class="ma-0">
-          <v-col cols="12" sm="5" class="pa-0 d-flex" :class="mobile ? 'pa-3 justify-center' : 'pa-0 align-center'">
-            <v-sheet class="bg-transparent d-flex flex-column">
-              <h1 class="mb-3 text-center" :class="mobile ? 'text-h5' : 'text-h4'">可愛影片～療癒身心～</h1>
-              大等西加，走突這不一說害遠雲然我看急行政足沒，氣專陽們藝來接怎出工力；下去那從立，後它家備。我易預完麼關全不態花內手智列手古衣的三實人是爸選聲。線政裡開到何法成去步全度車商己能親國一這使愛樂題有了……配來怎！間的光你？玩用節子集講初般情來界法引！
-            </v-sheet>
+    <!-- ● 結尾影片 -->
+    <section id="end-video" class="end-video">
+      <v-container fluid>
+        <v-row>
+          <v-col cols="12" md="5">
+            <div class="txt-box">
+              <p>
+                你走了這麼久，<br />
+                牠也是。
+              </p>
+              <p>
+                最後，<br />
+                你們在這裡遇見了 🐾
+              </p>
+              <p>
+                如果你願意，<br />
+                我們幫你安排<v-btn to="/booking">下一次相遇<span>→</span></v-btn>
+              </p>
+            </div>
           </v-col>
-          <v-col cols="12" sm="7" class="pa-0">
-            <v-responsive aspect-ratio="16/9" class="w-100">
-              <video class="w-100 rounded-xl" controls>
-                <source src="@/assets/video/01_Dog_1280x720.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </v-responsive>
+          <v-col cols="12" md="7">
+            <video muted autoplay controls>
+              <source src="@/assets/video/01_Dog_1280x720.mp4" type="video/mp4">
+            </video>
           </v-col>
         </v-row>
-      </v-sheet>
+      </v-container>
     </section>
 
   </div>
