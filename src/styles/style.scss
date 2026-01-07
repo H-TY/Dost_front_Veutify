@@ -45,7 +45,7 @@ body {
 
 		.v-container {
 			padding: 1.2rem;
-			filter: drop-shadow(0px 12px 4px rgba(darken($mainColor, 20%), 0.2));
+			filter: drop-shadow(0px 6px 4px rgba(darken($mainColor, 20%), 0.2));
 		}
 	}
 
@@ -91,45 +91,51 @@ body {
 
 	// 導覽列 Logo
 	.navbar-logo {
-		width: fit-content;
+		width: calc(10% + 2vw);
+		max-width: 110px;
+		min-width: 80px;
+		height: auto;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: $mainColor;
+		padding: calc(0.6rem + 0.2vw);
 		margin-bottom: 6px;
 		transition: all 0.3s linear;
 
-		// &.move {
-		// 	margin-bottom: 6px;
-
-		// 	.navbar-logo-bg {
-		// 		padding: 0.8rem;
-		// 	}
-		// }
-
-		@include rsp-down-excl(mobile) {
-			margin: 0;
-
-			.navbar-logo-bg {
-				background: transparent !important;
-				padding: unset !important;
-			}
+		&.moveDown {
+			max-width: calc(80px + 0.6vw);
+			min-width: calc(80px + 0.6vw);
+			padding: calc(0.4rem + 0.2vw);
 
 			.v-btn {
-				min-width: 64px !important;
+				border: 2px solid transparent;
+				padding: calc(0.5rem + 0.2vw);
+			}
+
+			@include rsp-down(md) {
+				max-width: calc(70px + 0.6vw);
+				min-width: calc(70px + 0.6vw);
+			}
+		}
+
+		@include rsp-down(md) {
+			width: calc(15% + 2vw);
+		}
+
+		@include rsp-down-excl(sm) {
+			min-width: 64px;
+			padding: 0;
+			margin: 0;
+
+			.v-btn {
 				border-width: 2px !important;
 			}
 		}
 
-		.navbar-logo-bg {
-			width: min-content;
-			background: $mainColor;
-			border-radius: 50%;
-			padding: 0.8rem;
-		}
-
 		.v-btn {
-			width: calc(10% + 2vw);
-			min-width: 80px;
-			// max-width: 120px;
+			width: 100%;
+			min-width: unset;
 			height: auto;
-			aspect-ratio: 1;
 			background: white;
 			border: 4px solid transparent;
 			border-radius: 50%;
@@ -279,15 +285,15 @@ body {
 			}
 		}
 
-		@include rsp-down(md) {
+		@include rsp-down-excl(lg) {
 			// 宣告變數
-			--items-gap: 2rem;
+			--items-gap: 2.2rem;
 
 			.v-btn {
 				padding: 0;
 
 				i {
-					font-size: calc(1.5rem + 0.1vw);
+					font-size: calc(1.7rem + 0.4vw);
 					padding-right: unset;
 				}
 
@@ -325,6 +331,7 @@ body {
 					padding: 0.4rem;
 
 					i {
+						font-size: calc(1.4rem + 0.4vw);
 						padding: unset;
 					}
 
@@ -370,6 +377,7 @@ body {
 				}
 
 				i {
+					font-size: calc(1.4rem + 0.1vw);
 					padding-right: 6px;
 				}
 			}
@@ -436,6 +444,7 @@ body {
 
 	background: $bg;
 	margin-top: calc(var(--v-layout-top) - 50px);
+	z-index: 0;
 
 	@include rsp-down-excl(mobile) {
 		margin-top: var(--v-layout-top);
@@ -782,7 +791,14 @@ body {
 
 		.top-area {
 			.content {
-				margin-top: 80px;
+				// margin-top: 80px;
+				padding-top: 50px;
+				padding-bottom: 80px;
+
+				@include rsp-down-excl(sm) {
+					padding-top: 10px;
+					padding-bottom: 80px;
+				}
 			}
 
 			.dog-card {
@@ -999,7 +1015,7 @@ body {
 
 		.service {
 			overflow-x: clip;
-			// padding: 0;
+			padding: 0;
 
 			.v-container {
 				padding: 0;
@@ -1035,12 +1051,23 @@ body {
 				width: 100%;
 				// height: 100%;
 				align-self: stretch;
+				margin-top: -30%;
+				margin-bottom: -30%;
+				z-index: -1;
 
-				img {
-					@include rsp-up(xl) {
-						height: 925px;
-					}
+				@include rsp-down(md) {
+					margin: -100% 0;
 				}
+
+				// img {
+				// 	@include rsp-up(xl) {
+				// 		height: 925px;
+				// 	}
+				// }
+
+				// @include rsp-up(xl) {
+				// 	height: 925px;
+				// }
 			}
 
 			.service-card-box {
@@ -1048,7 +1075,7 @@ body {
 				display: flex;
 				gap: 3.2rem;
 				flex-direction: column;
-				justify-content: start;
+				justify-content: center;
 				align-items: start;
 				padding: 1.5rem calc(0.5rem + 3.5vw);
 			}
@@ -1143,7 +1170,7 @@ body {
 						.dot-box {
 							// 宣告變數
 							--with-height: 68px;
-							--anim-position: translate(0%, -22%);
+							--anim-position: translate(6%, -22%);
 
 							width: var(--with-height);
 							height: var(--with-height);
@@ -1168,11 +1195,29 @@ body {
 								$dotTotal: 5;
 								// dot 尺寸
 								$dotWidthHeight: 6px;
+								// @for $i from 1 through $dotTotal {
+								// 	&:nth-of-type(#{$i}) {
+								// 		width: $dotWidthHeight * 0.2 + $i;
+								// 		height: $dotWidthHeight * 0.2 + $i;
+								// 		transform: rotate(calc(60deg / (#{$dotTotal - 1}) * (#{$i - 1}))) translateX(calc((var(--with-height) / 2)));
+								// 	}
+								// }
+
 								@for $i from 1 through $dotTotal {
-									&:nth-of-type(#{$i}) {
-										width: $dotWidthHeight * 0.2 + $i;
-										height: $dotWidthHeight * 0.2 + $i;
-										transform: rotate(calc(60deg / (#{$dotTotal - 1}) * (#{$i - 1}))) translateX(calc((var(--with-height) / 2)));
+									@if ($i != $dotTotal) {
+										&:nth-of-type(#{$i}) {
+											width: $dotWidthHeight * 0.22 + ($i * 1px);
+											height: $dotWidthHeight * 0.22 + ($i * 1px);
+											transform: rotate(calc(60deg / (#{$dotTotal - 1}) * (#{$i - 1}))) translateX(calc((var(--with-height) / 2)));
+											opacity: 0.5;
+										}
+									} @else {
+										&:nth-of-type(#{$i}) {
+											width: $dotWidthHeight * 1.4;
+											height: $dotWidthHeight * 1.4;
+											transform: rotate(calc(64deg / (#{$dotTotal - 1}) * (#{$i - 1}))) translateX(calc((var(--with-height) / 2)));
+											opacity: 0.6;
+										}
 									}
 								}
 							}
@@ -1189,6 +1234,10 @@ body {
 		}
 
 		.env {
+			.v-container {
+				padding: 100px calc(1rem + 3vw);
+			}
+
 			.content {
 				// 變數宣告
 				--gap: 12px;

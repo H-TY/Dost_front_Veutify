@@ -9,7 +9,7 @@
         <v-container fluid class="d-flex flex-row align-center justify-space-between">
           <!-- Logo -->
           <div class="navbar-logo d-flex align-center justify-center">
-            <div class="navbar-logo-bg">
+            <div class="navbar-logo-bg-border">
               <v-btn :to="logo.to">
                 <img :src="logo.img"></img>
               </v-btn>
@@ -44,51 +44,51 @@
     <template v-else>
       <div ref="navbarHeightRef" class="mx-auto">
         <v-container fluid class="d-flex flex-column align-center justify-center">
-        <!-- Logo -->
-        <div class="navbar-logo d-flex align-center justify-center">
-          <div class="navbar-logo-bg">
-            <v-btn :to="logo.to">
-              <img :src="logo.img"></img>
-            </v-btn>
-          </div>
-        </div>
-        <!-- 導覽項目 -->
-        <div class="navbar-box">
-          <div class="navbar-items">
-            <template v-for="item in navItems" :key="item.to">
-              <v-btn v-if="item.show" :to="item.to">
-                <v-icon :icon="item.icon"></v-icon>
-                {{mdAndDown? '' : item.text}}
-              </v-btn>
-            </template>
-            ｜
-            <!-- 導覽列_右側_註冊 & 登入 按鈕 -->
-            <div class="RL-box">
-              <template v-for="RLitem in RegLogin" :key="RLitem.to">
-                <v-btn v-if="RLitem.show" :to="RLitem.to" :class="{loginState: user.isLogin, adminState: user.isAdmin}">
-                  <v-icon :icon="RLitem.icon"></v-icon>
-                  {{mdAndDown? '' : RLitem.text}}
-                </v-btn>
-              </template>
-
-              <!-- 登出按鈕 -->
-              <v-btn v-if="user.isLogin" class="logoOut-btn" @click="logout">
-                <v-icon icon="mdi-account-arrow-right"></v-icon>{{mdAndDown? '' : '登出'}}
+          <!-- Logo -->
+          <div class="navbar-logo d-flex align-center justify-center" :class="{ moveDown: isScrolled }">
+            <div class=" navbar-logo-bg-border">
+              <v-btn :to="logo.to">
+                <img :src="logo.img"></img>
               </v-btn>
             </div>
           </div>
-        </div>
-        
-        <!-- PC版_購物車懸浮按鈕 -->
-        <!-- user.cart > 0 時，才會顯示購物車按鈕 -->
-        <template v-if="user.cart > 0">
-          <v-btn class="me-4" position="fixed" location="right" :to="cart.to" color="transparent">
-            <!-- badge 徽章 指的是 icon 右上角的紅點或數字的狀態提示 -->
-            <v-badge offset-x="2" offset-y="2" color="pink-lighten-1" :content="user.cart" v-if="cart.to === '/cart' && user.cart > 0">
-              <v-icon class="bg-white rounded-circle text-h5" size="46" color="pink-lighten-1" :icon="cart.icon"></v-icon>
-            </v-badge>
-          </v-btn>
-        </template>
+          <!-- 導覽項目 -->
+          <div class="navbar-box">
+            <div class="navbar-items">
+              <template v-for="item in navItems" :key="item.to">
+                <v-btn v-if="item.show" :to="item.to">
+                  <v-icon :icon="item.icon"></v-icon>
+                  {{ mdAndDown ? '' : item.text }}
+                </v-btn>
+              </template>
+              ｜
+              <!-- 導覽列_右側_註冊 & 登入 按鈕 -->
+              <div class="RL-box">
+                <template v-for="RLitem in RegLogin" :key="RLitem.to">
+                  <v-btn v-if="RLitem.show" :to="RLitem.to" :class="{ loginState: user.isLogin, adminState: user.isAdmin }">
+                    <v-icon :icon="RLitem.icon"></v-icon>
+                    {{ mdAndDown ? '' : RLitem.text }}
+                  </v-btn>
+                </template>
+
+                <!-- 登出按鈕 -->
+                <v-btn v-if="user.isLogin" class="logoOut-btn" @click="logout">
+                  <v-icon icon="mdi-account-arrow-right"></v-icon>{{ mdAndDown ? '' : '登出' }}
+                </v-btn>
+              </div>
+            </div>
+          </div>
+
+          <!-- PC版_購物車懸浮按鈕 -->
+          <!-- user.cart > 0 時，才會顯示購物車按鈕 -->
+          <template v-if="user.cart > 0">
+            <v-btn class="me-4" position="fixed" location="right" :to="cart.to" color="transparent">
+              <!-- badge 徽章 指的是 icon 右上角的紅點或數字的狀態提示 -->
+              <v-badge offset-x="2" offset-y="2" color="pink-lighten-1" :content="user.cart" v-if="cart.to === '/cart' && user.cart > 0">
+                <v-icon class="bg-white rounded-circle text-h5" size="46" color="pink-lighten-1" :icon="cart.icon"></v-icon>
+              </v-badge>
+            </v-btn>
+          </template>
         </v-container>
       </div>
     </template>
@@ -102,19 +102,19 @@
         <template v-for="item in navItems" :key="item.to">
           <v-btn v-if="item.show" :to="item.to">
             <v-icon :icon="item.icon"></v-icon>
-            {{item.text}}
+            {{ item.text }}
           </v-btn>
         </template>
-            
+
         <v-divider></v-divider>
 
         <!-- 導覽列_右側_註冊 & 登入 按鈕 -->
         <div class="RL-box">
           <template v-for="RLitem in RegLogin" :key="RLitem.to">
-              <v-btn v-if="RLitem.show" :to="RLitem.to" :class="{loginState: user.isLogin, adminState: user.isAdmin}">
-                <v-icon :icon="RLitem.icon"></v-icon>
-                {{RLitem.text}}
-              </v-btn>
+            <v-btn v-if="RLitem.show" :to="RLitem.to" :class="{ loginState: user.isLogin, adminState: user.isAdmin }">
+              <v-icon :icon="RLitem.icon"></v-icon>
+              {{ RLitem.text }}
+            </v-btn>
           </template>
 
           <!-- 登出按鈕 -->
@@ -143,7 +143,9 @@
             <v-img src="@/assets/img/Dost_QRcode.png"></v-img>
           </div>
           <v-list>
-            <v-list-item ><p>DOST</p></v-list-item>
+            <v-list-item>
+              <p>DOST</p>
+            </v-list-item>
             <v-list-item>02-1234 1234</v-list-item>
             <v-list-item>243新北市泰山區貴子里致遠新村55之1號</v-list-item>
           </v-list>
@@ -155,7 +157,7 @@
             <v-btn icon="mdi-youtube"></v-btn>
           </v-col>
           <v-col cols="12" sm="8" md="12" lg="6" class="subscribe-box">
-            <v-text-field  type="input" placeholder="Enter your e-mail" prepend-inner-icon="mdi-email" clearable></v-text-field>
+            <v-text-field type="input" placeholder="Enter your e-mail" prepend-inner-icon="mdi-email" clearable></v-text-field>
             <v-btn>訂閱</v-btn>
           </v-col>
         </v-col>
@@ -255,30 +257,28 @@ const reNavbarHeight = ref(50)
 function updateNH() {
   // 在 onMounted 使用「微小延遲」比 nextTick 更可靠，Vuetify 官方也建議使用
   requestAnimationFrame(() => {
-    if(!navbarHeightRef.value) return;
+    if (!navbarHeightRef.value) return;
     // console.log(navbarHeightRef.value.clientHeight)
     reNavbarHeight.value = navbarHeightRef.value.clientHeight
   })
 }
 
 // 監聽螢幕寬度，更新 navbar 高度
-watch(width, ()=>{
+watch(width, () => {
   updateNH()
+})
+
+
+// ● navbar 向下移動指定距離，添加 class 樣式（且在需要操作元素的標籤新增 :class="{moveDown: isScrolled}" ）
+const isScrolled = ref(false)
+
+window.addEventListener('scroll', () => {
+  isScrolled.value = window.scrollY > 80
 })
 
 // onMounted 生命週期指 DOM 掛載完成，之後才會觸發裡面的程式碼
 onMounted(() => {
   updateNH()
-}) 
-
-
-// // ● navbar 向下移動指定距離，添加 class 樣式（且在需要操作元素的標籤新增 :class="{move: isScrolled}" ）
-// const isScrolled = ref(false)
-
-// window.addEventListener('scroll', ()=>{
-//   isScrolled.value = window.scrollY > 50
-// })
+})
 
 </script>
-
-

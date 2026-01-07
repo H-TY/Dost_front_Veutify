@@ -120,12 +120,12 @@
       <v-container fluid>
         <div class="content">
           <v-row class="box">
-            <v-col sm="4" md="5" lg="6" class="d-flex">
+            <v-col sm="5" lg="6" class="d-flex">
               <div class="img-box">
                 <img src="../assets/img/decorate/service/img-1.avif" alt="服務項目背景圖片">
               </div>
             </v-col>
-            <v-col sm="8" md="7" lg="6" class="service-card-box">
+            <v-col sm="7" lg="6" class="service-card-box">
               <sectionTitle v-bind="sectionTitleData[2]"></sectionTitle>
 
               <div v-for="(el, index) in serviceData" :key="el.title" class="service-card">
@@ -173,7 +173,6 @@
       </v-container>
     </section>
 
-
     <!-- ● 結尾影片 -->
     <section id="end-video" class="end-video">
       <v-container fluid>
@@ -215,9 +214,6 @@ import gsap from '@/plugins'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import sectionTitle from '@/components/sectionTitle.vue'
 import BannerSwiper from '@/components/bannerSwiper.vue'
-// import AwardCard from '@/components/awardCard.vue'
-import PhotoCardSwiper from '@/components/photoCardSwiper.vue'
-import PhotoCard from '@/components/photoCard.vue'
 
 // 引進生成的 data_json 檔案
 import { serviceData } from '@/plugins/data_json/serviceData' // 具名匯入
@@ -315,11 +311,10 @@ watchEffect(async () => {
 })
 // console.log('topOrderdata', topOrderdata)
 
-// 動態生成圖片
+// ● 動態生成圖片
 // 原因：Vite 的 @ 別名 只會在編譯時靜態解析。
 // 動態字串（template literal + 變數）在編譯階段無法解析：
-// img-${index + 1}.avif 是運行時才知道
-// Vite 編譯器不知道 @ 應該對應哪個檔案 → 會報錯
+// <例如>：img-${index + 1}.avif 是運行時才知道，Vite 編譯器不知道 @ 應該對應哪個檔案 → 會報錯
 function generateImg(index) {
   return new URL(`../assets/img/decorate/top_area/img-${index + 1}.avif`, import.meta.url).href
 }
@@ -350,10 +345,35 @@ onMounted(async () => {
   // 因 .box 有多個 img，後續需要用迴圈個別設定 gsap
   const footImgs = gsap.utils.toArray(".dog-foot-box .box img")
 
+
+  // Timeline：負責「動畫順序」
+  // ScrollTrigger：負責「什麼時候開始」
+  const endVideoTl = gsap.timeline(
+    {
+      scrollTrigger: {
+        trigger: ".end-video",
+        start: "top 60%",
+        // 沒有指定 end 時，GSAP 預設 end: "bottom top"
+
+        // 對應四個階段：
+        // onEnter | onLeave | onEnterBack | onLeaveBack
+        // - onEnter     ：第一次往下滾，進入觸發區
+        // - onLeave     ：繼續往下滾，離開觸發區
+        // - onEnterBack ：往上滾，從下面再進入觸發區
+        // - onLeaveBack ：繼續往上滾，離開觸發區（回到上方）
+        toggleActions: "play none none none", // 只會觸發一次動畫
+        // toggleActions: "play reverse play reverse", // 每次滾回來都「整段重播」
+      }
+    }
+  )
+
   // gsap ScrollTrigger 初始化函式
   function initScrollTrigger() {
     // 因有用到 Vutify 的元件(v-container、v-col ... 等)，故需要 requestAnimationFrame() 才能抓取到掛載後的正確位置
     requestAnimationFrame(() => {
+
+
+
       footImgs.forEach(el => {
         gsap.to(el, {
           scrollTrigger: {
@@ -364,6 +384,35 @@ onMounted(async () => {
           }
         })
       })
+
+      // 根據 endVideoTl 觸發動畫時機，開始依照 p 標籤的順序，依序執行動畫
+      endVideoTl.fromTo(".end-video .txt-box p",
+        // 執行向上淡入的動畫
+        // 設定初始狀態
+        {
+          y: 100,
+          opacity: 0,
+        },
+        // 設定動畫觸發後的狀態
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.5,
+          ease: "power1.out",
+          // stagger「啟動時間」錯開
+          stagger: 0.7
+
+          // 指定最後一句話的延遲時間更長一點
+          // - index → 元素順序
+          // - target → 當前元素 DOM
+          // - list → 所有元素陣列
+          // * 如果有用不到的參數，可以用佔位符 _ 代替，但像 target 這個用不到的參數不能省略(需用佔位符 _ )，不然後續的 list 會被誤認為 target
+          // stagger: function (index, _, list) {
+          //   const base = 0.6
+          //   return index === list.length - 1 ? (index * base) + 1 : index * base
+          // }
+        })
+
       // 確保 ScrollTrigger 第一次抓到正確位置
       ScrollTrigger.refresh()
     })
