@@ -455,7 +455,7 @@ body {
 		position: relative;
 	}
 
-	// home 頁面的樣式
+	// ▲ home 頁面的樣式
 	.home {
 		.content {
 			margin-top: 50px;
@@ -791,9 +791,8 @@ body {
 
 		.top-area {
 			.content {
-				// margin-top: 80px;
 				padding-top: 50px;
-				padding-bottom: 80px;
+				padding-bottom: 100px;
 
 				@include rsp-down-excl(sm) {
 					padding-top: 10px;
@@ -1235,7 +1234,7 @@ body {
 
 		.env {
 			.v-container {
-				padding: 100px calc(1rem + 3vw);
+				padding: 40px calc(1rem + 3vw);
 			}
 
 			.content {
@@ -1376,6 +1375,147 @@ body {
 
 				.txt-box {
 					padding-top: 0.5rem;
+				}
+			}
+		}
+	}
+
+	// ▲ cool-dogs 頁面的樣式
+	.cool-dogs {
+		.v-container {
+			padding: 0 calc(1rem + 1vw);
+		}
+
+		.content {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.number-pages {
+			width: 100%;
+			margin-top: 40px;
+
+			.v-pagination__list {
+				gap: 2rem;
+				flex-direction: row;
+
+				.v-pagination__item--is-active {
+					.v-btn {
+						width: calc(24px + 0.4vw);
+						height: calc(24px + 0.4vw);
+
+						.v-btn__overlay {
+							background: rgba($gtext, 0.6);
+							opacity: 1;
+						}
+
+						.v-btn__content {
+							color: $thirdColor;
+							z-index: 1;
+						}
+					}
+				}
+			}
+		}
+
+		.card-box {
+			// 變數宣告
+			--card-box-width: 100%;
+			--gap: 1rem;
+			--divide-num: 3;
+
+			width: var(--card-box-width);
+			display: flex;
+			gap: var(--gap);
+			row-gap: 1.3rem;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: start;
+			align-items: start;
+
+			@include rsp-down-excl(lg) {
+				--divide-num: 2;
+			}
+
+			@include rsp-down(sm) {
+				--divide-num: 1;
+				justify-content: center;
+			}
+		}
+
+		.card {
+			width: calc((var(--card-box-width) - (var(--gap) * (var(--divide-num) - 1))) / var(--divide-num));
+			height: 60vh;
+			border-radius: 10px;
+			padding: 0;
+			position: relative;
+			overflow: hidden;
+			box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+			@include rsp-down(sm) {
+				width: calc(100% - 7vw);
+			}
+
+			.card-img {
+				display: block;
+				height: 100%;
+			}
+
+			.card-txt-box {
+				width: 100%;
+				background: rgba($thirdColor, 0.8);
+				border-radius: 0 0 10px 10px;
+				padding: 1.2rem;
+				display: flex;
+				row-gap: 0.5rem;
+				flex-direction: column;
+				justify-content: center;
+				position: absolute;
+				bottom: 0;
+
+				p {
+					color: $gtext;
+
+					span {
+						color: $text;
+						font-weight: 400;
+					}
+				}
+
+				.name-age-box,
+				.price-booking-box {
+					display: flex;
+					flex-direction: row;
+					justify-content: space-between;
+					align-items: center;
+
+					.v-divider {
+						margin: 0 8px;
+					}
+
+					p {
+						color: $gtext;
+						white-space: nowrap;
+
+						span {
+							font-size: calc(1.2rem + 0.2vw);
+							font-weight: 500;
+							color: $text;
+							padding-right: 4px;
+						}
+					}
+				}
+			}
+
+			.v-btn {
+				color: $thirdColor;
+				background: $mainColor;
+				padding: 4px 8px;
+
+				&.red-btn {
+					background: $btnRed;
 				}
 			}
 		}

@@ -1,18 +1,20 @@
 <template>
-  <v-container class="mt-8">
-    <v-row>
-      <v-col cols="12" sm="4" v-for="item in items" :key="item._id" :class="mobile === true ? 'px-8' : ''">
-        <DogsCard v-bind="item"></DogsCard>
-      </v-col>
-      <v-col cols="12">
-        <v-pagination v-model="page" :length="pages" rounded="circle" @update:model-value="loadProducts"></v-pagination>
-      </v-col>
-    </v-row>
-  </v-container>
+  <section id="cool-dogs" class="cool-dogs">
+    <v-container>
+      <div class="content">
+        <div class="card-box">
+          <template v-for="item in items" :key="item._id">
+            <DogsCard v-bind="item"></DogsCard>
+          </template>
+        </div>
+        <v-pagination class="number-pages" v-model="page" :length="pages" rounded="circle" @update:model-value="loadProducts"></v-pagination>
+      </div>
+    </v-container>
+  </section>
 </template>
 
 <script setup>
-import {ref, watch} from 'vue'
+import { ref, watch } from 'vue'
 import { definePage } from 'vue-router/auto'
 import { useDisplay } from 'vuetify'
 import { useApi } from '@/composables/axios'

@@ -1,41 +1,35 @@
+<!-- ● 狗狗簡述_Card 元件 -->
 <template>
-  <!-- ● 狗狗簡述_Card 元件 -->
-  <v-card class="pa-0" position="relative">
-    <router-link :to="{ path: '/dogsResume' }">
-      <v-img :src="image" cover width="100%" height="450"></v-img>
+  <div class="card">
+    <router-link :to="{ path: '/dogsResume' }" class="card-img">
+      <img :src="image"></img>
     </router-link>
-    <v-sheet position="absolute" class="bottom-0 opacity-70 w-100" :style="$route.path === '/booking' ? 'box-sizing: border-box;' : ''">
-      <v-col class="d-flex flex-column">
-        <v-col class="d-flex pa-0">
-          <v-card-subtitle class="pa-0">名字
-            <span class="text-h6 font-weight-bold ms-2">{{ dogName }}</span>
-          </v-card-subtitle>
-          <v-divider class="align-self-center"></v-divider>
-          <v-card-subtitle class="pa-0">年齡
-            <span class="text-h6 ms-1">{{ age }}</span> 歲
-          </v-card-subtitle>
-        </v-col>
-        <v-card-subtitle class="pa-0 mt-2 text-start">性格、特徵
-          <span class="text-body-1 ms-2">{{ feature }}</span>
-        </v-card-subtitle>
-      </v-col>
-      <v-col class="d-flex pt-2" :class="$route.path === '/booking' ? 'justify-end' : 'justify-space-between'">
-        <v-card-subtitle class="pa-0 align-self-end">價格
-          <span class="text-h5 font-weight-bold ms-1">{{ price }}</span> 元 / 2小時
-        </v-card-subtitle>
-        <v-btn class="bg-red" :class="[
-          $route.path === '/booking' ? 'd-none' : 'd-flex',
-          booking === '預約已滿' ? 'bg-grey' : '']" 
-          :text="booking === '預約已滿' ? '預約已滿' : '預約'" 
-          :disabled="booking === '預約已滿'" 
-          @click="bookingAddId"></v-btn>
-      </v-col>
-    </v-sheet>
-  </v-card>
+    <div class="card-txt-box">
+      <div class="name-age-box">
+        <p>名字｜
+          <span>{{ dogName }}</span>
+        </p>
+        <v-divider></v-divider>
+        <p>年齡｜
+          <span>{{ age }}</span> 歲
+        </p>
+      </div>
+      <p>性格、特徵｜
+        <span>{{ feature }}</span>
+      </p>
+      <div class="price-booking-box">
+        <p>價格｜
+          <span>{{ price }}</span> 元 / 2小時
+        </p>
+        <v-btn :class="{ 'red-btn': bookingState }" :text="booking === '預約已滿' ? '預約已滿' : '預約'" @click="bookingAddId"></v-btn>
+      </div>
+    </div>
+  </div>
 
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
@@ -61,5 +55,11 @@ const bookingAddId = () => {
     query: { id: props._id }, // 直接使用 props 中的 id
   });
 }
+
+
+// ● 藉由傳入的 props 推算預約按鈕狀態，後續根據狀態設定樣式
+const bookingState = computed(() => props.booking === '預約已滿');
+
+
 
 </script>

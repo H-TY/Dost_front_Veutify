@@ -257,9 +257,9 @@ section {
 		padding: 70px 0;
 	}
 
-	&:nth-of-type(1) {
-		padding-top: 100px;
-	}
+	// &:nth-of-type(1) {
+	// 	padding-top: 100px;
+	// }
 
 	&:nth-of-type(2n) {
 		isolation: isolate;
@@ -269,25 +269,40 @@ section {
 			width: 100%;
 			height: 100%;
 			background: $areaBg;
-			// clip-path: polygon(0 0, 100% 15%, 100% 100%, 0 85%);
 			clip-path: polygon(0 15%, 100% 0, 100% 85%, 0 100%);
 			position: absolute;
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
 			z-index: -1;
+
+			@include rsp-down(sm) {
+				clip-path: polygon(0 8%, 100% 0, 100% 92%, 0 100%);
+			}
 		}
 	}
 
 	&:nth-of-type(4n) {
 		&::before {
 			clip-path: polygon(0 0, 100% 15%, 100% 100%, 0 85%);
+
+			@include rsp-down(md) {
+				clip-path: polygon(0 0, 100% 8%, 100% 100%, 0 92%);
+			}
+
+			@include rsp-down(sm) {
+				clip-path: polygon(0 0, 100% 4%, 100% 100%, 0 96%);
+			}
 		}
 	}
 }
 
 // btn 設定
 .v-btn {
+	&.v-btn--variant-plain {
+		opacity: 1;
+	}
+
 	&.v-btn--size-default {
 		// 系統預設變數宣告
 		--v-btn-size: unset;
