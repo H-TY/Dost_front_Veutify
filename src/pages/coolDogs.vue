@@ -1,8 +1,10 @@
 <template>
+  <!-- ● 帥氣狗狗頁面 pages/coolDogs.vue -->
   <section id="cool-dogs" class="cool-dogs">
     <v-container>
       <div class="content">
         <div class="card-box">
+          <!-- ● components/dogCard.vue 元件 -->
           <template v-for="item in items" :key="item._id">
             <DogsCard v-bind="item"></DogsCard>
           </template>

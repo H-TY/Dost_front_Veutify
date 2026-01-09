@@ -1,6 +1,7 @@
 // 引進函式
 @use '_mixins' as *;
 
+// 全域共通設定
 // ● 顏色設定
 $mainColor: #01579b; // 主要顏色
 $secColor: #bcc770; // 次要顏色
@@ -23,6 +24,13 @@ $FB: #1877f7;
 $IG: linear-gradient(to left bottom, #9d37ba, #fed677);
 
 // color bakeup #4caf50
+
+// ● 容器預設 border-box 設定　width & height 尺寸大小皆已包含 padding + border 的尺寸，不用再額外計算
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
 
 // ● 文字格式設定
 h1,
@@ -96,6 +104,7 @@ ul {
 	}
 }
 
+// ● 圖片格式設定
 img {
 	display: block;
 	width: 100%;
@@ -104,12 +113,7 @@ img {
 	object-position: center;
 }
 
-hr {
-	width: 100%;
-	border-color: $text;
-}
-
-// 欄位區塊標題設定（md以上顯示 title-l；未滿 md 顯示 title-m）
+// ● 欄位區塊標題設定（md以上顯示 title-l；未滿 md 顯示 title-m）
 .section-title-m {
 	width: fit-content;
 	padding-left: 1.5rem;
@@ -297,7 +301,13 @@ section {
 	}
 }
 
-// btn 設定
+// ● 水平線 hr 設定
+hr {
+	width: 100%;
+	border-color: $text;
+}
+
+// ● btn 設定
 .v-btn {
 	&.v-btn--variant-plain {
 		opacity: 1;

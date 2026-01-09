@@ -9,14 +9,20 @@ import vuetify from "./vuetify";
 import pinia from "@/stores";
 import router from "@/router";
 
-// UI方塊跳出提示
+// ● UI方塊跳出提示
 import VuetifyUseDialog from "vuetify-use-dialog";
 
-// 引用上傳檔案套件(可拖曳並預覽圖片和顯示檔案大小)
+// ● 引用上傳檔案套件(可拖曳並預覽圖片和顯示檔案大小)
 import VueFileAgentNext from "@boindil/vue-file-agent-next";
 import "@boindil/vue-file-agent-next/dist/vue-file-agent-next.css";
 
-// 引用 GSAP 核心以及其套件
+// ● 引用 Swiper 套件以及相關檔案
+import { Swiper, SwiperSlide } from "swiper/vue";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
+// ● 引用 GSAP 核心以及其套件
 import { gsap } from "gsap";
 // 啟用 ScrollSmoother 必須搭配 ScrollTrigger 套件
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -48,4 +54,8 @@ export function registerPlugins(app) {
       },
     })
     .use(VueFileAgentNext);
+
+  // 註冊為全域元件(可以直接當作標籤使用，不用另外 import)
+  app.component("Swiper", Swiper);
+  app.component("SwiperSlide", SwiperSlide);
 }

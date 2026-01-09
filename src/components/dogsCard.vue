@@ -1,4 +1,3 @@
-<!-- ● 狗狗簡述_Card 元件 -->
 <template>
   <div class="card">
     <router-link :to="{ path: '/dogsResume' }" class="card-img">
@@ -21,7 +20,7 @@
         <p>價格｜
           <span>{{ price }}</span> 元 / 2小時
         </p>
-        <v-btn :class="{ 'red-btn': bookingState }" :text="booking === '預約已滿' ? '預約已滿' : '預約'" @click="bookingAddId"></v-btn>
+        <v-btn :class="{ 'red-btn': bookingState, 'd-none': route.path === '/booking' }" :text="booking === '預約已滿' ? '預約已滿' : '預約'" @click="bookingAddId"></v-btn>
       </div>
     </div>
   </div>
@@ -31,13 +30,14 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
 const user = useUserStore()
-const router = useRouter()
+const route = useRoute() // 目前路由狀態（「現在在哪」），詳細說明看最底下
+const router = useRouter() // 負責「跳轉、返回、取路由設定」（「要去哪、怎麼去」），詳細說明看最底下
 const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 
@@ -61,5 +61,35 @@ const bookingAddId = () => {
 const bookingState = computed(() => props.booking === '預約已滿');
 
 
+
+// ===============================
+// ◆ useRoute 跟 useRouter 差異
+// * route 是「現在在哪」
+// * router 是「要去哪、怎麼去」
+
+// useRoute：用來取得目前的路由資訊，例如當前的路由參數、查詢字串、路由名稱等。它提供了一個響應式的物件，可以讓你在組件中輕鬆地訪問當前路由的相關資訊。
+// 常用屬性：
+// - route.path        // '/booking'
+// - route.name        // 'booking'
+// - route.params      // 動態路由參數
+// - route.query       // query string
+// - route.fullPath
+// - route.meta
+// 使用時機：
+//   ✔ 判斷頁面
+//   ✔ 顯示 / 隱藏元素
+//   ✔ watch 路由變化
+
+// useRouter：用來進行路由導航操作，例如跳轉到不同的路徑/頁面。
+// 常用屬性：
+// - router.push('/booking')
+// - router.push({ name: 'booking' })
+// - router.replace('/login')
+// - router.back()
+// - router.go(-1)
+// 使用時機：
+//   ✔ 點擊跳頁
+//   ✔ 登入後導頁
+//   ✔ 條件導向
 
 </script>

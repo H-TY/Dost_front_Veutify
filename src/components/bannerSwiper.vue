@@ -1,14 +1,8 @@
 <template>
-  <swiper 
-  :pagination="{
+  <swiper :pagination="{
     dynamicBullets: true,
-  }" 
-  :navigation="true" 
-  :modules="modules" 
-  class="mySwiper">
-    <swiper-slide 
-    v-for="(el, index) in banners" 
-    :key="index">
+  }" :navigation="true" :modules="modules" class="bannerSwiper">
+    <swiper-slide v-for="(el, index) in banners" :key="index">
       <img :src="el.img">
     </swiper-slide>
   </swiper>
@@ -16,17 +10,10 @@
 
 
 <script setup>
-// ● 引進 Swiper 套件以及相關檔案
-// Import Swiper Vue.js components
-import { Swiper, SwiperSlide } from 'swiper/vue'
-// Import Swiper styles
-import 'swiper/css'
-import 'swiper/css/pagination'
-import 'swiper/css/navigation'
-import 'swiper/css/effect-cards'
-// import required modules
+// 引用需要 swiper 的 modules
 import { Pagination, Navigation } from 'swiper/modules'
 
+// ● 將需要啟用的 modules 放入陣列，與上方 swiper 標籤內的 :modules 綁定，意思是啟用這些模組功能
 const modules = [Pagination, Navigation]
 
 const banners = computed(() => {

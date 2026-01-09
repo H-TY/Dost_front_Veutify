@@ -1,80 +1,88 @@
 <template>
-  <v-container class="text-center mt-8">
-    <h1>預約狗狗時間</h1>
-    <!-- ● 狗狗簡述資訊卡片 -->
-    <swiper :slidesPerView="'auto'" :centeredSlides="true" :spaceBetween="30" :pagination="{
-      clickable: true,
-    }" :navigation="true" :hashNavigation="{
-      replaceState: true,
-      watchState: true
-    }" :modules="modules" @slideChangeTransitionEnd="onHashChange" class="mySwiper my-10">
-      <swiper-slide v-for="item in items" :data-hash="`/booking#${item._id}`">
-        <v-sheet style="width: 100%;">
+  <!-- ● 預約狗狗時間頁面 pages/booking.vue -->
+  <section id="booking" class="booking">
+    <v-container>
+      <!-- 狗狗輪播 swiper 套件 -->
+      <swiper class="dogSwiper" :centeredSlides="true" :spaceBetween="30" :pagination="{
+        clickable: true,
+      }" :navigation="true" :hashNavigation="{
+        replaceState: true,
+        watchState: true
+      }" :breakpoints="{
+        0: { slidesPerView: 1 },      // 小於 sm
+        576: { slidesPerView: 'auto' } // sm 以上
+      }" :modules="modules" @slideChangeTransitionEnd="onHashChange">
+        <swiper-slide v-for="item in items" :data-hash="`/booking#${item._id}`">
+          <!-- ● components/dogCard.vue 元件 -->
           <DogsCard v-bind="item"></DogsCard>
-        </v-sheet>
-      </swiper-slide>
-    </swiper>
+        </swiper-slide>
+      </swiper>
 
-    <v-row class="my-7">
-      <!-- ● 日期選擇 -->
-      <v-col class="d-flex flex-wrap justify-center" cols="12" sm="6">
-        <v-date-picker width="400" color="primary" v-model="date" show-adjacent-months :allowed-dates="allowedSelectDate" @click="dialogOpen($event)">
-        </v-date-picker>
-        <!-- 點擊日期，跳出視窗選擇預約時段 -->
-        <v-dialog v-model="dialog">
-          <v-form>
-            <v-sheet class="bg-white d-flex flex-column text-center justify-self-center align-self-center pa-7" width="350" height="240">
-              <h3>可預約時段</h3>
-              <v-divider class=" my-4"></v-divider>
-              <v-checkbox class="d-flex justify-center" v-model="selectedTime" v-for="el in Dinfo.bookingTime.join(' ').split(',').sort((a, b) => parseInt(a) - parseInt(b))" :label="el" :value="el" false-icon="mdi-paw-outline" true-icon="mdi-paw"></v-checkbox>
-              <v-sheet class="dialogClosePosition rounded-circle bg-transparent d-flex">
-                <v-btn class="rounded-circle d-flex pa-0 bg-white opacity-100" min-width="60" min-height="60" variant="plain" @click="dialogClose" flat>
-                  <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" size="48" color="red-darken-4" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickmouseToggleOff"></v-icon>
-                </v-btn>
+      <!-- ● 預約資訊 -->
+      <v-row>
+        <!-- 日期選擇 -->
+        <v-col class="d-flex flex-wrap justify-center" cols="12" sm="6">
+          <v-date-picker width="400" color="primary" v-model="date" show-adjacent-months :allowed-dates="allowedSelectDate" @click="dialogOpen($event)">
+          </v-date-picker>
+
+          <!-- 點擊日期，跳出視窗選擇預約時段 -->
+          <v-dialog v-model="dialog">
+            <v-form>
+              <v-sheet class="bg-white d-flex flex-column text-center justify-self-center align-self-center pa-7" width="350" height="240">
+                <h3>可預約時段</h3>
+                <v-divider class=" my-4"></v-divider>
+                <v-checkbox class="d-flex justify-center" v-model="selectedTime" v-for="el in Dinfo.bookingTime.join(' ').split(',').sort((a, b) => parseInt(a) - parseInt(b))" :label="el" :value="el" false-icon="mdi-paw-outline" true-icon="mdi-paw"></v-checkbox>
+                <v-sheet class="dialogClosePosition rounded-circle bg-transparent d-flex">
+                  <v-btn class="rounded-circle d-flex pa-0 bg-white opacity-100" min-width="60" min-height="60" variant="plain" @click="dialogClose" flat>
+                    <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" size="48" color="red-darken-4" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickmouseToggleOff"></v-icon>
+                  </v-btn>
+                </v-sheet>
               </v-sheet>
-            </v-sheet>
+            </v-form>
+          </v-dialog>
+
+          <v-sheet class="bg-transparent d-flex align-center" :class="mobile ? 'mt-5' : ''"><v-icon icon="mdi-message-alert" class="me-1" color="orange-darken-2"></v-icon>當天日期無法預約，若有需求，請來電洽詢，謝謝！</v-sheet>
+        </v-col>
+
+        <!-- ● 預約表單填寫 -->
+        <v-col class="d-flex justify-center" :class="mobile ? 'my-4' : ''">
+          <v-form class="w-90" cols="12" sm="6" @submit.prevent="submit" :disabled="isSubmitting">
+            <v-text-field label="預約人姓名" :class="addClass" v-model="name.value.value" :error-messages="name.errorMessage.value"></v-text-field>
+            <v-text-field label="預約人電話" :class="addClass" v-model="phone.value.value" :error-messages="phone.errorMessage.value"></v-text-field>
+            <v-row>
+              <v-col cols=4 class="pa-0 ps-3">
+                <v-sheet class="bg-transparent my-2" elevation="2" rounded>
+                  <v-img :src="dogImg" height="70" cover></v-img>
+                </v-sheet>
+              </v-col>
+              <v-col>
+                <v-text-field readonly>預約狗狗：
+                  <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ Dinfo.dogName }}</v-sheet></v-text-field>
+              </v-col>
+            </v-row>
+            <v-text-field readonly>預約日期：
+              <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ dateForm }}</v-sheet>
+            </v-text-field>
+            <v-text-field readonly>預約時段：
+              <v-list class="my-0 pa-0 bg-transparent" :items="selectedTime.sort((a, b) => parseInt(a) - parseInt(b))"></v-list>
+            </v-text-field>
+            <v-text-field readonly>預約總時數：
+              <v-sheet class="text-h5 font-weight-bold bg-transparent">{{ totalBTime }}</v-sheet>&nbsp小時
+            </v-text-field>
+            <v-text-field readonly>總計金額：
+              <v-sheet class="text-h5 font-weight-bold bg-transparent">{{ Total }}</v-sheet>&nbsp元
+            </v-text-field>
+            <v-btn class="w-40 mt-5" type="submit" color="green" :loading="isSubmitting">送出預約</v-btn>
           </v-form>
-        </v-dialog>
-        <v-sheet class="bg-transparent d-flex align-center" :class="mobile ? 'mt-5' : ''"><v-icon icon="mdi-message-alert" class="me-1" color="orange-darken-2"></v-icon>當天日期無法預約，若有需求，請來電洽詢，謝謝！</v-sheet>
-      </v-col>
-      <!-- ● 預約表單 -->
-      <v-col class="d-flex justify-center" :class="mobile ? 'my-4' : ''">
-        <v-form class="w-90" cols="12" sm="6" @submit.prevent="submit" :disabled="isSubmitting">
-          <v-text-field label="預約人姓名" :class="addClass" v-model="name.value.value" :error-messages="name.errorMessage.value"></v-text-field>
-          <v-text-field label="預約人電話" :class="addClass" v-model="phone.value.value" :error-messages="phone.errorMessage.value"></v-text-field>
-          <v-row>
-            <v-col cols=4 class="pa-0 ps-3">
-              <v-sheet class="bg-transparent my-2" elevation="2" rounded>
-                <v-img :src="dogImg" height="70" cover></v-img>
-              </v-sheet>
-            </v-col>
-            <v-col>
-              <v-text-field readonly>預約狗狗：
-                <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ Dinfo.dogName }}</v-sheet></v-text-field>
-            </v-col>
-          </v-row>
-          <v-text-field readonly>預約日期：
-            <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ dateForm }}</v-sheet>
-          </v-text-field>
-          <v-text-field readonly>預約時段：
-            <v-list class="my-0 pa-0 bg-transparent" :items="selectedTime.sort((a, b) => parseInt(a) - parseInt(b))"></v-list>
-          </v-text-field>
-          <v-text-field readonly>預約總時數：
-            <v-sheet class="text-h5 font-weight-bold bg-transparent">{{ totalBTime }}</v-sheet>&nbsp小時
-          </v-text-field>
-          <v-text-field readonly>總計金額：
-            <v-sheet class="text-h5 font-weight-bold bg-transparent">{{ Total }}</v-sheet>&nbsp元
-          </v-text-field>
-          <v-btn class="w-40 mt-5" type="submit" color="green" :loading="isSubmitting">送出預約</v-btn>
-        </v-form>
-      </v-col>
-    </v-row>
+        </v-col>
+      </v-row>
 
-    <!-- ● 送出訂單成功後，彈出已下單的資訊 -->
-    <v-dialog v-model="dialogOrderInfo">
-      <OrderInfoCard :bigTitle="'已預約資訊'" :orderInfoData="orderInfoData.infor" :orderInfoDataImg="orderInfoData.img" :dialogClose="dialogClose" :submit="submit" :isSubmitting="isSubmitting"></OrderInfoCard>
-    </v-dialog>
-  </v-container>
+      <!-- ● 送出訂單成功後，彈出已下單的資訊 -->
+      <v-dialog v-model="dialogOrderInfo">
+        <OrderInfoCard :bigTitle="'已預約資訊'" :orderInfoData="orderInfoData.infor" :orderInfoDataImg="orderInfoData.img" :dialogClose="dialogClose" :submit="submit" :isSubmitting="isSubmitting"></OrderInfoCard>
+      </v-dialog>
+    </v-container>
+  </section>
 </template>
 
 <script setup>
@@ -90,17 +98,9 @@ import DogsCard from '@/components/dogsCard.vue'
 import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
 import OrderInfoCard from '@/components/orderInfoCard'
+// 引用需要 swiper 的 modules
+import { Pagination, Navigation, HashNavigation } from 'swiper/modules'
 
-// ● 引進 Swiper 套件以及相關檔案
-// Swiper_Centered auto
-// Import Swiper Vue.js components
-import { Swiper, SwiperSlide } from 'swiper/vue'
-// Import Swiper styles
-import 'swiper/css'
-import 'swiper/css/pagination'
-import 'swiper/css/navigation'
-// import required modules
-import { Pagination, Navigation, History, HashNavigation } from 'swiper/modules'
 
 
 const route = useRoute()
@@ -111,7 +111,9 @@ const User = useUserStore()
 const BookingOrderStore = useBookingOrderStore()
 // console.log('BookingOrderStore', BookingOrderStore)
 const createSnackbar = useSnackbar()
-const modules = [Pagination, Navigation, HashNavigation, History]
+// ● 將 swiper 需要啟用的 modules 放入陣列，與上方 <swiper> 標籤內的 :modules 綁定，意思是啟用這些模組功能
+const modules = [Pagination, Navigation, HashNavigation]
+
 
 
 definePage({
