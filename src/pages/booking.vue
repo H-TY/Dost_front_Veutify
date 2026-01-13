@@ -11,7 +11,7 @@
       }" :breakpoints="{
         0: { slidesPerView: 1 },      // 小於 sm
         576: { slidesPerView: 'auto' } // sm 以上
-      }" :modules="modules" @slideChangeTransitionEnd="onHashChange">
+      }" :modules="modules" @swiper="onSwiper" @slideChangeTransitionEnd="onHashChange">
         <swiper-slide v-for="item in items" :data-hash="`/booking#${item._id}`">
           <!-- ● components/dogCard.vue 元件 -->
           <DogsCard v-bind="item"></DogsCard>
@@ -19,59 +19,71 @@
       </swiper>
 
       <!-- ● 預約資訊 -->
-      <v-row>
+      <v-row class="booking-area">
         <!-- 日期選擇 -->
-        <v-col class="d-flex flex-wrap justify-center" cols="12" sm="6">
-          <v-date-picker width="400" color="primary" v-model="date" show-adjacent-months :allowed-dates="allowedSelectDate" @click="dialogOpen($event)">
+        <v-col md="6">
+          <v-date-picker v-model="date" @click="dialogOpen($event)" :allowed-dates="allowedSelectDate">
           </v-date-picker>
+
+          <div class="notice">
+            <v-icon icon="mdi-message-alert"></v-icon>
+            <p>當天日期無法預約，若有需求，請來電洽詢，謝謝！</p>
+          </div>
 
           <!-- 點擊日期，跳出視窗選擇預約時段 -->
           <v-dialog v-model="dialog">
-            <v-form>
-              <v-sheet class="bg-white d-flex flex-column text-center justify-self-center align-self-center pa-7" width="350" height="240">
-                <h3>可預約時段</h3>
-                <v-divider class=" my-4"></v-divider>
-                <v-checkbox class="d-flex justify-center" v-model="selectedTime" v-for="el in Dinfo.bookingTime.join(' ').split(',').sort((a, b) => parseInt(a) - parseInt(b))" :label="el" :value="el" false-icon="mdi-paw-outline" true-icon="mdi-paw"></v-checkbox>
-                <v-sheet class="dialogClosePosition rounded-circle bg-transparent d-flex">
-                  <v-btn class="rounded-circle d-flex pa-0 bg-white opacity-100" min-width="60" min-height="60" variant="plain" @click="dialogClose" flat>
-                    <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" size="48" color="red-darken-4" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickmouseToggleOff"></v-icon>
-                  </v-btn>
-                </v-sheet>
-              </v-sheet>
-            </v-form>
-          </v-dialog>
+            <div class="dogBooking-dialog-txt">
+              <h4>可預約時段</h4>
 
-          <v-sheet class="bg-transparent d-flex align-center" :class="mobile ? 'mt-5' : ''"><v-icon icon="mdi-message-alert" class="me-1" color="orange-darken-2"></v-icon>當天日期無法預約，若有需求，請來電洽詢，謝謝！</v-sheet>
+              <v-divider></v-divider>
+
+              <v-checkbox hide-details v-model="selectedTime" v-for="el in Dinfo.bookingTime.join(' ').split(',').sort((a, b) => parseInt(a) - parseInt(b))" :label="el" :value="el" false-icon="mdi-paw-outline" true-icon="mdi-paw"></v-checkbox>
+
+              <div class="dialog-close">
+                <v-btn class="rounded-circle d-flex pa-0 bg-white opacity-100" min-width="60" min-height="60" variant="plain" @click="dialogClose" flat>
+                  <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" size="48" color="red-darken-4" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickmouseToggleOff"></v-icon>
+                </v-btn>
+              </div>
+            </div>
+          </v-dialog>
         </v-col>
 
         <!-- ● 預約表單填寫 -->
-        <v-col class="d-flex justify-center" :class="mobile ? 'my-4' : ''">
-          <v-form class="w-90" cols="12" sm="6" @submit.prevent="submit" :disabled="isSubmitting">
+        <v-col md="6">
+          <v-form class="booking-form" @submit.prevent="submit" :disabled="isSubmitting">
+
             <v-text-field label="預約人姓名" :class="addClass" v-model="name.value.value" :error-messages="name.errorMessage.value"></v-text-field>
+
             <v-text-field label="預約人電話" :class="addClass" v-model="phone.value.value" :error-messages="phone.errorMessage.value"></v-text-field>
-            <v-row>
-              <v-col cols=4 class="pa-0 ps-3">
-                <v-sheet class="bg-transparent my-2" elevation="2" rounded>
-                  <v-img :src="dogImg" height="70" cover></v-img>
-                </v-sheet>
+
+            <div class="d-flex flex-row justify-center align-center pb-6">
+              <v-col class="pa-0">
+                <img style=" height: 70px;" :src="dogImg"></img>
               </v-col>
-              <v-col>
-                <v-text-field readonly>預約狗狗：
-                  <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ Dinfo.dogName }}</v-sheet></v-text-field>
+              <v-col class="py-0">
+                <div class="d-flex flex-row justify-center align-baseline">
+                  <p>預約狗狗：</p>
+                  <h6>{{ Dinfo.dogName }}</h6>
+                </div>
               </v-col>
-            </v-row>
+            </div>
+
             <v-text-field readonly>預約日期：
-              <v-sheet class="text-h6 font-weight-bold bg-transparent">{{ dateForm }}</v-sheet>
+              <div class="text-h6 font-weight-bold bg-transparent">{{ dateForm }}</div>
             </v-text-field>
+
             <v-text-field readonly>預約時段：
               <v-list class="my-0 pa-0 bg-transparent" :items="selectedTime.sort((a, b) => parseInt(a) - parseInt(b))"></v-list>
             </v-text-field>
+
             <v-text-field readonly>預約總時數：
-              <v-sheet class="text-h5 font-weight-bold bg-transparent">{{ totalBTime }}</v-sheet>&nbsp小時
+              <div class="text-h5 font-weight-bold bg-transparent">{{ totalBTime }}</div>&nbsp小時
             </v-text-field>
+
             <v-text-field readonly>總計金額：
-              <v-sheet class="text-h5 font-weight-bold bg-transparent">{{ Total }}</v-sheet>&nbsp元
+              <div class="text-h5 font-weight-bold bg-transparent">{{ Total }}</div>&nbsp元
             </v-text-field>
+
             <v-btn class="w-40 mt-5" type="submit" color="green" :loading="isSubmitting">送出預約</v-btn>
           </v-form>
         </v-col>
@@ -161,10 +173,15 @@ const allowedSelectDate = (date) => {
 
 // ● 將全部狗狗資訊匯入上方的 Swiper 元件
 const items = ref([])
+// console.log('items', items.value)
+
 const loadItems = async () => {
   try {
     const { data } = await backApi.get('/dogs')
     items.value.splice(0, items.value.length, ...data.result.data)
+
+    // 確保 items.value 有值之後再執行 reSwiper()，讓後續 swiper 移動至指定的圖片
+    reSwiper()
 
   } catch (error) {
     console.log(error)
@@ -178,8 +195,104 @@ const loadItems = async () => {
 }
 loadItems()
 
+// ● dogSwiper 滑動圖片至指定位置
+// 把 Swiper 內部的實例（instance）存起來，讓你之後可以用 JS 控制 Swiper；以下物件就是 Swiper instance。
+// swiper = {
+// slideTo(),
+// slideNext(),
+// slidePrev(),
+// activeIndex,
+// slides,
+// update(),
+// ... }
+// swiperInstance 用來後續存放「Swiper 建好之後的 instance」
+const swiperInstance = ref(null)
 
-// ● 動態指定 id 的狗狗訊息
+// swiper 來自 <swiper @swiper="onSwiper">，當 Swiper 初始化完成時：Swiper 內部呼叫，把 instance 當參數丟入 onSwiper 函式
+function onSwiper(swiper) {
+  swiperInstance.value = swiper
+}
+
+// ● 用來判斷是否是從 "帥氣狗狗" 頁面點擊過來的（若是，會提供 id 值）
+// 取得目前網址的 query.id
+const currentID = route.query.id
+// console.log('currentID:', currentID)
+
+// function reSwiper() {
+
+//   // 判斷 route.query.id 是否存在
+//   if (!currentID) return
+
+//   // findIndex 從 items 陣列中，找到與 currentID 相符的 id，最終回傳 index 索引值
+//   const moveToIndex = items.value.findIndex(item => item._id === currentID)
+//   // console.log('moveToIndex:', moveToIndex)
+
+//   if (moveToIndex === -1) return
+
+//   // .slideTo(index, speed?, runCallbacks?)
+//   // - index：第幾張 slide（從 0 開始）
+//   // - speed：動畫時間（ms）
+//   // - runCallbacks：是否觸發事件（預設 true），觸發的事件包括：
+//   //                 ．slideChange
+//   //                 ．slideChangeTransitionStart
+//   //                 ．slideChangeTransitionEnd
+//   //                 ．transitionStart
+//   //                 ．transitionEnd
+//   swiperInstance.value.slideTo(moveToIndex, 0, false)
+
+//   loadDinfo(currentID)
+
+// }
+
+function reSwiper() {
+
+  if (currentID) {
+    // 判斷 route.query.id 是否存在
+    if (!currentID) return
+
+    // findIndex 從 items 陣列中，找到與 currentID 相符的 id，最終回傳 index 索引值
+    const moveToIndex = items.value.findIndex(item => item._id === currentID)
+    // console.log('moveToIndex:', moveToIndex)
+
+    if (moveToIndex === -1) return
+
+    // .slideTo(index, speed?, runCallbacks?)
+    // - index：第幾張 slide（從 0 開始）
+    // - speed：動畫時間（ms）
+    // - runCallbacks：是否觸發事件（預設 true），觸發的事件包括：
+    //                 ．slideChange
+    //                 ．slideChangeTransitionStart
+    //                 ．slideChangeTransitionEnd
+    //                 ．transitionStart
+    //                 ．transitionEnd
+    swiperInstance.value.slideTo(moveToIndex, 0, false)
+
+    loadDinfo(currentID)
+
+  } else {
+    initSwiperHash()
+  }
+}
+
+// ● 當前頁面刷新或是從非 "帥氣狗狗" 頁面進入此頁面時，載入當前預設的資料
+function initSwiperHash() {
+  const initHash = items.value[0]?._id
+  // console.log('initHash:', initHash)
+
+  loadDinfo(initHash)
+}
+
+
+
+// ● Swiper 事件 @slideChangeTransitionEnd 當滑動動畫結束時觸發函式 onHashChange
+const onHashChange = () => {
+  const changeHash = window.location.hash.split('#')[2]
+  // console.log('changeHash:', changeHash)
+  loadDinfo(changeHash)
+}
+
+
+// ● 指定 id 的狗狗訊息
 const Dinfo = ref({
   _id: '',
   image: '',
@@ -199,72 +312,39 @@ const dogImg = computed(() => {
 })
 
 
-// 路徑解析查询参数中的 id
-// console.log(route.query.id)
-
-// 定義網址上的 hash 變數
-const urlHash = ref(null)
-
 // 監聽 hash 的變化
 // 如果有變化，清空選擇的日期和時段
-watch(urlHash, (newId, oldId) => {
-  // console.log('哈希newId:', newId, '哈希oldId:', oldId)
-  if (newId !== oldId) {
-    return selectedTime.value = [],
-      date.value = null,
-      image.value.value = Dinfo.value.image
-  }
-})
+// watch(urlHash, (newId, oldId) => {
+//   console.log('哈希newId:', newId, '哈希oldId:', oldId)
 
-// 更新成當前頁面的 hash 值
-const reHash = () => {
-  if (route.query.id) {
-    // 讀取從"帥氣狗狗"頁面點擊過來的 id
-    urlHash.value = route.query.id
-    // 滑動至指定的 hash 圖片
-    window.location.hash = `booking#${route.query.id}`
-    // 將原本的 route.query.id 賦值空字串，避免影響後續的 Swiper 滑動圖片時 hash 值的更新
-    route.query.id = ''
-  } else {
-    urlHash.value = window.location.hash.substring(10)
-  }
-}
-
-// 事件 @slideChangeTransitionEnd 當滑動動畫結束時觸發函式 onHashChange
-const onHashChange = () => {
-  reHash()
-  loadDinfo()
-}
-
-
-// onMounted(()=>{}) 用來執行在組件首次渲染（DOM 元素掛載）完成後的操作。
-// 無論你將 onMounted 放在 <script setup> 的哪個位置，都會在組件掛載完成後自動執行。
-// ● 使用時機：
-// 初始化數據：從 API 或服務器請求數據。
-// 設置事件監聽器：比如監聽瀏覽器事件、窗口大小改變等。
-// 操作 DOM：比如設置焦點、滾動事件、第三方庫初始化等。
-onMounted(() => {
-  // 因在進入頁面時會自動跳轉至當前 Swiper 圖片的 hash 值，同時網址也會添加上 hash 值
-  // 但初次渲染時無 hash 值，故會是預設值 null
-  // 為了正確抓到跳轉後網址的 hash 值，延遲 500 毫秒觸發函式抓取 hash 值
-  setTimeout(() => {
-    reHash()
-    loadDinfo()
-  }, 500)
-})
+//   if (newId !== oldId) {
+//     return loadDinfo()
+//   }
+//   // if (newId !== oldId) {
+//   //   return selectedTime.value = [],
+//   //     date.value = null,
+//   //     image.value.value = Dinfo.value.image
+//   // }
+// })
 
 
 
 // ● 回傳指定 id 的狗狗訊息
-const loadDinfo = async () => {
-  if (urlHash.value === null) return
+const loadDinfo = async (passInData) => {
+
+  // console.log('passInData:', passInData)
+
+  // 清空當前表格欄位
+  manualResetForm()
 
   try {
 
     await nextTick()
+    // console.log('有觸發')
 
     // 利用 id 只回傳某一隻狗狗的資料
-    const { data } = await backApi.get('/dogs/' + urlHash.value)
+    const { data } = await backApi.get('/dogs/' + passInData)
+    // console.log('data.result:', data.result)
 
     Dinfo.value._id = data.result._id
     Dinfo.value.image = data.result.image
@@ -287,7 +367,6 @@ const loadDinfo = async () => {
     })
   }
 }
-loadDinfo()
 
 
 
@@ -353,6 +432,13 @@ const totalBTime = computed(() => {
 const Total = computed(() => {
   return Dinfo.value.price * selectedTime.value.length
 })
+
+
+// 手動清除的表格欄位
+function manualResetForm() {
+  date.value = null
+  selectedTime.value = []
+}
 
 // 定義預約表格
 const bookingFormSchema = yup.object({
@@ -530,8 +616,7 @@ const submit = handleSubmit(async (values) => {
     resetForm()
     // 因不是綁在表格上，故 resetForm() 僅對有手動輸入表格的資料有效；其他欄位需另外手動設定重置
     // 清空選擇的日期、時段、總金額欄位
-    date.value = null
-    selectedTime.value = []
+    manualResetForm()
 
   } catch (error) {
     console.log('error', error)
@@ -555,96 +640,20 @@ const addClass = computed(() => {
 })
 // console.log(addClass)
 
-// watch 監聽響應式（ref、reactive、computed）的變化
-// watch(dateForm, (newValue, oldValue) => {
-//   console.log('newValue', typeof newValue, newValue, 'oldValue', oldValue)
-// }, { deep: true })
+
+
+
+// ● onMounted(()=>{}) 用來執行在組件首次渲染（DOM 元素掛載）完成後的操作。
+// 無論你將 onMounted 放在 <script setup> 的哪個位置，都會在組件掛載完成後自動執行。
+// * 使用時機：
+// 初始化數據：從 API 或服務器請求數據。
+// 設置事件監聽器：比如監聽瀏覽器事件、窗口大小改變等。
+// 操作 DOM：比如設置焦點、滾動事件、第三方庫初始化等。
+onMounted(async () => {
+  await nextTick();
+
+  // requestAnimationFrame(() => {
+  // })
+})
 
 </script>
-
-
-
-<style scoped>
-/* 狗狗簡述資訊卡片 Swiper_Centered auto 的樣式 */
-.swiper {
-  width: 100%;
-  height: 100%;
-}
-
-.swiper-slide {
-  text-align: center;
-  font-size: 18px;
-  background: #fff;
-
-  /* Center slide text vertically */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.swiper-slide img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.swiper-slide {
-  width: 50%;
-}
-
-::v-deep .swiper-pagination {
-  position: initial;
-  margin-top: 30px;
-}
-
-/* 將上下頁滑動按鈕面積加大 */
-::v-deep .swiper-button-prev {
-  width: calc(var(--swiper-navigation-size) / 44* 100);
-  height: inherit;
-  top: 0;
-  left: 0;
-}
-
-::v-deep .swiper-button-next {
-  width: calc(var(--swiper-navigation-size) / 44* 100);
-  height: inherit;
-  top: 0;
-  right: 0;
-}
-
-/* --- 分隔線 --- */
-/* 在彈窗選擇時段物件添加關閉安鈕的 class 設定 */
-.dialogClosePosition {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-
-/* --- 分隔線 --- */
-/* 在預約表格上添加自定義的 class */
-.myClass {
-  color: #424242;
-}
-
-/* 
-  1. 因為想選擇的 class（.v-field__input） 其他的欄位也有，但只需要修改指定的欄位
-  2. 故先添加自定義的 myClass 到指定的物件標籤裡，方便後續指定某一個標籤修改樣式
-  3. 在指定選擇 .myClass .v-field__input 做樣式的修改，如下所示
-*/
-::v-deep .myClass .v-field__input {
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-::v-deep .v-list-item-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-::v-deep .v-list-item--density-default:not(.v-list-item--nav).v-list-item--one-line {
-  padding: 0;
-}
-</style>

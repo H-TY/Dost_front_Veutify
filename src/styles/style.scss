@@ -10,6 +10,49 @@ body {
 	.v-application {
 		color: $text;
 	}
+
+	// v-dialog 彈窗樣式設定
+	.v-overlay-container {
+		.v-dialog {
+			.v-overlay__content {
+				width: fit-content;
+
+				.dogBooking-dialog-txt {
+					min-width: 360px;
+					background: white;
+					border-radius: 10px;
+					padding: 2rem;
+					padding-bottom: 2.7rem;
+					margin: auto;
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+
+					.v-input {
+						.v-icon {
+							color: rgba($gtext, 0.8);
+						}
+
+						.v-label {
+							font-size: calc(1.1rem + 0.2vw);
+							font-weight: 400;
+						}
+					}
+
+					.dialog-close {
+						color: $btnRed;
+						background: white;
+						border-radius: 50%;
+						position: absolute;
+						top: 100%;
+						left: 50%;
+						transform: translate(-50%, -50%);
+					}
+				}
+			}
+		}
+	}
 }
 
 // ● 導覽列 header / navbar
@@ -1537,73 +1580,164 @@ body {
 		}
 
 		.dogSwiper {
-			padding-bottom: 100px;
-		}
-
-		.card {
 			width: 100%;
-			height: 60vh;
-			border-radius: 10px;
-			padding: 0;
-			position: relative;
-			overflow: hidden;
-			box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+			height: 100%;
+			padding-bottom: 100px;
 
-			@include rsp-down(sm) {
-				height: 55vh;
+			.swiper-slide {
+				width: 50%;
 			}
 
-			.card-img {
-				display: block;
-				width: 100%;
-				height: 100%;
+			// 將上下頁滑動按鈕面積加大
+			.swiper-button-prev,
+			.swiper-button-next {
+				color: $btnLBlue;
+				width: calc(var(--swiper-navigation-size) / 0.6);
+				height: inherit;
+				top: 0;
+				left: 0;
 			}
 
-			.card-txt-box {
+			.swiper-button-next {
+				left: unset;
+				right: 0;
+			}
+
+			.swiper-pagination {
+				position: initial;
+				margin-top: 30px;
+			}
+
+			.card {
 				width: 100%;
-				height: fit-content;
-				background: rgba($thirdColor, 0.8);
-				border-radius: 0 0 10px 10px;
-				padding: 1.1rem;
-				display: flex;
-				row-gap: 0.5rem;
-				flex-direction: column;
-				justify-content: center;
-				position: absolute;
-				bottom: 0;
+				height: 60vh;
+				border-radius: 10px;
+				padding: 0;
+				position: relative;
+				overflow: hidden;
+				box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 
-				p {
-					color: $gtext;
-					text-align: start;
-
-					span {
-						color: $text;
-						font-weight: 400;
-					}
+				@include rsp-down(sm) {
+					height: 55vh;
 				}
 
-				.name-age-box,
-				.price-booking-box {
-					display: flex;
-					flex-direction: row;
-					justify-content: space-between;
-					align-items: center;
+				.card-img {
+					display: block;
+					width: 100%;
+					height: 100%;
+				}
 
-					.v-divider {
-						margin: 0 8px;
-					}
+				.card-txt-box {
+					width: 100%;
+					height: fit-content;
+					background: rgba($thirdColor, 0.8);
+					border-radius: 0 0 10px 10px;
+					padding: 1.1rem;
+					display: flex;
+					row-gap: 0.5rem;
+					flex-direction: column;
+					justify-content: center;
+					position: absolute;
+					bottom: 0;
 
 					p {
 						color: $gtext;
-						white-space: nowrap;
+						text-align: start;
 
 						span {
-							font-size: calc(1.2rem + 0.2vw);
-							font-weight: 500;
 							color: $text;
-							padding-right: 4px;
+							font-weight: 400;
 						}
 					}
+
+					.name-age-box,
+					.price-booking-box {
+						display: flex;
+						flex-direction: row;
+						justify-content: space-between;
+						align-items: center;
+
+						.v-divider {
+							margin: 0 8px;
+						}
+
+						p {
+							color: $gtext;
+							white-space: nowrap;
+
+							span {
+								font-size: calc(1.2rem + 0.2vw);
+								font-weight: 500;
+								color: $text;
+								padding-right: 4px;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		.booking-area {
+			@include rsp-down(sm) {
+				flex-direction: column;
+			}
+
+			.v-col {
+				@include rsp-up(lg) {
+					padding: calc(1rem + 1.5vw);
+				}
+			}
+
+			// 日期選取器樣式
+			.v-picker {
+				width: 100%;
+				border: 1px solid rgba(darken($secColor, 20%), 0.4);
+				padding: 1rem;
+
+				.v-picker-title,
+				.v-picker__header {
+					background: rgba($secColor, 1);
+				}
+
+				.v-picker__body {
+					.v-date-picker-controls {
+						padding: 20px 0.5rem;
+					}
+
+					.v-date-picker-month__day {
+						// 當天日期圈選樣式
+						.v-btn--variant-outlined {
+							border: 2px dotted rgba($gtext, 0.6);
+						}
+					}
+
+					// 選中日期樣式
+					.v-date-picker-month__day--selected {
+						.v-btn {
+							color: rgba($thirdColor, 1);
+							background: rgba($secColor, 1);
+						}
+					}
+				}
+			}
+
+			.notice {
+				display: flex;
+				gap: 8px;
+				flex-direction: row;
+				justify-content: center;
+				align-items: start;
+				margin-top: 30px;
+
+				.v-icon {
+					margin-top: 2px;
+				}
+			}
+
+			// 預約表單樣式
+			.booking-form {
+				@include rsp-down(sm) {
+					margin-top: 50px;
 				}
 			}
 		}
@@ -1619,7 +1753,6 @@ footer {
 	.v-divider {
 		border-color: $thirdColor;
 		opacity: 0.2;
-		margin: 24px 0;
 	}
 
 	.v-btn--variant-plain {
