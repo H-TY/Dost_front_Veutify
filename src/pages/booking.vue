@@ -81,10 +81,10 @@
               </div> -->
 
               <!-- mobile 預約日期 -->
-              <v-text-field :label="chooseDateTitle" disabled variant="underlined" @click="dialogOpen" v-model="bookingDate.value.value" :error-messages="bookingDate.errorMessage.value"></v-text-field>
+              <v-text-field :label="chooseDateTitle" readonly variant="underlined" @click="dialogOpen" v-model="bookingDate.value.value" :error-messages="bookingDate.errorMessage.value"></v-text-field>
 
               <!-- mobile 預約時段 -->
-              <v-textarea label="預約時段" disabled textarea auto-grow rows="1" variant="underlined" :model-value="bookingTimeText" @click="dialogOpen($event, '預約時段')"></v-textarea>
+              <v-textarea label="預約時段" readonly textarea auto-grow rows="1" variant="underlined" :model-value="bookingTimeText" @click="dialogOpen($event, '預約時段')"></v-textarea>
             </template>
 
             <template v-else>
