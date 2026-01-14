@@ -16,9 +16,45 @@ body {
 		.v-dialog {
 			.v-overlay__content {
 				width: fit-content;
+				margin: auto;
 
-				.dogBooking-dialog-txt {
-					min-width: 360px;
+				// 日期選取器彈窗
+				.v-picker {
+					width: 100%;
+					background: white !important;
+					border: 1px solid rgba(darken($secColor, 20%), 0.4);
+					padding: 1rem;
+
+					.v-picker-title,
+					.v-picker__header {
+						background: rgba($secColor, 1);
+					}
+
+					.v-picker__body {
+						.v-date-picker-controls {
+							padding: 20px 0.5rem;
+						}
+
+						.v-date-picker-month__day {
+							// 當天日期圈選樣式
+							.v-btn--variant-outlined {
+								border: 2px dotted rgba($gtext, 0.6);
+							}
+						}
+
+						// 選中日期樣式
+						.v-date-picker-month__day--selected {
+							.v-btn {
+								color: rgba($thirdColor, 1);
+								background: rgba($secColor, 1);
+							}
+						}
+					}
+				}
+
+				// 選擇時段彈窗
+				.choose-time-dialog-txt {
+					min-width: calc(320px + 1.5vw);
 					background: white;
 					border-radius: 10px;
 					padding: 2rem;
@@ -30,7 +66,7 @@ body {
 					align-items: center;
 
 					.v-input {
-						.v-icon {
+						i {
 							color: rgba($gtext, 0.8);
 						}
 
@@ -39,15 +75,24 @@ body {
 							font-weight: 400;
 						}
 					}
+				}
 
-					.dialog-close {
-						color: $btnRed;
-						background: white;
-						border-radius: 50%;
-						position: absolute;
-						top: 100%;
-						left: 50%;
-						transform: translate(-50%, -50%);
+				.dialog-close {
+					color: $btnRed;
+					background: white;
+					border-radius: 50%;
+					position: absolute;
+					top: 100%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+
+					.v-btn {
+						width: 60px;
+						height: 60px;
+
+						i {
+							font-size: calc(44px + 0.4vw);
+						}
 					}
 				}
 			}
@@ -1691,6 +1736,7 @@ body {
 			// 日期選取器樣式
 			.v-picker {
 				width: 100%;
+				background: white;
 				border: 1px solid rgba(darken($secColor, 20%), 0.4);
 				padding: 1rem;
 
@@ -1729,15 +1775,58 @@ body {
 				align-items: start;
 				margin-top: 30px;
 
-				.v-icon {
+				i {
 					margin-top: 2px;
 				}
 			}
 
 			// 預約表單樣式
 			.booking-form {
+				@include rsp-down(md) {
+					padding: 0 calc(1rem + 0.5vw);
+				}
+
 				@include rsp-down(sm) {
 					margin-top: 50px;
+				}
+
+				.box {
+					display: flex;
+					gap: 1rem;
+					flex-direction: row;
+					justify-content: center;
+					align-items: center;
+
+					.v-col {
+						padding: 0;
+
+						&:nth-child(1) {
+							flex-grow: 0;
+							white-space: nowrap;
+						}
+					}
+
+					img {
+						height: calc(100px + 0.5vw);
+						padding-left: 1rem;
+					}
+				}
+
+				.v-text-field {
+					.v-field__input {
+						font-size: calc(1.1rem + 0.2vw);
+						font-weight: 500;
+					}
+
+					.v-field--disabled {
+						opacity: 1;
+
+						.v-field__outline {
+							&::before {
+								border-image: unset;
+							}
+						}
+					}
 				}
 			}
 		}
