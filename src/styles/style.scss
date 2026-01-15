@@ -1627,7 +1627,7 @@ body {
 		.dogSwiper {
 			width: 100%;
 			height: 100%;
-			padding-bottom: 100px;
+			padding-bottom: calc(40px + 5vw);
 
 			.swiper-slide {
 				width: 50%;
@@ -1775,6 +1775,10 @@ body {
 				align-items: start;
 				margin-top: 30px;
 
+				@include rsp-down-excl(mobile) {
+					margin-top: unset;
+				}
+
 				i {
 					margin-top: 2px;
 				}
@@ -1827,6 +1831,16 @@ body {
 							}
 						}
 					}
+				}
+
+				// 送出表單按鈕
+				.submit-btn {
+					display: flex;
+					color: white;
+					background: $btnGreen;
+					padding: 0.5rem 1rem;
+					margin: auto;
+					margin-top: 30px;
 				}
 			}
 		}

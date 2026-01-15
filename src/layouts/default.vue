@@ -220,7 +220,7 @@ const navItems = computed(() => {
     { to: '/', text: 'Home', icon: 'mdi-home', show: user.isLogin || !user.isLogin },
     { to: '/coolDogs', text: '帥氣狗狗', icon: 'mdi-dog', show: user.isLogin || !user.isLogin },
     { to: '/booking', text: '預約時間', icon: 'mdi-calendar-clock', show: user.isLogin || !user.isLogin },
-    { to: '/test', text: '狗狗適性測驗', icon: 'mdi-dog-side', show: user.isLogin || !user.isLogin },
+    // { to: '/test', text: '狗狗適性測驗', icon: 'mdi-dog-side', show: user.isLogin || !user.isLogin },
     // { to: '/shop', text: '寵物用品', icon: 'mdi-store', show: user.isLogin || !user.isLogin },
     // { to: '/cart', text:'購物車', icon:'mdi-cart-variant', show: user.isLogin},
   ]

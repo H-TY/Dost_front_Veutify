@@ -105,7 +105,7 @@
             </v-text-field>
 
             <!-- 送出表單按鈕 -->
-            <v-btn class="w-40 mt-5" type="submit" color="green" :loading="isSubmitting">送出預約</v-btn>
+            <v-btn class="submit-btn" type="submit" :loading="isSubmitting">送出預約</v-btn>
           </v-form>
         </v-col>
       </v-row>
