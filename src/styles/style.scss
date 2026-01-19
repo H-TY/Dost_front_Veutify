@@ -77,6 +77,109 @@ body {
 					}
 				}
 
+				// 訂單資訊卡片
+				.order-info-card {
+					background: white;
+
+					.card-content {
+						display: flex;
+						flex-direction: column;
+						justify-content: center;
+						align-items: center;
+					}
+
+					.v-row {
+						margin: 0;
+					}
+
+					.v-col {
+						white-space: pre-line;
+					}
+
+					h3 {
+						letter-spacing: 2px;
+					}
+
+					.content-txt-img {
+						width: 100%;
+						display: flex;
+						flex-direction: row;
+						justify-content: center;
+						align-items: center;
+
+						@include rsp-down(mobile) {
+							flex-direction: column;
+						}
+					}
+
+					.cancel-btn {
+						width: 100px;
+						background: #616161;
+						color: white;
+					}
+				}
+
+				// 成功預約後，彈窗預約資訊
+				.order-info {
+					max-width: 600px;
+					min-width: 320px;
+					margin: auto;
+
+					.order-info-card {
+						border-radius: 10px;
+						padding: 2rem;
+						padding-bottom: 3.5rem;
+
+						@include rsp-down(mobile) {
+							padding: 1.5rem;
+							padding-bottom: 2.5rem;
+						}
+
+						// 框線設定
+						.v-row {
+							// 宣告變數
+							--border-width: 1px;
+							--border-style: solid;
+							--border-color: #{rgba($gtext, 0.3)};
+
+							border: var(--border-width) var(--border-style) var(--border-color);
+							border-bottom: unset;
+
+							&:last-of-type {
+								border-bottom: var(--border-width) var(--border-style) var(--border-color);
+							}
+
+							.v-col {
+								&:first-of-type {
+									border-right: var(--border-width) var(--border-style) var(--border-color);
+								}
+							}
+						}
+
+						.content-txt-img {
+							margin-top: calc(20px + 1.5vw);
+						}
+
+						.txt-box {
+							width: 100%;
+							align-self: stretch;
+						}
+
+						.img-box {
+							width: 100%;
+							align-self: stretch;
+							padding-left: 0.5rem;
+							// overflow: hidden;
+
+							@include rsp-down(mobile) {
+								height: 200px;
+								padding: unset;
+								padding-top: 1.2rem;
+							}
+						}
+					}
+				}
+
 				.dialog-close {
 					color: $btnRed;
 					background: white;
@@ -299,7 +402,9 @@ body {
 
 			&.v-btn--active {
 				.v-btn__content {
-					text-shadow: 1.5px 1.5px 0px $mainColor, 3px 3px 1px rgba($mainColor, 0.2);
+					text-shadow:
+						1.5px 1.5px 0px $mainColor,
+						3px 3px 1px rgba($mainColor, 0.2);
 					z-index: 0;
 				}
 
@@ -1786,6 +1891,12 @@ body {
 
 			// 預約表單樣式
 			.booking-form {
+				// display: flex;
+				// flex-direction: column;
+				// justify-content: center;
+				// align-items: center;
+				// row-gap: 1rem;
+
 				@include rsp-down(md) {
 					padding: 0 calc(1rem + 0.5vw);
 				}
@@ -1795,6 +1906,7 @@ body {
 				}
 
 				.box {
+					width: 100%;
 					display: flex;
 					gap: 1rem;
 					flex-direction: row;
@@ -1817,6 +1929,11 @@ body {
 				}
 
 				.v-text-field {
+					width: 100%;
+
+					// 變數宣告
+					--message-red: #{darken($btnRed, 20%)};
+
 					.v-field__input {
 						font-size: calc(1.1rem + 0.2vw);
 						font-weight: 500;
@@ -1825,10 +1942,25 @@ body {
 					.v-field--disabled {
 						opacity: 1;
 
+						&.v-field--error {
+							.v-field-label {
+								color: var(--message-red) !important;
+							}
+						}
+
 						.v-field__outline {
 							&::before {
 								border-image: unset;
 							}
+						}
+					}
+
+					.v-input__details {
+						opacity: 0.7;
+
+						.v-messages {
+							// color: var(--message-red) !important;
+							color: $gtext;
 						}
 					}
 				}

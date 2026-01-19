@@ -28,11 +28,7 @@
               <v-date-picker v-model="date" :allowed-dates="allowedSelectDate">
               </v-date-picker>
 
-              <div class="dialog-close">
-                <v-btn @click="dialogClose">
-                  <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickmouseToggleOff"></v-icon>
-                </v-btn>
-              </div>
+              <dialogCloseBtn dialogName="dataDialog" @close="dialogClose"></dialogCloseBtn>
             </v-dialog>
           </template>
 
@@ -75,37 +71,37 @@
                 </v-col>
                 <v-col>
                   <v-text-field @click="dialogOpen">
-                    {{ dateForm }}
+                    {{ chooseBDate }}
                   </v-text-field>
                 </v-col>
               </div> -->
 
               <!-- mobile 預約日期 -->
-              <v-text-field :label="chooseDateTitle" readonly variant="underlined" @click="dialogOpen" v-model="bookingDate.value.value" :error-messages="bookingDate.errorMessage.value"></v-text-field>
+              <v-text-field :label="chooseDateTitle" readonly variant="underlined" @click="dialogOpen($event, '預約日期')" :model-value="chooseBDate" :error-messages="bookingDate.errorMessage.value"></v-text-field>
 
               <!-- mobile 預約時段 -->
-              <v-textarea label="預約時段" readonly textarea auto-grow rows="1" variant="underlined" :model-value="bookingTimeText" @click="dialogOpen($event, '預約時段')"></v-textarea>
+              <v-textarea label="預約時段" readonly textarea auto-grow rows="1" variant="underlined" :model-value="BTimeTxt" :error-messages="bookingTime.errorMessage.value" @click="dialogOpen($event, '預約時段')"></v-textarea>
             </template>
 
             <template v-else>
               <!-- 預約日期 -->
-              <v-text-field :label="chooseDateTitle" disabled variant="underlined" v-model="bookingDate.value.value" :error-messages="bookingDate.errorMessage.value"></v-text-field>
+              <v-text-field :label="chooseDateTitle" disabled variant="underlined" :model-value="chooseBDate" :error-messages="bookingDate.errorMessage.value"></v-text-field>
 
               <!-- 預約時段 -->
-              <v-textarea label="預約時段" disabled textarea auto-grow rows="1" variant="underlined" :model-value="bookingTimeText"></v-textarea>
+              <v-textarea label="預約時段" disabled textarea auto-grow rows="1" variant="underlined" :model-value="BTimeTxt" :error-messages="bookingTime.errorMessage.value"></v-textarea>
             </template>
 
 
             <!-- 預約總時數 -->
-            <v-text-field label=" 預約總時數" disabled variant="underlined" :model-value="totalBookingTime.value.value">
+            <v-text-field label=" 預約總時數" disabled variant="underlined" :model-value="totalBTimeTxt" :error-messages="totalBookingTime.errorMessage.value">
             </v-text-field>
 
             <!-- 總計金額 -->
-            <v-text-field label="總計金額" disabled variant="underlined" :model-value="totalPrice.value.value">
+            <v-text-field label="總計金額" disabled variant="underlined" :model-value="totalBPriceTxt" :error-messages="totalPrice.errorMessage.value">
             </v-text-field>
 
             <!-- 送出表單按鈕 -->
-            <v-btn class="submit-btn" type="submit" :loading="isSubmitting">送出預約</v-btn>
+            <v-btn class="submit-btn" type="submit" @click="useFormUpdate" :loading="isSubmitting">送出預約</v-btn>
           </v-form>
         </v-col>
       </v-row>
@@ -119,17 +115,13 @@
 
           <v-checkbox hide-details v-model="selectedTime" v-for="el in Dinfo.bookingTime.join(' ').split(',').sort((a, b) => parseInt(a) - parseInt(b))" :label="el" :value="el" false-icon="mdi-paw-outline" true-icon="mdi-paw"></v-checkbox>
 
-          <div class="dialog-close">
-            <v-btn @click="dialogClose">
-              <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickmouseToggleOff"></v-icon>
-            </v-btn>
-          </div>
+          <dialogCloseBtn dialogName="chooseTimeDialog" @close="dialogClose"></dialogCloseBtn>
         </div>
       </v-dialog>
 
-      <!-- ● 送出訂單成功後，彈出已下單的資訊 -->
+      <!-- ● 送出訂單成功後，彈出已預約的訂單資訊 -->
       <v-dialog v-model="dialogOrderInfo">
-        <OrderInfoCard :bigTitle="'已預約資訊'" :orderInfoData="orderInfoData.infor" :orderInfoDataImg="orderInfoData.img" :dialogClose="dialogClose" :submit="submit" :isSubmitting="isSubmitting"></OrderInfoCard>
+        <OrderInfoCard class="order-info" :bigTitle="'已成功預約'" :orderInfoData="orderInfoData.infor" :orderInfoDataImg="orderInfoData.img" :dialogClose="dialogClose"></OrderInfoCard>
       </v-dialog>
     </v-container>
   </section>
@@ -148,8 +140,11 @@ import DogsCard from '@/components/dogsCard.vue'
 import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
 import OrderInfoCard from '@/components/orderInfoCard'
+import dialogCloseBtn from '@/components/dialogCloseBtn.vue'
 // 引用需要 swiper 的 modules
 import { Pagination, Navigation, HashNavigation } from 'swiper/modules'
+// 引用計算產生結果的檔案
+import { useBookingSummary } from "@/composables/calculate_area";
 
 
 
@@ -186,8 +181,12 @@ const userName = computed(() => {
 })
 
 
-// 綁定時間，讓日期和表格時間一致
-// 綁定選取的日期，並預設空字串
+
+
+
+
+
+// ● 綁定時間，讓日期和表格時間一致，並預設空字串
 const date = ref(null)
 // console.log(date.value)
 
@@ -211,15 +210,6 @@ function updateChooseDateTitle() {
 }
 
 
-// 取出日期並將日期當地化
-const dateForm = computed(() => {
-  if (date.value === null || isNaN(date.value.getTime())) {
-    return "尚未選取日期"
-  } else {
-    return date.value.toLocaleDateString()
-  }
-})
-
 // 監視彈窗的日期選擇器，確定有選擇日期後，直接關閉彈窗
 // * 比較日期物件要注意：
 //  - date 通常是 Date 物件
@@ -235,6 +225,10 @@ watch(date, (newDate, oldDate) => {
 const allowedSelectDate = (date) => {
   return date > nowDate.value
 }
+
+
+// ● 動態選取預約時段
+const selectedTime = ref([])
 
 
 // ● 將全部狗狗資訊匯入上方的 Swiper 元件
@@ -288,7 +282,7 @@ const currentID = route.query.id
 function reSwiper() {
 
   if (currentID) {
-    // 判斷 route.query.id 是否存在
+    // 判斷 route.query.id 是否存在，用來判斷是否是從 "帥氣狗狗" 頁面點擊過來的
     if (!currentID) return
 
     // findIndex 從 items 陣列中，找到與 currentID 相符的 id，最終回傳 index 索引值
@@ -311,6 +305,7 @@ function reSwiper() {
     loadDinfo(currentID)
 
   } else {
+    // 不是"帥氣狗狗" 頁面點擊過來的，執行預設
     initSwiperHash()
   }
 }
@@ -392,6 +387,20 @@ const loadDinfo = async (passInData) => {
 }
 
 
+// ● 取出各種計算結果
+const {
+  // 計算結果
+  totalBTime,
+  totalBPrice,
+
+  // 要呈現在 UI/畫面 的值
+  chooseBDate,
+  BTimeTxt,
+  totalBTimeTxt,
+  totalBPriceTxt,
+} = useBookingSummary(date, selectedTime, Dinfo)
+
+
 
 // ● 彈窗效果
 const chooseTimeDialog = ref(false) // 預設不跳出
@@ -401,16 +410,10 @@ const dataDialog = ref(false)
 // 綁定事件 @click="dialogOpen" 函式本身會預設有 e（等同於 $event），藉由 e 原生事件物件做判斷，當點取的日期數字相同時觸發彈窗事件
 // .slice(-2) 擷取文字，-2 表示從後面開始接取 2 位
 const dialogOpen = (e, passInData) => {
-  // console.log('e', e)
-  // console.log('passInData', passInData)
-  // console.log('e.target.innerText:', e.target.innerText)
-  // console.log(`dateForm.value`, dateForm.value)
-  // console.log(`dateForm.value.slice(-2).replace('/',''):`, dateForm.value.slice(-2).replace('/',''))
-  // console.log('dateForm.value.slice(-2)', dateForm.value.slice(-2))
-  if (passInData == '預約時段' || e.target.innerText == dateForm.value.slice(-2).replace('/', '')) {
-    chooseTimeDialog.value = true
-  } else {
+  if (passInData == '預約日期') {
     dataDialog.value = true
+  } else if (passInData == '預約時段' || e.target.innerText == chooseBDate.value.slice(-2).replace('/', '')) {
+    chooseTimeDialog.value = true
   }
 }
 
@@ -420,16 +423,32 @@ const orderInfoData = reactive({})
 // 已預約的訂單資訊彈窗效果預設關閉
 const dialogOrderInfo = ref(false)
 
+
 // 送出預約表單成功後，彈出已預約的訂單資訊
 const openDialogOrderInfo = () => {
   dialogOrderInfo.value = true
 }
 
 // ● 關閉彈窗
-const dialogClose = () => {
-  dataDialog.value = false
-  chooseTimeDialog.value = false
-  dialogOrderInfo.value = false
+const dialogClose = (dialogName) => {
+  // 使用 switch/case value 會先跳到最符合的條件開始判斷，切記要加上 break，用來中斷後續的判斷，不然會接續跑後面程式
+  // value 必須是「單一值」（字串、數字、布林、符號等），沒辦法直接用 >, <, &&, || 等邏輯運算做匹配
+  // 優點：比較不會浪費效能去判斷其他條件
+  // 缺點：較難判斷複雜的狀況，若要判斷複雜條件，推薦用 if/else
+  switch (dialogName) {
+    case 'dataDialog':
+      dataDialog.value = false
+      break
+    case 'chooseTimeDialog':
+      chooseTimeDialog.value = false
+      break
+    case 'dialogOrderInfo':
+      dialogOrderInfo.value = false
+      break
+    default:
+      console.warn('不存在的 dialogName:', dialogName)
+    // 也可以用 console.log()
+  }
 }
 
 // 個別關閉彈窗
@@ -447,55 +466,20 @@ const dialogClose = () => {
 //   }
 // }
 
-// ● 用滑鼠滑入、滑出，觸發改變圖示。
-// * 滑鼠事件：
-// mouseenter：當滑鼠進入元素時觸發（不冒泡，滑鼠在父元素也不會觸發事件）。
-// mouseleave：當滑鼠離開元素時觸發（不冒泡）。
-// mouseover：當滑鼠移動到元素上方時觸發（冒泡，滑鼠在父元素也會觸發事件）。
-// mouseout：當滑鼠移動離開元素上方時觸發（冒泡）
-const mouseToggle = ref(false)
-
-const mouseoverHandle = () => {
-  mouseToggle.value = !mouseToggle.value
-}
-
-const clickmouseToggleOff = () => {
-  mouseToggle.value = false
-}
 
 
-// ● 動態選取預約時段
-const selectedTime = ref([])
 
-const bookingTimeText = computed(() => {
-  const val = selectedTime.value
-
-  if (val.length > 1) {
-    // 加入換行符號
-    return val.join('\n')
-  } else {
-    return selectedTime.value
-  }
-})
-
-// ● 預約總時數計算
-const totalBTime = computed(() => {
-  return `${selectedTime.value.length * 2} 小時`;
-})
-
-// ● 計算總金額
-const Total = computed(() => {
-  return `${Dinfo.value.price * selectedTime.value.length} 元`;
-})
-
-
-// 手動清除的表格欄位
+// ● 手動清除的表格欄位
+// 因日期選取和時段選取欄位並沒有與 useForm 雙向綁定資料，故需要手動清除
+// 因根據日期、時段做計算，總時數、總金額欄位會自動歸 0
 function manualResetForm() {
   date.value = null
   selectedTime.value = []
 }
 
-// 定義預約表格
+
+
+// ● 定義預約表格
 const bookingFormSchema = yup.object({
   name: yup
     .string()
@@ -511,17 +495,18 @@ const bookingFormSchema = yup.object({
     .required('預約日期必填'),
   bookingTime: yup
     .array()
-    .required('預約時段必填'),
+    .required('預約時段必填')
+    .min(1, '預約時段必填'), // 至少要有 1 個元素
   totalBookingTime: yup
     .number()
     .required('預約總時數必填')
     .typeError('預約總時數格式錯誤')
-    .min(0, '預約總時數不能小於 0'),
+    .min(1, '預約總時數不能小於 1'),
   totalPrice: yup
     .number()
     .required('預約總金額必填')
     .typeError('預約總金額格式錯誤')
-    .min(0, '預約總金額不能小於 0'),
+    .min(1, '預約總金額不能小於 1'),
   accountName: yup
     .string()
     .required('帳戶名稱必填'),
@@ -542,7 +527,7 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
     bookingTime: [],
     totalBookingTime: 0,
     totalPrice: 0,
-    accountName: '',
+    accountName: userName.value,
     orderStatus: true,
   }
 })
@@ -559,53 +544,25 @@ const accountName = useField('accountName')
 const orderStatus = useField('orderStatus')
 
 
+// ● 點擊發送按鈕，觸發將輸入表單的資料更新至要發送表單資料內
+// name, phone 綁定雙向資料（v-model），只要使用者輸入就會即時更新，故不用在點擊發送按鈕時，再更新一次
+function useFormUpdate() {
+  image.value.value = Dinfo.value.image;
+  dogName.value.value = Dinfo.value.dogName;
+  bookingDate.value.value = chooseBDate.value;
+  bookingTime.value.value = selectedTime.value;
+  totalBookingTime.value.value = totalBTime.value;
+  totalPrice.value.value = totalBPrice.value;
+}
 
-
-// 監聽綁定使用者和狗狗名字
-watch(dateForm, (newValue, oldValue) => {
-  if (newValue !== oldValue) {
-    return accountName.value.value = userName.value,
-      dogName.value.value = Dinfo.value.dogName,
-      image.value.value = Dinfo.value.image
-  }
-})
-
-
-// 監聽綁定預約時間
-// 監聽選取的日期，當選取的日期不同時，取消原選擇的預約時段，並同時傳遞更新的預約日期給裏表格(要送至後端的表格資訊)
-// 外表格的綁定不是用 v-model，而是借由此函式監聽觸發更改日期並回傳值給裏表格
-watch(dateForm, async (newValue, oldValue) => {
-  if (newValue !== oldValue) {
-    return selectedTime.value = [],
-      bookingDate.value.value = dateForm.value
-  }
-})
-
-
-// 監聽綁定預約時段
-watch(selectedTime, (newValue, oldValue) => {
-  if (newValue !== oldValue) {
-    return bookingTime.value.value = selectedTime.value.sort((a, b) => parseInt(a) - parseInt(b))
-  }
-})
-
-// 監聽綁定總計時數
-watch(totalBTime, (newValue, oldValue) => {
-  if (newValue !== oldValue) {
-    return totalBookingTime.value.value = totalBTime.value
-  }
-})
-
-// 監聽綁定總計金額
-watch(Total, (newValue, oldValue) => {
-  if (newValue !== oldValue) {
-    return totalPrice.value.value = Total.value
-  }
-})
 
 
 // ★ FormData 直接傳至後端處理會失敗，需再經過 multer 的套件解析 form-data，才能傳入後端
 const submit = handleSubmit(async (values) => {
+  // console.log('有觸發 submit')
+  // console.log('submit values', values)
+
+
   try {
     // ★ 按下送出表單按鈕時，先判斷是否為登入狀態
     // 非登入狀態，跳出需登入的提示，關閉提示後，自動轉跳至登入頁面
@@ -643,13 +600,15 @@ const submit = handleSubmit(async (values) => {
 
     // 因為要包2個東西，所以用 {} 一起包住，視為一個物件
     const resOrderInfor = {
-      infor: [{ title: '訂單編號', value: result.data.result.bookingOrderNumber },
-      { title: '預約人', value: result.data.result.accountName },
-      { title: '電話', value: result.data.result.phone },
-      { title: '預約狗狗', value: result.data.result.dogName },
-      { title: '預約日期', value: result.data.result.bookingDate },
-      // { title:'預約時段', value: result.data.result.bookingTime },
-      { title: '預約總金額', value: result.data.result.totalPrice + ' 元' }],
+      infor: [
+        { title: '訂單編號', value: result.data.result.bookingOrderNumber },
+        { title: '預約人', value: result.data.result.name },
+        { title: '電話', value: result.data.result.phone },
+        { title: '預約狗狗', value: result.data.result.dogName },
+        { title: '預約日期', value: result.data.result.bookingDate },
+        { title: '預約時段', value: result.data.result.bookingTime[0].replace(/,/g, '\n') },
+        { title: '預約總金額', value: result.data.result.totalPrice + ' 元' }
+      ],
       img: result.data.result.image
     }
 
@@ -669,8 +628,8 @@ const submit = handleSubmit(async (values) => {
     })
 
     resetForm()
-    // 因不是綁在表格上，故 resetForm() 僅對有手動輸入表格的資料有效；其他欄位需另外手動設定重置
-    // 清空選擇的日期、時段、總金額欄位
+    // 因部分欄位沒有與 useForm 雙向綁定資料（v-model），故 resetForm() 僅對有綁定的欄位有效；其他欄位需另外手動設定重置
+    // 清空選擇的日期、時段（總時數、總金額欄位會自動歸 0，因為是根據日期、時段做計算)
     manualResetForm()
 
   } catch (error) {
