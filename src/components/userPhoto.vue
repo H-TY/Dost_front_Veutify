@@ -2,9 +2,7 @@
   <v-container fluid class="pa-0 d-flex flex-column w-100 fill-height">
     <v-sheet class="bg-transparent" @click="openDialog">
       <v-img :src="userPhotoChange" class="rounded-circle" min-width="130" min-height="130" cover></v-img>
-      <v-btn 
-      class="d-flex justify-center align-center pa-0" :class="mobile ? 'mobileIconBtnPosition':'PCiconBtnPosition'"
-      flat>
+      <v-btn class="d-flex justify-center align-center pa-0" :class="mobile ? 'mobileIconBtnPosition' : 'PCiconBtnPosition'" flat>
         <v-icon icon="mdi-camera" :class="mobile ? 'mobileIconStyle' : 'PCiconStyle'"></v-icon>
       </v-btn>
     </v-sheet>
@@ -45,6 +43,7 @@ import { useForm, useField } from 'vee-validate'
 import { useUserStore } from '@/stores/user'
 import { useApi } from '@/composables/axios'
 import { useSnackbar } from 'vuetify-use-dialog'
+import multiavatar from '@multiavatar/multiavatar/esm'
 
 
 
@@ -54,8 +53,13 @@ const { apiAuth } = useApi()
 const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 
-
-
+// 隨機生成英數字
+// .random() 隨機 0（含）到 1（不含）之間的浮點數
+// .toString(radix) 可以把數字轉成指定進位的字串，36 進位使用 0–9 + a–z 這 36 個字元
+// .substring(start, end) 會擷取字串從 索引 start 到 end-1 的部分
+const randomSeed = Math.random().toString(36).substring(2, 10)
+// 根據生成的字串再生成 multiavatar 的 svg 程式碼
+let svgCode = multiavatar(randomSeed)
 
 // 宣告使用者大頭照變數
 const userPhotoChange = ref(User.image)
@@ -68,12 +72,12 @@ const fileAgent = ref(null)
 const defaultPhotoBtn = ref(false)
 
 // 恢復預設大頭照按鈕觸發點擊狀態 並 刪除目前已上傳的圖片
-const defaultPhoto = () =>{
+const defaultPhoto = () => {
   defaultPhotoBtn.value = true
   deletePhoto()
 
-    // 1 秒後，按鈕變回預設值 false
-    setTimeout(() => {
+  // 1 秒後，按鈕變回預設值 false
+  setTimeout(() => {
     defaultPhotoBtn.value = false
   }, 1000);
 }
@@ -140,14 +144,15 @@ const submit = handleSubmit(async (userEditData) => {
       userEditData.image = fileRecords.value[0].file
       // console.log('userEditData.image1', userEditData.image)
 
-    // 判斷是否按下 "恢復預設按鈕"
-    } else if (defaultPhotoBtn.value === true){
+      // 判斷是否按下 "恢復預設按鈕"
+    } else if (defaultPhotoBtn.value === true) {
       // console.log('觸發 defaultPhotoBtn')
-      userEditData.image = `https://api.multiavatar.com/${User.account}.png`
+      // multiavatar 的 svg 程式碼圖片連結
+      userEditData.image = `data:image/svg+xml;base64,${btoa(svgCode)}`
 
-    // 當 "沒有按下恢復預設按鈕" 且 "沒有上傳圖片時"，跳出提示
+      // 當 "沒有按下恢復預設按鈕" 且 "沒有上傳圖片時"，跳出提示
     } else if (defaultPhotoBtn.value === false && fileRecords.value.length < 1) {
-        createSnackbar({
+      createSnackbar({
         text: '未選擇圖片上傳',
         snackbarProps: {
           color: 'red',
@@ -214,7 +219,7 @@ const submit = handleSubmit(async (userEditData) => {
 }
 
 /* PC 版 iconBtn 定位設定 */
-.PCiconBtnPosition{
+.PCiconBtnPosition {
   position: absolute;
   background: transparent;
   bottom: 0;

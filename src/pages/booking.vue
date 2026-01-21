@@ -408,11 +408,26 @@ const dataDialog = ref(false)
 
 // 選取日期觸發觸發彈窗事件
 // 綁定事件 @click="dialogOpen" 函式本身會預設有 e（等同於 $event），藉由 e 原生事件物件做判斷，當點取的日期數字相同時觸發彈窗事件
-// .slice(-2) 擷取文字，-2 表示從後面開始接取 2 位
 const dialogOpen = (e, passInData) => {
+  // console.log('傳入的參數', passInData)
+  // console.log('選擇的日期', chooseBDate.value)
+  // console.log('點擊到的目標', e.target.innerText)
+
+  // 推薦使用 split() 將 年/月/日 另外拆分成 "陣列" 格式
+  // 再用 .pop() 取出陣列最後一個元素 "日" 做判斷
+  // 範例： chooseBDate.value.split('/')，輸出 ["2026", "2", "12"]，再 .pop() 輸出 "12"
+  const day = Number(chooseBDate.value.split('/').pop())
+  // console.log('取出 day', day)
+
+  // 點擊事件，利用 data-v-date 這個屬性來精準抓到點擊到的日期，這是官方 Vuetify 的格式，會在每一格日期上加上此屬性
+  // ex：<div class="v-date-picker-month__day" data-v-date="2026-02-12">
+  const clickDay = Number(e.target.closest('[data-v-date]')?.dataset.vDate.split('-').pop())
+  // console.log('clickDay', clickDay)
+
+
   if (passInData == '預約日期') {
     dataDialog.value = true
-  } else if (passInData == '預約時段' || e.target.innerText == chooseBDate.value.slice(-2).replace('/', '')) {
+  } else if (passInData == '預約時段' || clickDay === day) {
     chooseTimeDialog.value = true
   }
 }
@@ -471,7 +486,7 @@ const dialogClose = (dialogName) => {
 
 // ● 手動清除的表格欄位
 // 因日期選取和時段選取欄位並沒有與 useForm 雙向綁定資料，故需要手動清除
-// 因根據日期、時段做計算，總時數、總金額欄位會自動歸 0
+// 根據日期、時段做計算，總時數、總金額欄位會自動更新歸 0，故不需要再另外手動設定清除
 function manualResetForm() {
   date.value = null
   selectedTime.value = []
@@ -629,7 +644,7 @@ const submit = handleSubmit(async (values) => {
 
     resetForm()
     // 因部分欄位沒有與 useForm 雙向綁定資料（v-model），故 resetForm() 僅對有綁定的欄位有效；其他欄位需另外手動設定重置
-    // 清空選擇的日期、時段（總時數、總金額欄位會自動歸 0，因為是根據日期、時段做計算)
+    // 清空選擇的日期、時段（因總時數、總金額欄位會根據日期、時段自動做計算，故會自動更新歸 0)
     manualResetForm()
 
   } catch (error) {

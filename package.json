@@ -10,6 +10,7 @@
   "dependencies": {
     "@boindil/vue-file-agent-next": "^1.0.5",
     "@mdi/font": "7.4.47",
+    "@multiavatar/multiavatar": "^1.0.7",
     "axios": "^1.7.3",
     "core-js": "^3.37.1",
     "gsap": "^3.14.2",

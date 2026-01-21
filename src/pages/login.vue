@@ -1,31 +1,40 @@
 <template>
-  <v-container class="mt-3 mb-7">
-    <v-row>
-      <v-col class="text-center" cols="12">
-        <h1 class="text-spacing1">登入</h1>
-        <h4 class="text-spacing2">與狗狗歡度快樂時刻</h4>
-      </v-col>
-      <v-divider class="py-2"></v-divider>
-      <v-col class="d-flex justify-center">
-        <!-- 
+  <section id="logo-in" class="logo-in">
+    <v-container>
+
+      <div class="title">
+        <h2>登入</h2>
+        <h6>與狗狗歡度快樂時刻</h6>
+      </div>
+
+      <v-divider></v-divider>
+
+      <!-- 
         @submit.prevent="submit" 表單不會被送出
         :disabled="isSubmitting" 表單送出中，表單不顯示 / 停用
         -->
-        <v-form class="text-center" :class="mobile ? 'w-50': 'w-40'" @submit.prevent="submit" :disabled="isSubmitting">
-          <!-- 表格內容 -->
-          <v-text-field type="account" label="帳號" minlength="4" maxlength="20" counter v-model="account.value.value" :error-messages="account.errorMessage.value"></v-text-field>
-          <v-text-field type="password" label="密碼" minlength="4" maxlength="20" counter v-model="password.value.value" :error-messages="password.errorMessage.value"></v-text-field>
-          <v-sheet class="bg-transparent text-body-2 mb-5">
-            尚未加入會員？點擊 <router-link class="text-subtitle-1 font-weight-black text-decoration-none text-blue" :to="{ path: '/register' }">註冊</router-link> 會員
-          </v-sheet>
-          <!-- 送出按鈕 -->
-          <!-- :loading="isSubmitting" 表單送出後，按鈕會顯示轉圈 loading 的樣子 -->
-          <v-btn class="w-25" type="submit" color="green" :loading="isSubmitting">登入</v-btn>
-        </v-form>
-      </v-col>
-    </v-row>
-  </v-container>
+      <v-form @submit.prevent="submit" :disabled="isSubmitting">
+        <!-- 表格內容 -->
+        <v-text-field type="account" label="帳號" minlength="4" maxlength="20" counter variant="underlined" v-model="account.value.value" :error-messages="account.errorMessage.value"></v-text-field>
 
+        <v-text-field type="password" label="密碼" minlength="4" maxlength="20" counter variant="underlined" v-model="password.value.value" :error-messages="password.errorMessage.value"></v-text-field>
+
+        <div class="notice">
+          <p>
+            尚未加入會員？
+            <br>
+            點擊
+            <router-link :to="{ path: '/register' }">註冊</router-link>
+            會員
+          </p>
+        </div>
+
+        <!-- 送出按鈕 -->
+        <!-- :loading="isSubmitting" 表單送出後，按鈕會顯示轉圈 loading 的樣子 -->
+        <v-btn type="submit" :loading="isSubmitting">登入</v-btn>
+      </v-form>
+    </v-container>
+  </section>
 </template>
 
 <script setup>
@@ -35,7 +44,6 @@ import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import validator from 'validator'
 import { useRouter } from 'vue-router'
-import { useDisplay } from 'vuetify'
 import { definePage } from 'vue-router/auto'
 // 引用 stores 資料夾內的 user.js
 import { useUserStore } from '@/stores/user'
@@ -52,7 +60,6 @@ definePage({
 
 const router = useRouter()
 const UserStore = useUserStore()
-const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 
 // 用 yup 將要驗證的資料建立成物件陣列
@@ -110,20 +117,4 @@ const submit = handleSubmit(async (formData) => {
   }
 })
 
-
 </script>
-
-<style scoped>
-/* 更改文字間距 */
-.text-spacing1 {
-  letter-spacing: 12px;
-}
-
-.text-spacing2 {
-  letter-spacing: 12px;
-}
-
-.textC {
-  text-align: center;
-}
-</style>

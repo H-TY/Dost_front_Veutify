@@ -1,33 +1,40 @@
 <template>
-  <v-container class="mt-3 mb-7">
-    <v-row>
-      <v-col class="text-center" cols="12">
-        <h1 class="text-spacing1">歡迎註冊加入</h1>
-        <h4 class="text-spacing2">享受狗狗至上的服務</h4>
-      </v-col>
-      <v-divider class="py-2"></v-divider>
-      <v-col class="d-flex justify-center">
-        <!-- 
-        @submit.prevent="submit" 表單不會被送出
-        :disabled="isSubmitting" 表單送出中，表單不顯示 / 停用
-        -->
-        <v-form class="text-center" :class="mobile ? 'w-50': 'w-40'" @submit.prevent="submit" :disabled="isSubmitting">
-          <!-- 表格內容 -->
-          <v-text-field type="account" label="帳號" minlength="4" maxlength="20" counter v-model="account.value.value" :error-messages="account.errorMessage.value"></v-text-field>
-          <v-text-field type="email" label="信箱" v-model="email.value.value" :error-messages="email.errorMessage.value"></v-text-field>
-          <v-text-field type="password" label="密碼" minlength="4" maxlength="20" counter v-model="password.value.value" :error-messages="password.errorMessage.value"></v-text-field>
-          <v-text-field type="password" label="確認密碼" minlength="4" maxlength="20" counter v-model="passwordConfirm.value.value" :error-messages="passwordConfirm.errorMessage.value"></v-text-field>
-          <v-sheet class="bg-transparent text-body-2 mb-5">
-            已加入會員？點擊 <router-link class="text-subtitle-1 font-weight-black text-decoration-none text-blue" :to="{ path: '/login' }">登入</router-link> 會員
-          </v-sheet>
-          <!-- 註冊送出按鈕 -->
-          <!-- :loading="isSubmitting" 表單送出後，按鈕會顯示轉圈 loading 的樣子 -->
-          <v-btn class="w-25" type="submit" color="green" :loading="isSubmitting">註冊</v-btn>
-        </v-form>
-      </v-col>
-    </v-row>
-  </v-container>
+  <section id="register" class="register">
+    <v-container>
 
+      <div class="title">
+        <h2>註冊會員</h2>
+        <h6>享受狗狗至上的服務</h6>
+      </div>
+
+      <v-divider></v-divider>
+
+      <v-form @submit.prevent="submit" :disabled="isSubmitting">
+        <!-- 表格內容 -->
+        <v-text-field type="account" label="帳號" minlength="4" maxlength="20" counter variant="underlined" v-model="account.value.value" :error-messages="account.errorMessage.value"></v-text-field>
+
+        <v-text-field type="email" label="信箱" variant="underlined" v-model="email.value.value" :error-messages="email.errorMessage.value"></v-text-field>
+
+        <v-text-field type="password" label="密碼" minlength="4" maxlength="20" counter variant="underlined" v-model="password.value.value" :error-messages="password.errorMessage.value"></v-text-field>
+
+        <v-text-field type="password" label="確認密碼" minlength="4" maxlength="20" counter variant="underlined" v-model="passwordConfirm.value.value" :error-messages="passwordConfirm.errorMessage.value"></v-text-field>
+
+        <div class="notice">
+          <p>
+            已加入會員？
+            <br>
+            點擊
+            <router-link :to="{ path: '/login' }">登入</router-link>
+            會員
+          </p>
+        </div>
+
+        <!-- 註冊送出按鈕 -->
+        <!-- :loading="isSubmitting" 表單送出後，按鈕會顯示轉圈 loading 的樣子 -->
+        <v-btn type="submit" :loading="isSubmitting">註冊</v-btn>
+      </v-form>
+    </v-container>
+  </section>
 </template>
 
 <script setup>
@@ -39,10 +46,12 @@ import validator from 'validator'
 // 引進 axios （已將路徑定義至後端 api）
 import { useApi } from '@/composables/axios'
 import { useRouter } from 'vue-router'
-import { useDisplay } from 'vuetify'
 import { definePage } from 'vue-router/auto'
 import { useSnackbar } from 'vuetify-use-dialog'
 import { ref, computed, watch } from 'vue'
+import multiavatar from '@multiavatar/multiavatar/esm'
+
+
 
 definePage({
   meta: {
@@ -56,9 +65,17 @@ definePage({
 const logo = { to: '/userZone', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
 
 
+// 隨機生成英數字
+// .random() 隨機 0（含）到 1（不含）之間的浮點數
+// .toString(radix) 可以把數字轉成指定進位的字串，36 進位使用 0–9 + a–z 這 36 個字元
+// .substring(start, end) 會擷取字串從 索引 start 到 end-1 的部分
+const randomSeed = Math.random().toString(36).substring(2, 10)
+// 根據生成的字串再生成 multiavatar 的 svg 程式碼
+let svgCode = multiavatar(randomSeed)
+
+
 const { backApi } = useApi()
 const router = useRouter()
-const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 
 // 用 yup 將要驗證的資料建立成物件陣列
@@ -109,6 +126,8 @@ const registerFormData = yup.object({
 const { handleSubmit, isSubmitting } = useForm({
   validationSchema: registerFormData,
   initialValues: {
+    // 預設大頭照圖片（multiavatar 的 svg 程式碼圖片連結）
+    image: `data:image/svg+xml;base64,${btoa(svgCode)}`,
     // 預設默認帳戶背景圖片
     accountBgImage: logo.img,
   }
@@ -124,14 +143,6 @@ const image = useField('image')
 const accountBgImage = useField('accountBgImage')
 // console.log(account.value.value)
 // console.log(image.value.value)
-
-
-// watch 監視使用者輸入的帳戶名稱觸發 "大頭照的賦值的函式"
-watch (account.value, (now, old)=>{
-  // console.log ('now=', now, 'old=', old)
-  // 依據 "帳戶名稱" 默認大頭照
-  image.value.value = `https://api.multiavatar.com/${account.value.value}.png`
-})
 
 
 // formData 代表送出表單各欄位的值

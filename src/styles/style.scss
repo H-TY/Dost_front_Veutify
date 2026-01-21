@@ -180,6 +180,7 @@ body {
 					}
 				}
 
+				// 關閉彈窗
 				.dialog-close {
 					color: $btnRed;
 					background: white;
@@ -1976,6 +1977,67 @@ body {
 				}
 			}
 		}
+	}
+
+	// ▲ logoIn 和 register 頁面的樣式
+	.logo-in,
+	.register {
+		.title {
+			text-align: center;
+
+			h2,
+			h6 {
+				letter-spacing: 2px;
+			}
+
+			h6 {
+				margin-top: 6px;
+			}
+		}
+
+		.v-divider {
+			margin: 40px auto;
+
+			@include rsp-up(sm) {
+				max-width: 65%;
+			}
+
+			@include rsp-up(lg) {
+				max-width: 50%;
+			}
+		}
+
+		.v-form {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+
+			.v-field__input {
+				min-width: 280px;
+			}
+		}
+
+		.notice {
+			text-align: center;
+			margin: 20px 0;
+
+			a {
+				font-weight: 500;
+				color: darken($noticeColor, 20%);
+				padding: 0 4px;
+			}
+		}
+
+		.v-btn {
+			color: white;
+			background: $btnGreen;
+			padding: 6px 16px;
+		}
+	}
+
+	// ▲ register 頁面的樣式
+	.register {
 	}
 }
 
