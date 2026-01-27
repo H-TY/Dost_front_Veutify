@@ -157,7 +157,7 @@ body {
 						}
 
 						.content-txt-img {
-							margin-top: calc(20px + 1.5vw);
+							margin: calc(20px + 1.5vw) 0;
 						}
 
 						.txt-box {
@@ -175,6 +175,41 @@ body {
 								height: 200px;
 								padding: unset;
 								padding-top: 1.2rem;
+							}
+						}
+
+						p {
+							// 宣告顏色
+							--a-color: #{$mainColor};
+							--a-hover-color: #{$btnLBlue};
+
+							i {
+								color: $gtext;
+							}
+
+							span {
+								color: var(--a-color);
+								// border-bottom: 1px solid $btnRed;
+								// border-bottom: 1px solid $mainColor;
+								// padding-bottom: 4px;
+								margin: 0 2px;
+							}
+
+							a {
+								// color: darken($noticeColor, 20%);
+								font-size: 1rem;
+								letter-spacing: 1px;
+								color: white;
+								background: var(--a-color);
+								border: 1px solid var(--a-color);
+								border-radius: 8px;
+								padding: 2px 8px;
+								transition: 0.15s ease-in;
+
+								&:hover {
+									background: var(--a-hover-color);
+									border-color: var(--a-hover-color);
+								}
 							}
 						}
 					}
@@ -2034,10 +2069,6 @@ body {
 			background: $btnGreen;
 			padding: 6px 16px;
 		}
-	}
-
-	// ▲ register 頁面的樣式
-	.register {
 	}
 }
 

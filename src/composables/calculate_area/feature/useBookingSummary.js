@@ -8,7 +8,7 @@ import { useBookingCalculator } from "@/composables/calculate_area/domain/useBoo
 export function useBookingSummary(selectedDate, selectedTime, passInPrice) {
   const { totalBTime, totalBPrice } = useBookingCalculator(
     selectedTime,
-    passInPrice
+    passInPrice,
   );
 
   // ● 將選取的日期當地化
@@ -29,12 +29,12 @@ export function useBookingSummary(selectedDate, selectedTime, passInPrice) {
 
   // ● 將總預約時間轉成文字顯示的格式
   const totalBTimeTxt = computed(() => {
-    return `${totalBTime.value} 小時`;
+    return `預估 ${totalBTime.value} 小時`;
   });
 
   // ● 將預約總金額轉成文字顯示的格式
   const totalBPriceTxt = computed(() => {
-    return `${totalBPrice.value} 元`;
+    return `預估 ${totalBPrice.value} 元`;
   });
 
   return {

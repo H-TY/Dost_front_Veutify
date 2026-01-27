@@ -47,9 +47,9 @@
         <v-col md="6">
           <v-form class="booking-form" @submit.prevent="submit" :disabled="isSubmitting">
 
-            <v-text-field label="預約人姓名" variant="underlined" :class="addClass" v-model="name.value.value" :error-messages="name.errorMessage.value"></v-text-field>
+            <v-text-field label="預約人姓名" variant="underlined" v-model="name.value.value" :error-messages="name.errorMessage.value"></v-text-field>
 
-            <v-text-field label="預約人電話" variant="underlined" :class="addClass" v-model="phone.value.value" :error-messages="phone.errorMessage.value"></v-text-field>
+            <v-text-field label="預約人電話" variant="underlined" v-model="phone.value.value" :error-messages="phone.errorMessage.value"></v-text-field>
 
             <div class="box pb-6">
               <v-col>
@@ -93,11 +93,11 @@
 
 
             <!-- 預約總時數 -->
-            <v-text-field label=" 預約總時數" disabled variant="underlined" :model-value="totalBTimeTxt" :error-messages="totalBookingTime.errorMessage.value">
+            <v-text-field label=" 預約總時數" disabled variant="underlined" :model-value="totalBTimeTxt">
             </v-text-field>
 
             <!-- 總計金額 -->
-            <v-text-field label="總計金額" disabled variant="underlined" :model-value="totalBPriceTxt" :error-messages="totalPrice.errorMessage.value">
+            <v-text-field label="總計金額" disabled variant="underlined" :model-value="totalBPriceTxt">
             </v-text-field>
 
             <!-- 送出表單按鈕 -->
@@ -512,16 +512,16 @@ const bookingFormSchema = yup.object({
     .array()
     .required('預約時段必填')
     .min(1, '預約時段必填'), // 至少要有 1 個元素
-  totalBookingTime: yup
-    .number()
-    .required('預約總時數必填')
-    .typeError('預約總時數格式錯誤')
-    .min(1, '預約總時數不能小於 1'),
-  totalPrice: yup
-    .number()
-    .required('預約總金額必填')
-    .typeError('預約總金額格式錯誤')
-    .min(1, '預約總金額不能小於 1'),
+  // totalBookingTime: yup
+  //   .number()
+  //   .required('預約總時數必填')
+  //   .typeError('預約總時數格式錯誤')
+  //   .min(1, '預約總時數不能小於 1'),
+  // totalPrice: yup
+  //   .number()
+  //   .required('預約總金額必填')
+  //   .typeError('預約總金額格式錯誤')
+  //   .min(1, '預約總金額不能小於 1'),
   accountName: yup
     .string()
     .required('帳戶名稱必填'),
@@ -540,8 +540,8 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
     dogName: '',
     bookingDate: '',
     bookingTime: [],
-    totalBookingTime: 0,
-    totalPrice: 0,
+    // totalBookingTime: 0,
+    // totalPrice: 0,
     accountName: userName.value,
     orderStatus: true,
   }
@@ -553,8 +553,8 @@ const image = useField('image')
 const dogName = useField('dogName')
 const bookingDate = useField('bookingDate')
 const bookingTime = useField('bookingTime')
-const totalBookingTime = useField('totalBookingTime')
-const totalPrice = useField('totalPrice')
+// const totalBookingTime = useField('totalBookingTime')
+// const totalPrice = useField('totalPrice')
 const accountName = useField('accountName')
 const orderStatus = useField('orderStatus')
 
@@ -566,33 +566,32 @@ function useFormUpdate() {
   dogName.value.value = Dinfo.value.dogName;
   bookingDate.value.value = chooseBDate.value;
   bookingTime.value.value = selectedTime.value;
-  totalBookingTime.value.value = totalBTime.value;
-  totalPrice.value.value = totalBPrice.value;
+  // totalBookingTime.value.value = totalBTime.value;
+  // totalPrice.value.value = totalBPrice.value;
 }
-
 
 
 // ★ FormData 直接傳至後端處理會失敗，需再經過 multer 的套件解析 form-data，才能傳入後端
 const submit = handleSubmit(async (values) => {
-  // console.log('有觸發 submit')
-  // console.log('submit values', values)
+  console.log('有觸發 submit')
+  console.log('submit values', values)
+
+  // ★ 按下送出表單按鈕時，先判斷是否為登入狀態
+  // 非登入狀態，跳出需登入的提示，關閉提示後，自動轉跳至登入頁面
+  if (!User.isLogin) {
+    console.log('User.isLogin', User.isLogin)
+    createSnackbar({
+      text: '請先登入會員',
+      snackbarProps: {
+        color: 'red'
+      }
+    })
+    router.push('/login')
+    return
+  }
 
 
   try {
-    // ★ 按下送出表單按鈕時，先判斷是否為登入狀態
-    // 非登入狀態，跳出需登入的提示，關閉提示後，自動轉跳至登入頁面
-    if (!User.isLogin) {
-      console.log('User.isLogin', User.isLogin)
-      createSnackbar({
-        text: '請先登入會員',
-        snackbarProps: {
-          color: 'red'
-        }
-      })
-      router.push('/login')
-      return
-    }
-
     // console.log('有觸發')
 
     // 建立符合後端可接收格式的表格
@@ -605,26 +604,41 @@ const submit = handleSubmit(async (values) => {
     fd.append('dogName', values.dogName)
     fd.append('bookingDate', values.bookingDate)
     fd.append('bookingTime', values.bookingTime)
-    fd.append('totalBookingTime', values.totalBookingTime)
-    fd.append('totalPrice', values.totalPrice)
+    // fd.append('totalBookingTime', values.totalBookingTime)
+    // fd.append('totalPrice', values.totalPrice)
     fd.append('accountName', values.accountName)
     fd.append('orderStatus', values.orderStatus)
 
-    const result = await BookingOrderStore.createBookingOrder(fd)
-    // console.log('result.data.result', result.data.result)
+
+    // 將 nowDate 日期格式改為現在常見的 yy/mm/dd
+    // .toLocaleDateString() 是在地化日期格式（符合當地使用的日期格式）；若換了一個區域，因使用的日期格式習慣不同，後續程式碼可能會報錯，故這邊統一一種格式，不因地區改變。
+    const formatNowDate = `${nowDate.value.getFullYear()}/${String(nowDate.value.getMonth() + 1).padStart(2, '0')}/${String(nowDate.value.getDate()).padStart(2, '0')}`
+    // console.log('formatNowDate', formatNowDate)
+
+
+    // data 為後端回傳的資料
+    // 第一個參數要放傳至後端的路徑
+    // 第二個參數要放傳至後端的 fd 表格資料
+    // 第三個才放查詢參數 params 傳至後端做正則表達式的查詢關鍵字
+    const { data } = await apiAuth.post("/order", fd, {
+      params: {
+        orderDate: formatNowDate,
+      },
+    });
+    console.log('回傳 data', data)
 
     // 因為要包2個東西，所以用 {} 一起包住，視為一個物件
     const resOrderInfor = {
       infor: [
-        { title: '訂單編號', value: result.data.result.bookingOrderNumber },
-        { title: '預約人', value: result.data.result.name },
-        { title: '電話', value: result.data.result.phone },
-        { title: '預約狗狗', value: result.data.result.dogName },
-        { title: '預約日期', value: result.data.result.bookingDate },
-        { title: '預約時段', value: result.data.result.bookingTime[0].replace(/,/g, '\n') },
-        { title: '預約總金額', value: result.data.result.totalPrice + ' 元' }
+        { title: '訂單編號', value: data.result.bookingOrderNumber },
+        { title: '預約人', value: data.result.name },
+        { title: '電話', value: data.result.phone },
+        { title: '預約狗狗', value: data.result.dogName },
+        { title: '預約日期', value: data.result.bookingDate },
+        { title: '預約時段', value: data.result.bookingTime[0].replace(/,/g, '\n') },
+        { title: '預約總金額', value: data.result.totalPrice + ' 元' }
       ],
-      img: result.data.result.image
+      img: data.result.image
     }
 
     // Object.assign(A, B) 把 B 合併進 A 物件
@@ -636,7 +650,7 @@ const submit = handleSubmit(async (values) => {
     openDialogOrderInfo()
 
     createSnackbar({
-      text: result.text,
+      text: data.message,
       snackbarProps: {
         color: 'green'
       }
@@ -660,16 +674,6 @@ const submit = handleSubmit(async (values) => {
     })
   }
 })
-
-
-// 在表單的"預約人姓名"欄位，動態計算添加自定義 class(.myClass)
-// v-model="name.value.value" 已宣告
-const addClass = computed(() => {
-  return { 'myClass': name.value.value.length > 0 } // 回傳的是 boolean 值
-})
-// console.log(addClass)
-
-
 
 
 // ● onMounted(()=>{}) 用來執行在組件首次渲染（DOM 元素掛載）完成後的操作。

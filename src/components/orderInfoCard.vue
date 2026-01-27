@@ -28,6 +28,16 @@
         <template v-if="displayCancelBtn">
           <v-btn class="cancel-btn" type="submit" variant="plain" flat @click="changeOrderStatus" :loading="isSubmitting">確認取消</v-btn>
         </template>
+
+        <!-- 提示取消訂單的方法 -->
+        <template v-else>
+          <p>
+            <v-icon icon="mdi-message-alert"></v-icon>
+            如需<span>取消預約訂單</span>，請前往
+            <router-link :to="{ path: '/userZone/dogBookingSearch' }">會員專區</router-link>
+            做取消，謝謝！
+          </p>
+        </template>
       </div>
 
       <dialogCloseBtn dialogName="dialogOrderInfo" @close="dialogClose"></dialogCloseBtn>

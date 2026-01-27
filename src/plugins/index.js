@@ -43,7 +43,7 @@ export function registerPlugins(app) {
   app
     .use(vuetify)
     .use(router)
-    .use(pinia)
+    .use(pinia) // 就像安裝倉庫系統(倉庫系統放進 Vue 裡)
     .use(VuetifyUseDialog, {
       snackbar: {
         // 不顯示"關閉按鈕"
