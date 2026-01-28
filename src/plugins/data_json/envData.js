@@ -13,6 +13,7 @@
 
 // console.log(envData);
 
+// =========******=============
 // ● 方法 2：使用 Vite 提供的特殊 API，用來「批次抓取資料夾裡的檔案」。
 // 可以不用自己計算有幾張圖，系統會自己抓取圖片
 const totalImg = import.meta.glob("@/assets/img/env_img/*.avif", {

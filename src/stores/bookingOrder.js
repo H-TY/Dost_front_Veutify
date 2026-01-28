@@ -1,26 +1,26 @@
 // 建立 "訂單資料狀態"
 
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, reactive } from "vue";
 import { useUserStore } from "@/stores/user";
 import UserRole from "@/enums/UserRole";
 // 引進 axios （已將路徑定義至後端 api）
 import { useApi } from "@/composables/axios";
 
 export const useBookingOrderStore = defineStore("BookingOrderData", () => {
-  const { apiAuth } = useApi();
+  const { backApi, apiAuth } = useApi();
   const UserStore = useUserStore();
   // console.log('UserStore.isLogin', UserStore.isLogin)
 
+  // 建立 pinia 的資料
+  const topThreeOrderData = reactive([]);
+
+  const topThreeOrder = async (data) => {};
+
   // 預設要回傳的資料
-  const bookingOrderNumber = ref(null);
-  const image = ref("");
-  const dogName = ref("");
-  const bookingDate = ref("");
-  const bookingTime = ref("");
   const orderStatus = ref("");
 
-  // ● 訂單修改
+  // ● 訂單修改（預計要移到操作頁面，這邊不留）
   const edit = async (values) => {
     // console.log('values', values)
 
@@ -47,12 +47,6 @@ export const useBookingOrderStore = defineStore("BookingOrderData", () => {
 
   // 要 return 出去，前端才收的到資料
   return {
-    bookingOrderNumber,
-    image,
-    dogName,
-    bookingDate,
-    bookingTime,
-    orderStatus,
     edit,
   };
 });

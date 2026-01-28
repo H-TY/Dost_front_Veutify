@@ -65,17 +65,6 @@
 
 
             <template v-if="mobile">
-              <!-- <div class="box">
-                <v-col>
-                  <p>預約日期：</p>
-                </v-col>
-                <v-col>
-                  <v-text-field @click="dialogOpen">
-                    {{ chooseBDate }}
-                  </v-text-field>
-                </v-col>
-              </div> -->
-
               <!-- mobile 預約日期 -->
               <v-text-field :label="chooseDateTitle" readonly variant="underlined" @click="dialogOpen($event, '預約日期')" :model-value="chooseBDate" :error-messages="bookingDate.errorMessage.value"></v-text-field>
 
@@ -106,7 +95,7 @@
         </v-col>
       </v-row>
 
-      <!-- 點擊日期，跳出視窗選擇預約時段 -->
+      <!-- ● 點擊日期，跳出視窗選擇預約時段 -->
       <v-dialog class="choose-time-dialog" v-model="chooseTimeDialog">
         <div class="choose-time-dialog-txt">
           <h4>可預約時段</h4>
@@ -573,8 +562,8 @@ function useFormUpdate() {
 
 // ★ FormData 直接傳至後端處理會失敗，需再經過 multer 的套件解析 form-data，才能傳入後端
 const submit = handleSubmit(async (values) => {
-  console.log('有觸發 submit')
-  console.log('submit values', values)
+  // console.log('有觸發 submit')
+  // console.log('submit values', values)
 
   // ★ 按下送出表單按鈕時，先判斷是否為登入狀態
   // 非登入狀態，跳出需登入的提示，關閉提示後，自動轉跳至登入頁面
@@ -594,10 +583,10 @@ const submit = handleSubmit(async (values) => {
   try {
     // console.log('有觸發')
 
-    // 建立符合後端可接收格式的表格
+    // ● 建立符合後端可接收格式的表格
     const fd = new FormData()
 
-    // 要將東西放進去的語法 fd.append(key, value)
+    // ● 要將東西放進去的語法 fd.append(key, value)
     fd.append('name', values.name)
     fd.append('phone', values.phone)
     fd.append('image', values.image)
@@ -610,23 +599,26 @@ const submit = handleSubmit(async (values) => {
     fd.append('orderStatus', values.orderStatus)
 
 
-    // 將 nowDate 日期格式改為現在常見的 yy/mm/dd
-    // .toLocaleDateString() 是在地化日期格式（符合當地使用的日期格式）；若換了一個區域，因使用的日期格式習慣不同，後續程式碼可能會報錯，故這邊統一一種格式，不因地區改變。
+    // ● 將 nowDate 日期格式改為現在常見的 yy/mm/dd
+    // .toLocaleDateString() 是在地化日期格式（符合當地使用的日期格式）；若換了一個區域，因使用的日期格式習慣不同，後續處理日期的程式碼可能會報錯，故這邊統一一種格式，不因地區改變。
     const formatNowDate = `${nowDate.value.getFullYear()}/${String(nowDate.value.getMonth() + 1).padStart(2, '0')}/${String(nowDate.value.getDate()).padStart(2, '0')}`
     // console.log('formatNowDate', formatNowDate)
 
 
+    // ● 向後端發送訂單資料
     // data 為後端回傳的資料
     // 第一個參數要放傳至後端的路徑
     // 第二個參數要放傳至後端的 fd 表格資料
     // 第三個才放查詢參數 params 傳至後端做正則表達式的查詢關鍵字
     const { data } = await apiAuth.post("/order", fd, {
       params: {
-        orderDate: formatNowDate,
+        orderDate: formatNowDate, // 提供後端製作訂單流水號用
+        dogId: Dinfo.value._id, // 提供後端查詢狗狗資料庫的 id
       },
     });
-    console.log('回傳 data', data)
+    // console.log('回傳 data', data)
 
+    // ● 統整後端回傳的資料，作為 "預約完成彈窗的資料"
     // 因為要包2個東西，所以用 {} 一起包住，視為一個物件
     const resOrderInfor = {
       infor: [

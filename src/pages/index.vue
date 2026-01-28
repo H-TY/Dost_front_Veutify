@@ -210,14 +210,14 @@ import { ref, reactive, computed, watchEffect, onMounted, nextTick } from 'vue'
 import { definePage } from 'vue-router/auto'
 import { useDisplay } from 'vuetify'
 import { useApi } from '@/composables/axios'
+import { useBookingOrderStore } from "@/stores/bookingOrder"
 import gsap from '@/plugins'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import sectionTitle from '@/components/sectionTitle.vue'
 import BannerSwiper from '@/components/bannerSwiper.vue'
 
 // 引進生成的 data_json 檔案
-import { serviceData } from '@/plugins/data_json/serviceData' // 具名匯入
-import { envData } from '@/plugins/data_json/envData'
+import { serviceData, envData } from '@/plugins/data_json'
 
 
 
@@ -252,6 +252,7 @@ const sectionTitleData = [
 // 解構出 mobile 的斷點
 const { mobile } = useDisplay()
 const { backApi } = useApi()
+const bookingOrderStores = useBookingOrderStore()
 
 
 // ● 向後端請求訂單最多的前 3 名狗狗
