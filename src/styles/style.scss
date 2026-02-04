@@ -1099,6 +1099,11 @@ body {
 					height: 0;
 					// transition: 0.3s ease;
 					overflow: hidden;
+
+					h6,
+					p {
+						margin: 20px 0;
+					}
 				}
 
 				.crown-box {

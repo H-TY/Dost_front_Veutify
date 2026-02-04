@@ -101,13 +101,15 @@
                 <img :src="generateImg(index)" alt="獎牌圖示">
               </div>
               <div class="img-box">
-                <img :src="item.img" alt="狗狗圖片">
+                <img :src="item.image" alt="狗狗圖片">
               </div>
               <div class="txt-box">
                 <h4>{{ item.dogName }}</h4>
-                <p>溫柔第一名
-                  <br />最會靜靜靠著你
-                </p>
+                <p>{{ item.feature }}</p>
+                <!-- <p>
+                  小故事：<br />
+                  {{ item.story }}
+                </p> -->
               </div>
             </div>
           </div>
@@ -256,61 +258,31 @@ const bookingOrderStores = useBookingOrderStore()
 
 
 // ● 向後端請求訂單最多的前 3 名狗狗
-// 用 watchEffect 監聽訂單變動情形，有變動時會自動更新狀態
-const topOrderdata = reactive([])
+// 建立空陣列，後續渲染資料的來源
+const topOrderdata = ref([])
 
-watchEffect(async () => {
-  try {
+// 呼叫 stores/bookingOrder.js 裡的 API
+const TTOdata = await bookingOrderStores.topThreeOrder()
+// console.log('TTOdata', TTOdata)
 
-    // 只計算 4 個月內的有效訂單
-    const nowDate = ref(new Date())
-
-    // 要傳至後端作為搜尋訂單編號用的關鍵字
-    const reNowDate = computed(() => {
-      // 找出年份 .getFullYear()，並 .toString() 轉成文字
-      const nowDateYear = nowDate.value.getFullYear().toString()
-
-      // 找出月份 .getMonth()，並 .toString() 轉成文字
-      // 資料類型須為文字/字符/字符串 .padStart(2, '0') 用零補足至 2 位數
-      const nowDateMonth = (nowDate.value.getMonth() + 1).toString().length > 1 ? (nowDate.value.getMonth() + 1).toString() : (nowDate.value.getMonth() + 1).toString().toString().padStart(2, '0')
-
-      // 將年、月、日組合
-      return nowDateYear + nowDateMonth
-    })
-    // console.log('reNowDate', reNowDate.value)
-
-    // 後端回傳數量最多的前 3 筆訂單資料
-    const { data } = await backApi.get('/order/topOrder', {
-      params: {
-        reNowDate: reNowDate.value
-      }
-    }, { timeout: 10 })
-    // console.log('topOrder_data.result', data.result)
-
-    const reData = data.result
-      .map(el => {
-        // expend 給後續卡片做開合狀態的設定，目前預設為 false 關閉
-        return { dogName: el.dogName, img: el.image, counter: el.counter, expend: false }
-      })
-      // 以 counter 做降冪排序
-      .sort((a, b) => {
-        return b.counter - a.counter
-      })
-    // 修改第二筆的資料排序，放至第一位
-    // 在頁面上由左而右顯示的樣子 2nd 1st 3rd
-    // const [secondData] = reData.splice(1, 1)
-    // reData.unshift(secondData)
-    // console.log('reData', reData)
-
-    // 將回傳的資料放入 topOrderdata 的陣列中
-    topOrderdata.push(...reData)
-
-  } catch (error) {
-    console.log('請求訂單最多的前 3 名狗狗_error', error)
-
-  }
+// 將回傳的資料整理，賦值給預先設立的 topOrderdata 空陣列
+topOrderdata.value = TTOdata.map(el => {
+  // expend 給後續卡片做開合狀態的設定，目前預設為 false 關閉
+  return { ...el, expend: false }
 })
-// console.log('topOrderdata', topOrderdata)
+// console.log('topOrderdata', topOrderdata.value)
+
+//● dog-card 點擊展開
+function toggleExpend(index) {
+  topOrderdata.value.forEach((el, i) => {
+    if (i === index) {
+      el.expend = !el.expend
+    } else {
+      el.expend = false
+    }
+  })
+}
+
 
 // ● 動態生成圖片
 // 原因：Vite 的 @ 別名 只會在編譯時靜態解析。
@@ -320,16 +292,6 @@ function generateImg(index) {
   return new URL(`../assets/img/decorate/top_area/img-${index + 1}.avif`, import.meta.url).href
 }
 
-//● dog-card 點擊展開
-function toggleExpend(index) {
-  topOrderdata.forEach((el, i) => {
-    if (i === index) {
-      el.expend = !el.expend
-    } else {
-      el.expend = false
-    }
-  })
-}
 
 
 // * onMounted：
