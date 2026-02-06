@@ -110,6 +110,9 @@
                   小故事：<br />
                   {{ item.story }}
                 </p> -->
+                <v-btn @click="goToPageById('booking', item._id)">
+                  前往相遇
+                </v-btn>
               </div>
             </div>
           </div>
@@ -213,6 +216,7 @@ import { definePage } from 'vue-router/auto'
 import { useDisplay } from 'vuetify'
 import { useApi } from '@/composables/axios'
 import { useBookingOrderStore } from "@/stores/bookingOrder"
+import { useNavigationById } from '@/composables/navigationById' // 這個是為了讓「熱門狗狗區」的按鈕能夠帶參數跳轉到預約頁面，並且直接定位到對應的狗狗卡片
 import gsap from '@/plugins'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import sectionTitle from '@/components/sectionTitle.vue'
@@ -255,6 +259,7 @@ const sectionTitleData = [
 const { mobile } = useDisplay()
 const { backApi } = useApi()
 const bookingOrderStores = useBookingOrderStore()
+const { goToPageById } = useNavigationById()
 
 
 // ● 向後端請求訂單最多的前 3 名狗狗

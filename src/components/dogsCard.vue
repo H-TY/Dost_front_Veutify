@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="dogs-card">
     <router-link :to="{ path: '/dogsResume' }" class="card-img">
       <img :src="image"></img>
     </router-link>
@@ -13,14 +13,15 @@
           <span>{{ age }}</span> 歲
         </p>
       </div>
-      <p>性格、特徵｜
+      <p class="feature-txt">
+        <span class="title">特徵｜</span>
         <span>{{ feature }}</span>
       </p>
       <div class="price-booking-box">
         <p>價格｜
           <span>{{ price }}</span> 元 / 2小時
         </p>
-        <v-btn :class="{ 'red-btn': bookingState, 'd-none': route.path === '/booking' }" :text="booking === '預約已滿' ? '預約已滿' : '預約'" @click="bookingAddId"></v-btn>
+        <v-btn :class="{ 'red-btn': bookingState, 'd-none': route.path === '/booking' }" :text="booking === '預約已滿' ? '預約已滿' : '預 約'" @click="bookingAddId"></v-btn>
       </div>
     </div>
   </div>
@@ -33,6 +34,7 @@ import { useUserStore } from '@/stores/user'
 import { useRouter, useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { useSnackbar } from 'vuetify-use-dialog'
+import { useNavigationById } from '@/composables/navigationById.js'
 
 
 const user = useUserStore()
@@ -40,8 +42,9 @@ const route = useRoute() // 目前路由狀態（「現在在哪」），詳細�
 const router = useRouter() // 負責「跳轉、返回、取路由設定」（「要去哪、怎麼去」），詳細說明看最底下
 const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
+const { goToPageById } = useNavigationById() // 引入自定義的導航函式，詳細說明看 src/composables/navigationById.js
 
-// 定義父組件傳遞給當前組件的數據，類似於組件的「輸入參數」。
+// ● 定義父組件傳遞給當前組件的數據，類似於組件的「輸入參數」。
 // 指定了當前組件可以接收哪些 props。這些 props 是來自父組件的屬性，並且在當前組件中可以使用它們。
 const props = defineProps(['_id', 'image', 'dogName', 'age', 'price', 'booking', 'bookingTime', 'feature', 'sell', 'counter'])
 
@@ -49,11 +52,7 @@ const props = defineProps(['_id', 'image', 'dogName', 'age', 'price', 'booking',
 // ● 在網址添加 id 資訊，以利下個頁面查詢利用
 // 動作綁定點擊觸發，調用以下的 bookingAddId 函式，而不用 to 去導航
 const bookingAddId = () => {
-  router.push({
-    path: '/booking',
-    // 這邊 props._id 的 props 必須寫出來
-    query: { id: props._id }, // 直接使用 props 中的 id
-  });
+  goToPageById('booking', props._id)
 }
 
 
