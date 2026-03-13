@@ -1,10 +1,9 @@
 <template>
-  <v-container fluid>
-    <v-row class="text-center">
-      <v-col>
-        <h1>狗狗資訊管理</h1>
-      </v-col>
-    </v-row>
+  <div class="dog-info">
+    <div class="admin-page-title" ref="RefTitle">
+      <h2>狗狗資訊管理</h2>
+    </div>
+
     <v-row class="text-center">
       <v-col>
         <v-btn class="d-inline-flex pa-4" color="green" @click="openDialog(null)">新增夥伴資訊</v-btn>
@@ -58,6 +57,7 @@
 
               <v-textarea label="狗狗的性格、特徵" class="mt-6" v-model="feature.value.value" :error-messages="feature.errorMessage.value"></v-textarea>
             </v-card-text>
+
             <!-- 送出 & 取消 按鈕 -->
             <v-card-actions class="justify-center mb-5">
               <v-btn class="bg-red me-5" :loading="isSubmitting" @click="closeDialog">取消</v-btn>
@@ -118,15 +118,16 @@
         </v-data-table-server>
       </v-card>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, warn, watch } from 'vue'
+import { ref, reactive, computed, warn, watch, onMounted } from 'vue'
 import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
 import { definePage } from 'vue-router/auto'
 import { useApi } from '@/composables/axios'
+import { useTitleScrollDown } from '@/composables/scrollDownAddClass'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
@@ -137,6 +138,16 @@ definePage({
     admin: true
   }
 })
+
+const { RefTitle } = useTitleScrollDown()
+
+// // ● 向下滑動至指定距離，admin-title 元素添加 scroll-down 樣式
+// const RefadminTitle = ref(null)
+
+// onMounted(() => {
+
+//   console.log('RefadminTitle', RefadminTitle.value)
+// })
 
 const { backApi, apiAuth } = useApi()
 const createSnackbar = useSnackbar()
@@ -416,14 +427,6 @@ const checkboxChange = async (id, newValue) => {
 
 </script>
 
-
-<!-- 沒有寫 scoped，設定的樣式為全局樣式（所有頁面同名的 class 都會被影響） -->
-<style>
-/* 設定 snackbar 的全局樣式 */
-.v-snackbar__wrapper {
-  min-width: auto;
-}
-</style>
 
 
 <route lang="yaml">

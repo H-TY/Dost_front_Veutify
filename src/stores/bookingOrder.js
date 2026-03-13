@@ -106,6 +106,7 @@ export const useBookingOrderStore = defineStore("BookingOrderData", () => {
 
   // 要 return 出去，前端才收的到資料
   return {
+    topThreeDogsData,
     topThreeOrder,
     edit,
   };

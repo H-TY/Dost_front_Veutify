@@ -83,10 +83,12 @@
 
             <!-- 預約總時數 -->
             <v-text-field label=" 預約總時數" disabled variant="underlined" :model-value="totalBTimeTxt">
+              <span>預估</span>
             </v-text-field>
 
             <!-- 總計金額 -->
             <v-text-field label="總計金額" disabled variant="underlined" :model-value="totalBPriceTxt">
+              <span>預估</span>
             </v-text-field>
 
             <!-- 送出表單按鈕 -->
@@ -142,8 +144,8 @@ const router = useRouter()
 const { mobile, sm } = useDisplay()
 const { backApi, apiAuth } = useApi()
 const User = useUserStore()
-const BookingOrderStore = useBookingOrderStore()
-// console.log('BookingOrderStore', BookingOrderStore)
+const bookingOrderStores = useBookingOrderStore()
+// console.log('bookingOrderStores', bookingOrderStores)
 const createSnackbar = useSnackbar()
 // ● 將 swiper 需要啟用的 modules 放入陣列，與上方 <swiper> 標籤內的 :modules 綁定，意思是啟用這些模組功能
 const modules = [Pagination, Navigation, HashNavigation]
@@ -218,6 +220,9 @@ const allowedSelectDate = (date) => {
 
 // ● 動態選取預約時段
 const selectedTime = ref([])
+// watch(selectedTime, (newVal) => {
+//   console.log("selectedTime changed:", newVal);
+// })
 
 
 // ● 將全部狗狗資訊匯入上方的 Swiper 元件
@@ -648,10 +653,14 @@ const submit = handleSubmit(async (values) => {
       }
     })
 
+    // 清空欄位
     resetForm()
     // 因部分欄位沒有與 useForm 雙向綁定資料（v-model），故 resetForm() 僅對有綁定的欄位有效；其他欄位需另外手動設定重置
     // 清空選擇的日期、時段（因總時數、總金額欄位會根據日期、時段自動做計算，故會自動更新歸 0)
     manualResetForm()
+
+    // 更新 pinia 的 bookingOrderStores 的 topThreeDogsData 資料狀態
+    bookingOrderStores.topThreeOrder()
 
   } catch (error) {
     console.log('error', error)

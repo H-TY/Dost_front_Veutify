@@ -1,17 +1,29 @@
 <template>
-  <v-container class="h-100 d-flex justify-center position-relative">
-    <v-sheet class="bg-transparent d-flex flex-column align-center h-100 NavItemsPosition">
-      <h1 class="text-center my-5">請選擇管理項目</h1>
-      <v-sheet class="bg-transparent d-flex mt-4">
-        <itemsCard v-for="item in navItems" :key="text" :to="item.to" :text="item.text" :icon="item.icon"></itemsCard>
-      </v-sheet>
-    </v-sheet>
-  </v-container>
+  <div class="admin-home">
+    <div class="back-home">
+      <div class="text-box">
+        <h4>歡迎回來，管理者！</h4>
+        <p>您可以在此管理狗狗資訊並查看所有預約訂單。</p>
+        <small>※ 點擊 LOGO 可回首頁</small>
+      </div>
+      <v-card :to="logo.to">
+        <img :src="logo.img"></img>
+      </v-card>
+    </div>
+
+    <div class="admin-page-title">
+      <h2>選擇管理項目</h2>
+    </div>
+
+    <div class="card-box">
+      <itemsCard class="admin-home-card" v-for="item in adminNavItems.slice(1)" :key="item.text" :to="item.to" :text="item.text" :desc="item.desc" :icon="item.icon"></itemsCard>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { definePage } from 'vue-router/auto'
-import AdminNavItems from '@/components/AdminNavItems'
+import { logo, adminNavItems } from '@/plugins/data_json'
 import itemsCard from '@/components/Card'
 
 definePage({
@@ -22,19 +34,7 @@ definePage({
   }
 })
 
-const {logo, navItems} = AdminNavItems()
-
 </script>
-
-
-
-<style scoped>
-.NavItemsPosition{
-  position: absolute;
-  top: 8%;
-}
-</style>
-
 
 
 <route lang="yaml">

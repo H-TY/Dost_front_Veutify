@@ -1,6 +1,6 @@
 <template>
   <!-- Logo & 導覽列 -->
-  <v-app-bar :height="reNavbarHeight">
+  <v-app-bar :height="reNavbarHeight" class="home-app-bar">
 
     <!-- Mobile 版導覽列 -->
     <!-- v-if 若為手機的斷點尺寸時，顯示以下 code -->
@@ -96,7 +96,7 @@
 
   <!-- Mobile 版_點擊漢堡按鈕_展開導覽列項目 -->
   <!-- location="right" 從右側開啟 menu -->
-  <v-navigation-drawer v-if="mobile" v-model="drawer" location="right">
+  <v-navigation-drawer class="home-navigation-drawer" v-if="mobile" v-model="drawer" location="right">
     <div class="navbar-box">
       <div class="navbar-items">
         <template v-for="item in navItems" :key="item.to">
@@ -130,7 +130,7 @@
     ● pages 的頁面都在這邊由 <router-view> 做渲染。
     ● 告知 Router 要渲染頁面的組件和當前路徑。
   -->
-  <v-main>
+  <v-main class="home-main">
     <router-view></router-view>
   </v-main>
 
@@ -248,6 +248,8 @@ const logout = async () => {
   })
   return router.push('/')
 }
+
+
 
 // ● 抓取目前 navbar 高度，隨螢幕寬度改變高度
 const navbarHeightRef = ref(null)

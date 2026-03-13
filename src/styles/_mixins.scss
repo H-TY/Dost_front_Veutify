@@ -48,7 +48,7 @@
 	$width: map-get($grid-breakpoints, $el);
 
 	@if $width {
-		@media (min-width: #{$width - 0.02}px) {
+		@media (min-width: #{$width - 0.02}) {
 			@content;
 		}
 	} @else {

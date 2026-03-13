@@ -24,17 +24,18 @@ export function useBookingSummary(selectedDate, selectedTime, passInPrice) {
   const BTimeTxt = computed(() => {
     return selectedTime.value
       .sort((a, b) => parseInt(a) - parseInt(b))
+      .map((el) => `● ${el}`)
       .join("\n");
   });
 
   // ● 將總預約時間轉成文字顯示的格式
   const totalBTimeTxt = computed(() => {
-    return `預估 ${totalBTime.value} 小時`;
+    return `${totalBTime.value} 小時`;
   });
 
   // ● 將預約總金額轉成文字顯示的格式
   const totalBPriceTxt = computed(() => {
-    return `預估 ${totalBPrice.value} 元`;
+    return `${totalBPrice.value} 元`;
   });
 
   return {

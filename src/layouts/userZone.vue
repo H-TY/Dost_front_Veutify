@@ -23,19 +23,10 @@
         <v-row class="px-5 ma-0">
           <template v-for="item in navItems" :key="item.to">
             <v-col cols="6" class="text-center pa-5">
-              <v-btn 
-                class="mobileNavCss bg-white"
-                :to="item.to" 
-                size="80" 
-                variant="flat" 
-                flat 
-                active-color="green-darken-1">
-                <v-icon 
-                  class="text-light-blue-darken-4" 
-                  :icon="item.icon" 
-                  size="40"></v-icon>
+              <v-btn class="mobileNavCss bg-white" :to="item.to" size="80" variant="flat" flat active-color="green-darken-1">
+                <v-icon class="text-light-blue-darken-4" :icon="item.icon" size="40"></v-icon>
               </v-btn>
-              <v-sheet class="bg-transparent mt-3 text-blue-darken-4" >
+              <v-sheet class="bg-transparent mt-3 text-blue-darken-4">
                 {{ item.text }}
               </v-sheet>
             </v-col>
@@ -47,7 +38,7 @@
 
   <!-- PC 版導覽列 -->
   <template v-if="!mobile">
-    <v-navigation-drawer class="border-0 shadow-lg" position="relative" v-model="drawer" :permanent="drawerHandle">
+    <v-navigation-drawer class="userZone-navigation-drawer border-0 shadow-lg" position="relative" v-model="drawer" :permanent="drawerHandle">
       <!-- 使用者帳戶版面 -->
       <!-- 帳戶背景圖 -->
       <v-sheet class="bg-transparent w-100 fill-height position-absolute">
@@ -64,32 +55,17 @@
           {{ User.account }}
         </v-sheet>
       </v-sheet>
-      
+
       <!-- 水平線 -->
       <!-- <v-divider></v-divider> -->
 
       <!-- 導覽項目 & 登出 -->
       <v-list class="ps-6 py-4 Zindex text-grey-darken-2">
         <!-- 導覽項目 -->
-        <v-list-item 
-          v-for="item in navItems" 
-          :key="item.to" 
-          :to="item.to" 
-          :title="item.text" 
-          :prepend-icon="item.icon"
-          class="rounded-s-pill"
-          active-class="selectedStatus"
-          ></v-list-item>
+        <v-list-item v-for="item in navItems" :key="item.to" :to="item.to" :title="item.text" :prepend-icon="item.icon" class="rounded-s-pill" active-class="selectedStatus"></v-list-item>
         <!-- 登出按鈕 -->
         <v-col class="d-flex justify-center mt-15">
-          <v-btn 
-          v-if="User.isLogin" 
-          prepend-icon="mdi-account-arrow-right" 
-          class="bg-deep-orange-darken-2" 
-          variant="outlined" 
-          rounded 
-          :ripple="false" 
-          @click="logout">登出</v-btn>
+          <v-btn v-if="User.isLogin" prepend-icon="mdi-account-arrow-right" class="bg-deep-orange-darken-2" variant="outlined" rounded :ripple="false" @click="logout">登出</v-btn>
         </v-col>
       </v-list>
     </v-navigation-drawer>
@@ -189,12 +165,12 @@ const logout = async () => {
 }
 
 /* Mobile 版導覽列區塊位置*/
-.mobileNavMargin{
+.mobileNavMargin {
   margin-top: 100px;
 }
 
 /* Mobile 版導覽列物件按鈕樣式*/
-.mobileNavCss{
+.mobileNavCss {
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);
   border: 4px solid #E1F5FE;
   border-radius: 50%;
@@ -202,7 +178,7 @@ const logout = async () => {
 }
 
 /* PC 版帳戶大頭照樣式 & 定位 */
-.PCuserPhotoPosition{
+.PCuserPhotoPosition {
   position: relative;
   padding: 20px
 }
@@ -220,6 +196,7 @@ const logout = async () => {
   width: 100%;
   height: 100%;
 }
+
 /* 用偽元素設定要遮色的細節 */
 .BgOverlay::before {
   content: "";
@@ -228,7 +205,7 @@ const logout = async () => {
   height: 100%;
   /* 預設由上至下的漸變遮色片 */
   /* 指定漸層方向 to left, to right, to bottom */
-  background: linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 45%); 
+  background: linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 45%);
   z-index: 1;
   /* 因為有覆蓋遮色片，故要設定 pointer-events: none; 讓下面的元素能觸發事件（例如鼠標點擊、滑鼠懸停等） */
   pointer-events: none;
@@ -244,7 +221,7 @@ const logout = async () => {
 }
 
 /* 設定 PC 版_導覽項目的層級 */
-.Zindex{
+.Zindex {
   z-index: 2;
 }
 
@@ -268,7 +245,7 @@ const logout = async () => {
 }
 
 /* 此頁面所有 btn 樣式 */
-::v-deep .v-btn--active > .v-btn__overlay{
+::v-deep .v-btn--active>.v-btn__overlay {
   opacity: 0%;
 }
 
@@ -277,9 +254,10 @@ const logout = async () => {
 ::v-deep .v-list-item--variant-text .v-list-item__overlay {
   background: none;
 }
+
 /* 自訂導覽物件選擇狀態 */
-.selectedStatus{
-  color:#0288D1;
+.selectedStatus {
+  color: #0288D1;
   border: 3px solid #fcd796;
   border-top: 0px;
   /* border-bottom: 0px; */

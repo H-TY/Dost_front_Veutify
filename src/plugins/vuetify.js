@@ -39,6 +39,10 @@ export default createVuetify({
       ripple: false, // 關閉按鈕水波紋效果
       variant: "plain", // 預設按鈕樣式為 plain
     },
+    VCard: {
+      ripple: false,
+      variant: "plain",
+    },
     VSheet: {
       class: "bg-transparent", // 預設 VSheet 元件背景 none
     },

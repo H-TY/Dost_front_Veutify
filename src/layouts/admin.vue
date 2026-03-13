@@ -1,102 +1,114 @@
 <template>
-  <!-- Logo & 導覽列 -->
-  <v-navigation-drawer 
-  width="200" 
-  expand-on-hover 
-  rail 
-  @mouseover="isExpanded = true" 
-  @mouseleave="isExpanded = false">
-    <!-- ● Logo -->
-    <v-sheet class=" my-4 d-flex">
-      <v-col class="pa-0 d-flex justify-end pe-2">
-        <v-list-item 
-        class="rounded-circle pa-1" 
-        color="white" 
-        width=" 50" 
-        height="50" 
-        :to="logo.to" 
-        :ripple="false">
-          <v-img :src="logo.img" cover></v-img>
-        </v-list-item>
-      </v-col>
-      <v-col class="pa-0 d-flex align-center">
-        <v-list-item 
-        :to="logo.to" 
-        :ripple="false" 
-        min-height="0" 
-        class="align-center justify-center pa-0" 
-        text="管理區"></v-list-item>
-      </v-col>
-    </v-sheet>
+  <div class="admin-all">
+    <!-- Logo & 導覽列 -->
+    <v-navigation-drawer class="admin-navigation-drawer" :width="adminNavbarWidth" :location="mobileNarbarPosition" permanent :rail="mdAndUp" :rail-width="adminNavbarRailWidth" :expand-on-hover="lgAndUp" @mouseover="isExpanded = true" @mouseleave="isExpanded = false">
 
-    <v-divider></v-divider>
+      <!-- ● Logo -->
+      <v-btn :to="logo.to">
+        <div class="logo-box">
+          <img :src="logo.img">
+        </div>
+      </v-btn>
 
-    <!-- ● 導覽項目 -->
-    <v-list class=" d-flex flex-column align-center">
-      <v-list-item 
-      v-for="(item, index) in navItems" 
-      :key="index" 
-      :to="item.to" 
-      :title="item.text" 
-      :prepend-icon="item.icon" 
-      border-radius="50" 
-      color="light-blue-darken-2"></v-list-item>
-    </v-list>
+      <!-- ● 導覽列項目 -->
+      <v-list>
+        <v-list-item v-for="(item, index) in adminNavItems" :key="index" :to="item.to" :title="item.text" :prepend-icon="item.icon"></v-list-item>
+      </v-list>
 
-    <v-divider></v-divider>
+      <!-- ● 登出按鈕 -->
+      <div class="logout-box">
+        <v-btn v-if="user.isLogin" prepend-icon="mdi-account-arrow-right" @click="logout" :text="logOutBtnChange.text" :class="logOutBtnChange.class"></v-btn>
+      </div>
+    </v-navigation-drawer>
 
-    <!-- ● 登出按鈕 -->
-    <v-col>
-      <v-sheet class="d-flex justify-center mt-6">
-        <v-btn 
-        v-if="user.isLogin" 
-        prepend-icon="mdi-account-arrow-right" 
-        class="bg-deep-orange-darken-2 w-50" 
-        :rounded="isExpanded == true ? '' : 'circle'" 
-        :text="isExpanded == true ? '登出' : ''" 
-        :ripple="false" 
-        variant="outlined" 
-        @click="logout" 
-        :height="isExpanded == true ? '36' : ''"
-        ></v-btn>
-      </v-sheet>
-    </v-col>
-  </v-navigation-drawer>
-
-  <!-- 告知 Router 要渲染頁面的組件和當前路徑。 -->
-  <v-main>
-    <router-view></router-view>
-  </v-main>
+    <!-- 告知 Router 要渲染頁面的組件和當前路徑。 -->
+    <v-main class="admin-main" :style="{ '--v-layout-left': adminVLayoutLeft, '--v-layout-bottom': adminVLayoutBottom }">
+      <section>
+        <div class="admin-bg">
+          <router-view></router-view>
+        </div>
+      </section>
+    </v-main>
+  </div>
 </template>
 
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
-import AdminNavItems from '@/components/AdminNavItems'
+// 引進生成的 data_json 檔案
+import { logo, adminNavItems } from '@/plugins/data_json'
 
 
 // 解構出 mobile的斷點
-const { mobile } = useDisplay()
+const { mobile, smAndDown, mdAndUp, lgAndUp } = useDisplay()
+// console.log(mobile, lgAndUp)
 
 const user = useUserStore()
 const router = useRouter()
 const createSnackbar = useSnackbar()
-const {logo, navItems} = AdminNavItems()
 
 
-// 在導覽列 v-navigation-drawer 增添綁定動作事件 @mouseover @mouseleave
-// 再監聽動作事件判定導覽列是開啟或關閉狀態
+// ● 預設 admin 頁面的導覽列 "收闔/展開" 的寬度
+const adminNavbarRailWidth = ref(null)
+const adminNavbarWidth = ref(null)
+adminNavbarRailWidth.value = 120;
+adminNavbarWidth.value = 200;
+
+
+// ● mobile 版，v-navigation-drawer 的位置設定
+const mobileNarbarPosition = computed(() => {
+  if (smAndDown.value === true) {
+    return "bottom"
+  } else {
+    return "left"
+  }
+})
+
+
+// ● 在導覽列 v-navigation-drawer 增添綁定動作事件 @mouseover @mouseleave
 const isExpanded = ref(false)
+// // 監聽動作事件判定導覽列是開啟或關閉狀態
 // watch(isExpanded, (nweE, oldE) => {
-//   console.log('nweE:', nweE, 'oldE:', oldE)
+//   // console.log('nweE:', nweE, 'oldE:', oldE)
 // })
 
 
-// 登出函式
+// ● 根據導覽列是開啟或關閉狀態，計算 admin-main 的版面寬度
+const adminVLayoutLeft = computed(() => {
+  // 當頁面寬度 >= lg 時，觸發
+  if (lgAndUp.value === true) {
+    return isExpanded.value ? adminNavbarWidth.value + 'px' : adminNavbarRailWidth.value + 'px'
+  } else if (smAndDown.value === true) {
+    return '0px'
+  } else {
+    return adminNavbarRailWidth.value + 'px'
+  }
+})
+
+const adminVLayoutBottom = computed(() => {
+  // 當頁面寬度 <= sm 時，觸發
+  if (smAndDown.value === true) {
+    return adminNavbarRailWidth.value + 'px'
+  } else {
+    return '0px'
+  }
+})
+
+
+// ● 根據導覽列是開啟或關閉狀態，控制 "登出按鈕" 樣式是否開/闔
+const logOutBtnChange = computed(() => {
+  return {
+    text: lgAndUp.value && isExpanded.value ? '登出' : '',
+    class: lgAndUp.value && isExpanded.value ? 'expanded-btn' : ''
+  }
+})
+
+
+// ● 登出函式
 const logout = async () => {
   await user.logout()
   createSnackbar({
@@ -108,36 +120,5 @@ const logout = async () => {
   return router.push('/')
 }
 
+
 </script>
-
-
-<style scoped>
-/* logo 欄位的設定 */
-::v-deep .v-list-item-title {
-  padding-left: 15px;
-}
-
-::v-deep .v-list-item__spacer {
-  display: none;
-}
-
-/* 導覽列物件欄位的設定 */
-::v-deep .v-list-item--density-default.v-list-item--one-line {
-  display: inline-flex;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 登出按鈕縮小時 */
-::v-deep .v-btn--size-default {
-  --v-btn-size: 1rem;
-  --v-btn-height: 30px;
-  min-width: 30px;
-  padding: 0;
-}
-
-::v-deep .v-btn__prepend {
-  margin-inline: auto;
-}
-</style>

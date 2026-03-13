@@ -2,3 +2,4 @@
 // 這邊的寫法，* 表示將這個檔案裡的所有東西原封不動的匯出
 export * from "./serviceData";
 export * from "./envData";
+export * from "./navItemsData";
