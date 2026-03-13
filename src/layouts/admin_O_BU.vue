@@ -17,7 +17,7 @@
 
     <!-- ● 導覽項目 -->
     <v-list class=" d-flex flex-column align-center">
-      <v-list-item v-for="(item, index) in navItems" :key="index" :to="item.to" :title="item.text" :prepend-icon="item.icon" border-radius="50" color="light-blue-darken-2"></v-list-item>
+      <v-list-item v-for="(item, index) in adminNavItems" :key="index" :to="item.to" :title="item.text" :prepend-icon="item.icon" border-radius="50" color="light-blue-darken-2"></v-list-item>
     </v-list>
 
     <v-divider></v-divider>
@@ -43,7 +43,8 @@ import { useDisplay } from 'vuetify'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
-import AdminNavItems from '@/components/AdminNavItems'
+import { logo, adminNavItems } from '@/plugins/data_json'
+
 
 
 // 解構出 mobile的斷點
@@ -52,7 +53,6 @@ const { mobile } = useDisplay()
 const user = useUserStore()
 const router = useRouter()
 const createSnackbar = useSnackbar()
-const { logo, navItems } = AdminNavItems()
 
 
 // 在導覽列 v-navigation-drawer 增添綁定動作事件 @mouseover @mouseleave
