@@ -1,38 +1,27 @@
 <template>
-  <v-container fluid>
-    <v-row class="text-center">
-      <v-col>
-        <h1>預約管理</h1>
-      </v-col>
-    </v-row>
-    <v-row class="text-center">
-      <v-col>
-        <v-btn class="d-inline-flex pa-4" color="green" @click="loadItems">查詢預約</v-btn>
-      </v-col>
-    </v-row>
+  <div class="booking-info">
+    <div class="admin-page-title" ref="RefTitle">
+      <h2>預約訂單管理</h2>
+    </div>
 
-    <!-- ● 已預約資料表格 -->
-    <v-card class="mt-8" flat>
-      <v-card-title>查詢預約資料</v-card-title>
+    <div class="list-box">
+      <!-- ● 搜尋欄位 -->
+      <v-text-field class="search-box" label="搜尋訂單" v-model="search" prepend-inner-icon="mdi-magnify" variant="solo-filled" density="comfortable" flat hide-details single-line></v-text-field>
 
-      <template v-slot:text>
-        <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line></v-text-field>
-      </template>
+      <v-divider></v-divider>
 
-      <v-data-table :headers="headers" :items="items" :search="search">
+      <!-- ● 已預約訂單清單 -->
+      <v-data-table ref="refTableBox" class="table-box" :class="isSlideTable ? 'right-slide' : ''" :headers="headers" :items="items" :search="search">
         <!-- 訂單狀態欄位 -->
         <template #['item.orderStatus']='{ value, item }'>
-          <v-row class="flex-column justify-content-center my-6">
-            <v-col class="pa-0">
-              <v-chip @update:modelValue="newOS" :text="value ? '已預約' : '已取消'" :color="value ? 'green' : 'red'" size="default"></v-chip>
-            </v-col>
-            <v-col class="pa-0 mt-4">
-              <template v-if="value">
-                <v-btn class="cancelBtnCss" variant="flat" flat @click="openDialog(item)">取消訂單</v-btn>
-              </template>
-            </v-col>
-          </v-row>
+          <div class="status-box">
+            <v-chip @update:modelValue="newOS" :text="value ? '已預約' : '已取消'" :class="value ? 'no-fill' : 'fill'"></v-chip>
+            <template v-if="value">
+              <v-btn class="cancel-btn" @click="openDialog(item)">取消訂單</v-btn>
+            </template>
+          </div>
         </template>
+
         <!-- 下單日期欄位 -->
         <template #['item.createdAt']='{ value }'>
           <!-- 使用 .split(' ') 依據"空白"的字符作為分割成新的陣列
@@ -40,12 +29,14 @@
           -->
           {{ value.split(' ')[0] }}
         </template>
+
         <!-- 狗狗圖片欄位 -->
         <template #['item.image']='{ value }'>
-          <v-sheet class="bg-transparent my-2" width="70" height="70" rounded="lg" elevation="2">
-            <v-img :src="value" class="w-100 h-100" rounded="lg" cover></v-img>
-          </v-sheet>
+          <div class="img-box">
+            <img :src="value"></img>
+          </div>
         </template>
+
         <!-- 預約時段欄位 -->
         <template #['item.bookingTime']='{ value }'>
           <v-list>
@@ -55,20 +46,23 @@
               ● 供後續 .split(',') 轉成有分割時間段的陣列（["15:00～17:00", "10:00～12:00"]）
               ● 最後再用排序 .sort((a, b) => parseInt(a) - parseInt(b)) 由小到大排列，加 parseInt() 是為了將 a、b 參數從文字轉數字才可以做比較排序
               -->
-            <v-list-item v-for="(el, index) in value.join(' ').split(',').sort((a, b) => parseInt(a) - parseInt(b))" :key="index">{{ el }}</v-list-item>
+            <v-list-item v-for="(el, index) in value" :key="index">● {{ el }}</v-list-item>
           </v-list>
         </template>
+
         <!-- 預約預約總時數欄位 -->
         <template #['item.totalBookingTime']='{ value }'>
           {{ value ? value + ' 小時' : '無資料' }}
         </template>
+
         <!-- 預約總金額欄位 -->
         <template #['item.totalPrice']='{ value }'>
           {{ value }} 元
         </template>
       </v-data-table>
-    </v-card>
+    </div>
 
+    <!-- ● 取消訂單彈窗 -->
     <v-dialog v-model="dialog">
       <v-form @submit.prevent="submit" :disabled="isSubmitting">
         <v-sheet class="bg-white d-flex flex-column justify-self-center align-self-center justify-center pa-7" max-width="600" height="auto">
@@ -98,15 +92,11 @@
             <!-- 確認取消訂單按鈕 -->
             <v-btn class="confirmCancelBtn my-6" type="submit" variant="plain" flat @click="changeOrderStatus" :loading="isSubmitting">確認取消</v-btn>
           </v-sheet>
-          <v-sheet class="dialogClosePosition rounded-circle bg-transparent d-flex">
-            <v-btn class="rounded-circle d-flex pa-0 bg-white opacity-100" min-width="60" min-height="60" variant="plain" @click="dialogClose" flat>
-              <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" size="48" color="red-darken-4" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickmouseToggleOff"></v-icon>
-            </v-btn>
-          </v-sheet>
+          <dialogCloseBtn @click="dialog = false"></dialogCloseBtn>
         </v-sheet>
       </v-form>
     </v-dialog>
-  </v-container>
+  </div>
 </template>
 
 <script setup>
@@ -117,6 +107,8 @@ import { useForm, useField } from 'vee-validate'
 import { useUserStore } from '@/stores/user'
 import { useBookingOrderStore } from '@/stores/bookingOrder'
 import { useApi } from '@/composables/axios'
+import { useTitleScrollDown, useTableScroll } from '@/composables/scrollAddClass'
+import dialogCloseBtn from '@/components/dialogCloseBtn.vue'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
@@ -129,38 +121,48 @@ definePage({
   }
 })
 
+
 const { apiAuth } = useApi()
+const { RefTitle } = useTitleScrollDown()
+const { refTableBox, isSlideTable, resetTableScroll } = useTableScroll()
 const createSnackbar = useSnackbar()
 const user = useUserStore()
 const BookingOrderStore = useBookingOrderStore()
 
-// 取帳號名稱
+
+// ● 帳號名稱
 const User = ref(user.account)
 
 
+// ● 表格變數宣告
 const search = ref('')
 const items = ref([])
 // asc 升冪（由小至大排序）；desc 降冪（由大至小排序）
 // const sortBy = [{key: 'bookingOrderNumber', order:'desc'}]
 const headers = [
-  { align: 'center', title: '訂單編號', key: 'bookingOrderNumber' },
-  { align: 'center', title: '訂單狀態', key: 'orderStatus' },
-  { align: 'center', title: '下單日期', key: 'createdAt', value: item => new Date(item.createdAt).toLocaleString() },
-  { align: 'center', title: '帳號名稱', key: 'accountName' },
-  { align: 'center', title: '預約人', key: 'name' },
-  { align: 'center', title: '電話', key: 'phone' },
-  { align: 'center', title: '預約狗狗', key: 'dogName' },
-  { align: 'center', title: '圖片', key: 'image' },
-  { align: 'center', title: '預約日期', key: 'bookingDate' },
-  { align: 'center', title: '預約時段', key: 'bookingTime' },
-  { align: 'center', title: '預約總時數', key: 'totalBookingTime' },
-  { align: 'center', title: '預約總金額', key: 'totalPrice' },
+  { title: '訂單編號', key: 'bookingOrderNumber', align: 'center' },
+  { title: '訂單狀態', key: 'orderStatus', align: 'center' },
+  { title: '下單日期', key: 'createdAt', align: 'center', value: item => new Date(item.createdAt).toLocaleString() },
+  { title: '帳號名稱', key: 'accountName', align: 'center' },
+  { title: '預約人', key: 'name', align: 'center' },
+  { title: '電話', key: 'phone', align: 'center' },
+  { title: '預約狗狗', key: 'dogName', align: 'center' },
+  { title: '圖片', key: 'image', align: 'center' },
+  { title: '預約日期', key: 'bookingDate', align: 'center' },
+  { title: '預約時段', key: 'bookingTime', align: 'center' },
+  { title: '預約總時數', key: 'totalBookingTime', align: 'center' },
+  { title: '預約總金額', key: 'totalPrice', align: 'center' },
 ]
 
+// 向後端請求所有訂單資料，並將資料放入 items 變數中
 const loadItems = async () => {
   try {
     const { data } = await apiAuth.get('/order/all')
     items.value.splice(0, items.value.length, ...data.result.data)
+
+    // 切換頁數，表格會自動滾動回頂部
+    resetTableScroll()
+
   } catch (error) {
     console.log(error)
     createSnackbar({
@@ -174,15 +176,30 @@ const loadItems = async () => {
 loadItems()
 
 
+// // ● 升冪排序資料
+// // 因避免前端資料狀態被汙染，故會直接改變原本資料內容的：
+// // .sort() 排序
+// // .reverse() 反轉
+// // .splice() 刪除/插入
+// // .push() 從「後面加入元素」
+// // .pop() 移除「最後一個元素」
+// // .shift() 移除「第一個元素」
+// // .unshift() 從「前面加入元素」
+// // 先將原資料複製一份，再針對 "複製的資料" 進行排序
+// const sortItemsBookingTime = (value) => {
+//   return [...value].sort((a, b) => parseInt(a) - parseInt(b))
+// }
 
-// 訂單狀態
+
+
+// ● 訂單狀態
 const nowOrderStatus = ref(null)
 // console.log('nowOrderStatus', nowOrderStatus.value)
 // watch(nowOrderStatus, (A, B) => {
 //   console.log(A, B)
 // })
 
-// 取消訂單按鈕更改訂單狀態
+// ● 取消訂單按鈕更改訂單狀態
 const changeOrderStatus = () => {
   nowOrderStatus.value = false
 }
@@ -209,10 +226,10 @@ const confirmCancelDataId = ref({
 // })
 
 
-// 默認彈窗關閉狀態
+// ● 默認彈窗關閉狀態
 const dialog = ref(false)
 
-// 開啟彈窗
+// ● 開啟彈窗
 const openDialog = (item) => {
   if (item) {
     console.log('item', item.value)
@@ -230,23 +247,13 @@ const openDialog = (item) => {
   dialog.value = true
 }
 
-// 關閉彈窗
+// ● 關閉彈窗
+// 這邊還是要寫這一段，因後續會在取消訂單成功後呼叫 dialogClose() 來關閉彈窗
 const dialogClose = () => {
   dialog.value = false
 }
 
-// ● 用來觸發判斷滑鼠滑入、滑出的圖示。
-const mouseToggle = ref(false)
-
-const mouseoverHandle = () => {
-  mouseToggle.value = !mouseToggle.value
-}
-
-const clickmouseToggleOff = () => {
-  mouseToggle.value = false
-}
-
-// 觸發更新指定 id 的訂單狀態函式
+// ● 觸發更新指定 id 的訂單狀態函式
 const newOS = (id, newValue) => {
   // console.log('id', id, 'newValue', newValue)
   const findItem = items.value.find(item => item._id === id)
@@ -266,7 +273,7 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
   }
 })
 
-// 建立欄位 useField 的欄位
+// ● 建立欄位 useField 的欄位
 const id = useField('id')
 const orderStatus = useField('orderStatus')
 
@@ -310,7 +317,7 @@ const submit = handleSubmit(async (orderEditData) => {
 </script>
 
 
-<style scoped>
+<!-- <style scoped>
 /* 取消按鈕樣式 */
 .cancelBtnCss {
   width: 72px;
@@ -321,7 +328,7 @@ const submit = handleSubmit(async (orderEditData) => {
   border: 1px solid #613f0096;
 }
 
-.cancelBtnCss:hover{
+.cancelBtnCss:hover {
   color: white;
   background: #613f0096;
   border: none;
@@ -351,7 +358,7 @@ const submit = handleSubmit(async (orderEditData) => {
 .confirmCancelDataBorderCss {
   border: 1px solid #dfdfdf;
 }
-</style>
+</style> -->
 
 
 

@@ -15,7 +15,16 @@
             <template v-for="el in orderInfoData" :key="el.title">
               <v-row>
                 <v-col>{{ el.title }}</v-col>
-                <v-col cols="7"> {{ el.value }}</v-col>
+                <v-col cols="7">
+                  <template v-if="isArray(el.value)">
+                    <p v-for="(element, index) in el.value" :key="index">
+                      ● {{ element }}
+                    </p>
+                  </template>
+                  <template v-else>
+                    {{ el.value }}
+                  </template>
+                </v-col>
               </v-row>
             </template>
           </div>
@@ -26,7 +35,7 @@
 
         <!-- 確認取消訂單按鈕 -->
         <template v-if="displayCancelBtn">
-          <v-btn class="cancel-btn" type="submit" variant="plain" flat @click="changeOrderStatus" :loading="isSubmitting">確認取消</v-btn>
+          <v-btn class="cancel-btn" type="submit" @click="changeOrderStatus" :loading="isSubmitting">確認取消</v-btn>
         </template>
 
         <!-- 提示取消訂單的方法 -->
@@ -40,7 +49,7 @@
         </template>
       </div>
 
-      <dialogCloseBtn dialogName="dialogOrderInfo" @close="dialogClose"></dialogCloseBtn>
+      <dialogCloseBtn @click="dialogClose()"></dialogCloseBtn>
     </div>
   </v-form>
 </template>
@@ -60,9 +69,14 @@ const props = defineProps(['bigTitle', 'orderInfoData', 'orderInfoDataImg', 'cha
 // ● 在指定頁面顯示 "取消訂單按鈕"
 const CancelBtnPage = ['/userZone/dogBookingSearch',]
 
-// 用 computed 自動計算前進的頁面是否需要顯示 "取消訂單按鈕"
+// ● 用 computed 自動計算前進的頁面是否需要顯示 "取消訂單按鈕"
 const displayCancelBtn = computed(() =>
   CancelBtnPage.includes(route.path)
 )
+
+// ● 判斷資料型態是否為陣列
+const isArray = (passInData) => {
+  return Array.isArray(passInData)
+}
 
 </script>

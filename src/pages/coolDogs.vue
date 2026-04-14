@@ -49,6 +49,13 @@ const loadProducts = async () => {
     })
     pages.value = Math.ceil(data.result.total / ITEMS_PER_PAGE)
     items.value.splice(0, items.value.length, ...data.result.data)
+
+    // 頁面滾動到頂部
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+
   } catch (error) {
     console.log(error)
     createSnackbar({
@@ -60,6 +67,8 @@ const loadProducts = async () => {
   }
 }
 loadProducts()
+
+
 
 
 

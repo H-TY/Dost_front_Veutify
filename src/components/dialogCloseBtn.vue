@@ -1,30 +1,15 @@
 <template>
   <div class="dialog-close">
-    <v-btn @click="emitClose">
-      <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickmouseToggleOff"></v-icon>
+    <v-btn @click="emit('click')">
+      <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" @mouseover="mouseToggle = true" @mouseout="mouseToggle = false"></v-icon>
     </v-btn>
   </div>
 </template>
 
 
 <script setup>
-// ● 定義從元件傳入的資料
-// const props = defineProps([dialogName]) // 簡寫
-// 詳細寫
-const props = defineProps({
-  dialogName: {
-    type: String,
-    require: true,
-  },
-})
-
-// ● 通知父層要關閉的 dialog 名字
-// 無法在子元件修改 props 的值，可能會讓後續整個狀態亂掉
-// 子元件只做傳遞資訊，只能用 emit 通知父層要關閉的動作
-const emit = defineEmits(['close']) // 宣告子元件會發出哪些事件
-const emitClose = () => {
-  emit('close', props.dialogName) // 傳遞給父層要觸發的動作、名子參數
-}
+// ● 子元件只做傳遞資訊，只能用 emit 通知父層要觸發的事件，父層再去做事件處理。
+const emit = defineEmits(['click']) // 宣告子元件會發出哪些事件
 
 
 // ● 用滑鼠滑入、滑出，觸發改變圖示。
@@ -35,11 +20,4 @@ const emitClose = () => {
 // mouseout：當滑鼠移動離開元素上方時觸發（冒泡）
 const mouseToggle = ref(false)
 
-const mouseoverHandle = () => {
-  mouseToggle.value = !mouseToggle.value
-}
-
-const clickmouseToggleOff = () => {
-  mouseToggle.value = false
-}
 </script>

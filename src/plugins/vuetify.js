@@ -39,12 +39,24 @@ export default createVuetify({
       ripple: false, // 關閉按鈕水波紋效果
       variant: "plain", // 預設按鈕樣式為 plain
     },
+    VTextField: {
+      variant: "underlined",
+    },
+    VTextarea: {
+      variant: "underlined",
+    },
+    VCombobox: {
+      variant: "underlined",
+    },
     VCard: {
       ripple: false,
       variant: "plain",
     },
     VSheet: {
       class: "bg-transparent", // 預設 VSheet 元件背景 none
+    },
+    VList: {
+      density: "compact", // 控制元件的「空間尺寸（padding / height / 間距）」，預設 default 為較寬鬆， comfortable 稍微緊湊，compact 較緊湊
     },
   },
   // 啟用 TimePicker 元件

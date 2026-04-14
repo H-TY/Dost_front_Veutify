@@ -2,133 +2,187 @@
   <div class="dog-info">
     <div class="admin-page-title" ref="RefTitle">
       <h2>狗狗資訊管理</h2>
+      <v-btn class="add-btn" @click="openDialog(null)">
+        <v-icon class="mdi mdi-plus-circle"></v-icon>
+      </v-btn>
     </div>
 
-    <v-row class="text-center">
-      <v-col>
-        <v-btn class="d-inline-flex pa-4" color="green" @click="openDialog(null)">新增夥伴資訊</v-btn>
-      </v-col>
-      <!-- 跳出視窗 -->
-      <v-dialog v-model="dialog.open" persistent width="500">
-        <!-- 表格（新增/編輯商品） -->
-        <v-form @submit.prevent="submit">
-          <v-card>
-            <v-card-title>{{ dialog.id ? '編輯狗狗資訊' : '新增狗狗資訊' }}</v-card-title>
+    <!-- ● 彈窗（狗狗資訊建檔） -->
+    <v-dialog content-class="dog-info-dialog" v-model="dialog.open" persistent>
+      <!-- 表格（新增/編輯商品） -->
+      <v-form @submit.prevent="submit">
+        <v-card>
+          <div class="dialog-title-box">
+            <h5 class="dialog-title">{{ dialog.id ? '編輯狗狗資訊' : '新增狗狗資訊' }}</h5>
+          </div>
 
-            <v-card-text class="pb-0">
-              <!-- 上傳（圖片）檔案 -->
-              <p>狗狗大頭照：</p>
-              <!-- 
+          <div class="dialog-content">
+            <!-- 上傳（圖片）檔案 -->
+            <p>狗狗大頭照：</p>
+            <!-- 
                   * v-model:raw-model-value="rawFileRecords" 多個不同的可綁定屬性時，可以這樣寫做綁定
                   * :raw-model-value 是自訂義的名稱，方便辨識其他綁定的屬性
+                  * 詳細參數說明：https://safrazik.github.io/vue-file-agent/
                 -->
+            <div class="photo-box">
               <vue-file-agent v-model="fileRecords" v-model:raw-model-value="rawFileRecords" accept="image/jpeg,image/jpg,image/png" deletable max-size="1MB" help-text="選擇檔案或拖曳到這裡" :error-text="{ type: '檔案格式不支援', size: '檔案大小不能超過 1MB' }" ref="fileAgent"></vue-file-agent>
-              <v-row class="mt-4">
-                <v-col>
-                  <v-text-field label="狗狗名字" v-model="dogName.value.value" :error-messages="dogName.errorMessage.value"></v-text-field>
-                </v-col>
-                <v-col>
-                  <v-text-field label="年齡" type="number" min="0" v-model="age.value.value" :error-messages="age.errorMessage.value"></v-text-field>
-                </v-col>
-              </v-row>
+            </div>
 
-              <v-row class="d-flex ma-0">
-                <v-col class="d-flex align-self-center ps-0">
-                  <v-text-field label="預約價格" type="number" min="0" v-model="price.value.value" :error-messages="price.errorMessage.value"></v-text-field>
-                </v-col>
-                <v-checkbox label="上架" class="d-flex justify-center" v-model="sell.value.value" :error-messages="sell.errorMessage.value"></v-checkbox>
-              </v-row>
+            <div class="content-box">
+              <v-text-field label="狗狗名字" v-model="dogName.value.value" :error-messages="dogName.errorMessage.value"></v-text-field>
+              <v-text-field label="年齡" type="number" min="0" v-model="age.value.value" :error-messages="age.errorMessage.value"></v-text-field>
+              <v-text-field label="預約價格" type="number" min="0" v-model="price.value.value" :error-messages="price.errorMessage.value"></v-text-field>
+              <v-checkbox label="上架" v-model="sell.value.value" :error-messages="sell.errorMessage.value"></v-checkbox>
 
-              <v-radio-group class="d-flex" inline hide-spin-buttons v-model="booking.value.value">
-                <v-sheet class="d-flex align-center">
-                  <p><v-icon class="me-1">mdi-invoice-clock</v-icon>預約狀態：</p>
-                </v-sheet>
+              <v-radio-group class="booking-state-box" inline v-model="booking.value.value">
+                <p><v-icon>mdi-invoice-clock</v-icon>預約狀態：</p>
                 <v-radio label="可預約" value="可預約"></v-radio>
                 <v-radio label="預約已滿" value="預約已滿"></v-radio>
               </v-radio-group>
               <template v-if="booking.value.value === '可預約'">
-                <v-sheet class="mt-4">
-                  <p><v-icon class="me-1">mdi-clock</v-icon>可預約時段：</p>
-                  <v-chip-group selected-class="bg-amber-darken-4" multiple v-model="bookingTime.value.value" :error-messages="bookingTime.errorMessage.value">
-                    <v-chip v-for="time of times" :key="time" :text="time" :value="time"></v-chip>
+                <div class="time-box">
+                  <p><v-icon>mdi-clock</v-icon>可預約時段：</p>
+                  <v-chip-group selected-class="selected-item" multiple v-model="bookingTime.value.value" :error-messages="bookingTime.errorMessage.value">
+                    <v-chip v-for="(time, index) of times" :key="index" :text="time" :value="time"></v-chip>
                   </v-chip-group>
-                </v-sheet>
+                </div>
               </template>
 
-              <v-textarea label="狗狗的性格、特徵" class="mt-6" v-model="feature.value.value" :error-messages="feature.errorMessage.value"></v-textarea>
-            </v-card-text>
+              <!-- 疫苗接踵資訊 -->
+              <div class="vaccine-list">
+                <p>
+                  <v-icon class="mdi mdi-needle"></v-icon>疫苗接踵紀錄：
+                  <span class="warning-txt">{{ vaccine.errorMessage.value }}</span>
+                </p>
+                <div class="vaccine-box">
+                  <template v-for="(el, index) in vaccineFields" :key="el.key">
+                    <div class="vaccine-item">
+                      <h6>紀錄 {{ index + 1 }}</h6>
 
-            <!-- 送出 & 取消 按鈕 -->
-            <v-card-actions class="justify-center mb-5">
-              <v-btn class="bg-red me-5" :loading="isSubmitting" @click="closeDialog">取消</v-btn>
-              <v-btn class="bg-green" type="submit" :loading="isSubmitting">送出</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-form>
-      </v-dialog>
-    </v-row>
+                      <!-- 疫苗名稱 -->
+                      <Field :name="`vaccine[${index}].name`" v-slot="{ field, errorMessage }">
+                        <v-combobox hint="也可手動輸入疫苗名稱" persistent-hint v-model="el.value.name" :items="vaccineList" chips label="疫苗名稱" :error-messages="errorMessage" />
+                      </Field>
 
-    <!-- ● 所有的狗狗個人資訊表格 -->
-    <v-row class="justify-center mt-10" width="1500">
-      <v-card flat>
-        <v-card-title class="d-flex align-center pe-2">
-          <!-- Title -->
-          <h3>狗狗個人資訊</h3>
-          <v-spacer></v-spacer>
-          <!-- 搜尋欄位 -->
-          <v-text-field label="搜尋" v-model="tableSearch" density="comfortable" prepend-inner-icon="mdi-magnify" variant="solo-filled" flat hide-details single-line @click:prepend-inner="tableLoadItems(true)" @keydown.enter="tableLoadItems(true)"></v-text-field>
-        </v-card-title>
+                      <!-- 日期 -->
+                      <Field :name="`vaccine[${index}].date`" v-slot="{ errorMessage }">
+                        <v-text-field placeholder="YYYY-MM-DD" v-model="el.value.date" label="接踵日期" :error-messages="errorMessage" />
+                      </Field>
 
-        <v-divider></v-divider>
+                      <!-- 醫院 -->
+                      <Field :name="`vaccine[${index}].hospital`" v-slot="{ errorMessage }">
+                        <v-text-field v-model="el.value.hospital" label="接踵醫院" :error-messages="errorMessage" />
+                      </Field>
 
-        <v-data-table-server class="text-center" v-model:items-per-page="tableItemsPerPage" v-model:sort-by="tableSortBy" v-model:page="tablePage" :items="items" :headers="itemsHeaders" :items-length="tableItemsLength" :loading="tableLoading" :search="tableSearch" @update:items-per-page="tableLoadItems(false)" @update:sort-by="tableLoadItems(false)" @update:page="tableLoadItems(false)">
-          <!-- 大頭照欄位 -->
-          <template #['item.image']='{ value }'>
-            <v-card class="my-2" elevation="2" rounded>
-              <v-img :src="value" width="200" height="150" cover></v-img>
-            </v-card>
-          </template>
-          <!-- 預約狀態欄位 -->
-          <template #['item.booking']='{ value }'>
-            <v-chip :text="value" :color="value === '可預約' ? 'green' : 'red'" size="small" label></v-chip>
-          </template>
-          <!-- 預約時段欄位 -->
-          <template #['item.bookingTime']='{ value }'>
-            <v-list>
-              <!--
+                      <div class="delet-btn">
+                        <v-icon class="mdi mdi-delete-forever" @click="deletItem(index)"></v-icon>
+                      </div>
+                    </div>
+                  </template>
+
+                  <div class="add-btn">
+                    <v-icon class="mdi mdi-plus-box-outline" @click="addItem"></v-icon>
+                  </div>
+                </div>
+              </div>
+
+              <v-textarea label="狗狗的性格、特徵" v-model="feature.value.value" :error-messages="feature.errorMessage.value"></v-textarea>
+
+              <v-textarea label="狗狗背景故事" v-model="story.value.value" :error-messages="story.errorMessage.value"></v-textarea>
+            </div>
+          </div>
+
+          <!-- 送出 & 取消 按鈕 -->
+          <div class="btn-box">
+            <v-btn :loading="isSubmitting" @click="closeDialog">取消</v-btn>
+            <v-btn type="submit" :loading="isSubmitting">送出</v-btn>
+          </div>
+        </v-card>
+      </v-form>
+    </v-dialog>
+
+    <!-- ● 顯示所有的狗狗資訊表格清單 -->
+    <div class="list-box">
+
+      <!-- 搜尋欄位 -->
+      <v-text-field class="search-box" label="搜尋" v-model="tableSearch" prepend-inner-icon="mdi-magnify" variant="solo-filled" density="comfortable" flat hide-details single-line @click:prepend-inner="tableLoadItems(true)" @keydown.enter="tableLoadItems(true)"></v-text-field>
+
+      <v-divider></v-divider>
+
+      <v-data-table-server ref="refTableBox" class="table-box" :class="isSlideTable ? 'right-slide' : ''" v-model:items-per-page="tableItemsPerPage" v-model:sort-by="tableSortBy" v-model:page="tablePage" :items="items" :headers="itemsHeaders" :items-length="tableItemsLength" :loading="tableLoading" :search="tableSearch" @update:items-per-page="tableLoadItems(false)" @update:sort-by="tableLoadItems(false)" @update:page="tableLoadItems(false)">
+
+        <!-- 大頭照欄位 -->
+        <template #['item.image']='{ value }'>
+          <div class="img-box">
+            <img :src="value"></img>
+          </div>
+        </template>
+
+        <!-- 預約狀態欄位 -->
+        <template #['item.booking']='{ value }'>
+          <v-chip :text="value" :class="value === '可預約' ? 'no-fill' : 'fill'" label></v-chip>
+        </template>
+
+        <!-- 預約時段欄位 -->
+        <template #['item.bookingTime']='{ value }'>
+          <v-list>
+            <!--
               ● 因 value 是雖然是陣列，但時間段未分割（"value": ["15:00～17:00,13:00～15:00"]）
               ● 故用 .join(' ') 先轉成純文字串
               ● 供後續 .split(',') 轉成有分割時間段的陣列（["15:00～17:00", "10:00～12:00"]）
               ● 最後再用排序 .sort((a, b) => parseInt(a) - parseInt(b)) 由小到大排列，加 parseInt() 是為了將 a、b 參數從文字轉數字才可以做比較排序
               -->
-              <v-list-item v-for="(el, index) in value.join(' ').split(',').sort((a, b) => parseInt(a) - parseInt(b))" :key="index">{{ el }}</v-list-item>
-            </v-list>
-          </template>
-          <!-- 上下架欄位 -->
-          <template #['item.sell']='{ value, item }'>
-            <!-- 顯示 item 的 值 -->
-            <!-- <div><span v-text="JSON.stringify(item, null, 2)"></span></div> -->
-            <!-- :model-value 依據目前 sell 的值，顯示勾選狀態 -->
-            <!-- @update:modelValue 更新 model-value 狀態 -->
-            <v-checkbox :model-value="value" @update:modelValue="checkboxChange(item._id, $event)"></v-checkbox>
-          </template>
-          <template #['item.edit']='{ item }'>
-            <v-btn icon="mdi-pencil" variant="text" color="blue" @click="openDialog(item)"></v-btn>
-          </template>
-        </v-data-table-server>
-      </v-card>
-    </v-row>
+            <v-list-item v-for="(el, index) in value.sort((a, b) => parseInt(a) - parseInt(b))" :key="index">
+              <template v-if="el">
+                <v-icon class="mdi mdi-clock-time-four"> </v-icon>
+                {{ el }}
+              </template>
+            </v-list-item>
+          </v-list>
+        </template>
+
+        <!-- 疫苗接踵紀錄 -->
+        <template #['item.vaccine']='{ value }'>
+          <v-list>
+            <v-list-item v-for="(el, index) in value" :key="index">
+              <p>● {{ el.name }}</p>
+              <small>
+                日期：{{ el.date }}
+              </small>
+              <small>
+                醫院：{{ el.hospital }}
+              </small>
+            </v-list-item>
+          </v-list>
+        </template>
+
+        <!-- 上下架欄位 -->
+        <template #['item.sell']='{ value, item }'>
+          <!-- 顯示 item 的 值 -->
+          <!-- <div><span v-text="JSON.stringify(item, null, 2)"></span></div> -->
+          <!-- :model-value 依據目前 sell 的值，顯示勾選狀態 -->
+          <!-- @update:modelValue 更新 model-value 狀態 -->
+          <v-checkbox :model-value="value" @update:modelValue="checkboxChange(item._id, $event)"></v-checkbox>
+        </template>
+
+        <template #['item.edit']='{ item }'>
+          <v-btn icon="mdi-pencil" variant="text" color="blue" @click="openDialog(item)"></v-btn>
+        </template>
+      </v-data-table-server>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, warn, watch, onMounted } from 'vue'
+import { onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import * as yup from 'yup'
-import { useForm, useField } from 'vee-validate'
+import { useForm, useField, useFieldArray, Field } from 'vee-validate'
 import { definePage } from 'vue-router/auto'
 import { useApi } from '@/composables/axios'
-import { useTitleScrollDown } from '@/composables/scrollDownAddClass'
+import { useTitleScrollDown, useTableScroll } from '@/composables/scrollAddClass'
 import { useSnackbar } from 'vuetify-use-dialog'
+
+
 
 
 definePage({
@@ -139,21 +193,15 @@ definePage({
   }
 })
 
-const { RefTitle } = useTitleScrollDown()
 
-// // ● 向下滑動至指定距離，admin-title 元素添加 scroll-down 樣式
-// const RefadminTitle = ref(null)
-
-// onMounted(() => {
-
-//   console.log('RefadminTitle', RefadminTitle.value)
-// })
 
 const { backApi, apiAuth } = useApi()
+const { RefTitle } = useTitleScrollDown()
+const { refTableBox, isSlideTable, resetTableScroll } = useTableScroll()
 const createSnackbar = useSnackbar()
 
-// 宣告上傳的圖片變數
-// 尚未送出至後端，僅是上傳至當前頁面
+// ● 上傳圖片
+// 宣告上傳的圖片變數，目前圖片尚未送出至後端，僅是上傳至當前頁面
 const fileAgent = ref(null)
 // 要抓頁面上的東西時的寫法　ref=""，同時在 <script setup> 內也要建立一個同名的 ref 預設值為 null
 // null 表示“空”或“无”，是一个被显式赋值为“没有对象”的值。通常用于指示某个变量尚未保存任何对象或数据。（let obj = null）
@@ -161,7 +209,7 @@ const fileAgent = ref(null)
 // NaN　表示无效数字结果，通常出现在错误的数学运算中。
 
 
-// 可以預約的時段
+// ● 可以預約的時段
 const times = ref([
   '10:00～12:00',
   '13:00～15:00',
@@ -170,14 +218,35 @@ const times = ref([
 ])
 
 
-// 視窗動作
+// ● 疫苗清單
+const vaccineList = ref([
+  '無疫苗紀錄',
+  '五合一',
+  '七合一',
+  '八合一',
+  '十合一',
+  '十一合一',
+  '狂犬病疫苗',
+  '萊姆病疫苗',
+])
+
+// ● vaccine 表單欄位的初始值設定
+const initialVaccineItems = () => ({
+  name: null,
+  date: '',
+  hospital: ''
+})
+
+
+// ● 彈窗動作
 const dialog = ref({
   // 預設沒有彈出狀態
   open: false,
   // 用來判斷用是否為 "新增" 或 "編輯" 狀態
   id: ''
 })
-// 彈出表單內容視窗
+
+// ● 彈出表單內容視窗
 const openDialog = (item) => {
   if (item) {
     dialog.value.id = item._id
@@ -187,24 +256,32 @@ const openDialog = (item) => {
     booking.value.value = item.booking
     bookingTime.value.value = item.bookingTime
     feature.value.value = item.feature
+    story.value.value = item.story
+    vaccine.value.value = item.vaccine
     sell.value.value = item.sell
   } else {
     dialog.value.id = ''
+    addItem() // 新增一筆 vaccine 的初始值，確保在新增狀態下至少有一筆 vaccine 的欄位可以填寫
   }
+
   dialog.value.open = true
 }
 
 
-// 關閉彈窗
+// ● 關閉彈窗
 const closeDialog = () => {
   dialog.value.open = false
+
   // 重置表單
   resetForm()
+
   // 因上述的 "resetForm() 重置表單" 不會一併將上傳的檔案也重置，故需要自己再呼叫另一個函式 .deleteFileRecord() 來刪除已上傳的檔案
   fileAgent.value.deleteFileRecord()
 }
 
-// 自定義表單驗證
+
+
+// ● 自定義表單驗證
 const formSchema = yup.object({
   dogName: yup
     .string()
@@ -212,28 +289,44 @@ const formSchema = yup.object({
   age: yup
     .number()
     .required('狗狗年齡必填')
+    .typeError('年齡格式錯誤，請輸入數字')
     .min(0, '年齡不能小於 0'),
   price: yup
     .number()
     .required('預約價格必填')
-    .typeError('商品價格格式錯誤')
+    .typeError('商品價格格式錯誤，請輸入數字')
     .min(0, '商品價格不能小於 0'),
   booking: yup
     .string('')
     .required('預約狀態必填'),
   bookingTime: yup
-    .array(),
+    .array()
+    .of(
+      yup.string().required('請輸入時段')
+    ),
   feature: yup
     .string()
     .required('狗狗性格、特徵必填'),
+  story: yup
+    .string()
+    .required('狗狗背景故事必填'),
+  vaccine: yup
+    .array()
+    .of(
+      yup.object({
+        name: yup.string().required('疫苗名稱必填'),
+        date: yup.string().required('接踵日期必填寫'),
+        hospital: yup.string().required('接踵醫院必填寫'),
+      })
+    )
+    .min(1, '至少需要一筆記錄或選擇"無疫苗紀錄"')
+    .required('疫苗接踵記錄必填'),
   // 是否上架
   sell: yup
     .boolean(),
-  counter: yup
-    .number()
-    .required('點檯數字必填')
-    .min(0, '點檯數字不能小於 0'),
 })
+
+
 
 // 送出後執行驗證表單
 // useForm 指的是使用者填寫的 form
@@ -241,33 +334,114 @@ const formSchema = yup.object({
 // resetForm 是一個函式，作用為重置表單內容
 const { handleSubmit, isSubmitting, resetForm } = useForm({
   validationSchema: formSchema,
-  // initialValues 設定表單各欄位的初始值
+  // validateOnInput: true, // 即時驗證，使用者輸入資料的當下，同時驗證欄位
+  validateOnBlur: true, // 使用者輸入完資料，離開欄位時，才驗證欄位資料
+  // ▲ initialValues 設定表單各欄位的初始值
   initialValues: {
     dogName: '',
-    age: 0,
-    price: 0,
-    booking: '',
+    age: null,
+    price: null,
+    booking: '可預約',
     bookingTime: [],
     feature: '',
+    story: '',
+    vaccine: [],
     sell: true,
-    counter: 0,
   }
 })
 
+
+
+const { fields: vaccineFields, push: vaccinePush, remove: vaccineRemove } = useFieldArray('vaccine')
+// console.log(`useFieldArray('vaccine')`, useFieldArray('vaccine'))
+// console.log('vaccineFields', vaccineFields)
+// console.log('vaccineFields.value', vaccineFields.value)
+// vaccineFields.value.forEach((el) => {
+//   console.log('el.value', el.value)
+//   console.log('el.value.name', el.value.name)
+// })
+
+
+// ● 新增疫苗接踵紀錄
+const addItem = () => {
+  vaccinePush(initialVaccineItems())
+}
+
+// ● 移除疫苗接踵紀錄
+const deletItem = (index) => {
+  vaccineRemove(index)
+}
+
+
+// ● 疫苗接踵記錄欄位，當選擇 "無疫苗紀錄"，日期和醫院欄位自動帶入 "無紀錄" 的文字；當選擇其他疫苗名稱時，日期和醫院欄位恢復為空值
+watch(() => vaccineFields.value.map((el) => el.value.name), (newValue, oldValue) => {
+  // console.log('newValue', newValue)
+  newValue.forEach((el, index) => {
+    // 變數宣告：指定欄位 specField
+    const specField = vaccineFields.value[index]
+
+    if (!specField) return
+
+    if (el === '無疫苗紀錄') {
+      specField.value.date = "無紀錄"
+      specField.value.hospital = "無紀錄"
+
+    } else if (oldValue[index] === '無疫苗紀錄') {
+      // 當從 "無疫苗紀錄" 變更為其他疫苗名稱時，將日期和醫院欄位恢復為空值
+      specField.value.date = ""
+      specField.value.hospital = ""
+    }
+  })
+})
+
+
+// ● useField('XXX') 作用為：
+// * 註冊一個叫 'XXX' 的表單欄位
+// * 生成一個 響應式物件 XXX，可用來：
+//    - 讀取與更新欄位值
+//    - 監控驗證狀態
+//    - 顯示錯誤訊息
+//    - 控制欄位元件行為
 const price = useField('price')
 const dogName = useField('dogName')
 const age = useField('age')
 const feature = useField('feature')
+const story = useField('story')
+const vaccine = useField('vaccine')
 const booking = useField('booking')
 const bookingTime = useField('bookingTime')
 const sell = useField('sell')
-const counter = useField('counter')
+
+// watch(() => bookingTime.value.value, (newValue) => {
+//   console.log('newValue', newValue)
+// })
+
+
+
 
 // ● 綁定上傳檔案的動作
 // fileRecords 上傳檔案資料的物件陣列，用於展示和管理文件。
 const fileRecords = ref([])
 // fileRecords 原始文件資料，用於更底層的文件操作，例如文件上傳的動作或處理。
 const rawFileRecords = ref([])
+
+// ● 勾選 "預約已滿狀態" 清空選取時段
+// 推薦監聽 "涵式"，() => booking.value.value 明確：監聽「值」
+// 若是監聽的是 booking.value，裡面的來源複雜(包裝過的 ref 帶 getter/setter )，可能造成監聽有時候不會觸發
+watch(() => booking.value.value, (newValue) => {
+  // console.log('newValue', newValue)
+
+  // 利用 !!value 強制轉成 boolean（true / false），較為直覺的 boolean 值判斷目前是 "新增" 還是 "編輯" 狀態，不局限於特定的 id 值（例如：id 為空字串 '' 就是新增狀態；id 有值就為編輯狀態）
+  // ※ 運作原理：
+  // !value   // 先轉成 boolean 再取反
+  // !!value  // 再反一次 → 回到原本的 boolean
+  const isEditMode = !!dialog.value.id // 代表 id 值存在，boolean 值 = true 
+
+  if (newValue === '預約已滿' && !isEditMode) {
+    // console.log('新增狀態_觸發')
+    bookingTime.value.value = []
+  }
+})
 
 
 // ● 送出做完驗證後，才會再繼續執行上傳檔案的驗證（須要自己寫檔案上傳的驗證）
@@ -283,15 +457,17 @@ const submit = handleSubmit(async (values) => {
     // 表格需要寫成物件，採用 formdata
     const fd = new FormData()
 
+
     // 要將東西放進去的語法 fd.append(key, value)
     fd.append('dogName', values.dogName)
     fd.append('age', values.age)
     fd.append('price', values.price)
     fd.append('booking', values.booking)
-    fd.append('bookingTime', values.bookingTime)
+    fd.append('bookingTime', JSON.stringify(values.bookingTime)) // 因為 bookingTime 是陣列，後端接收時會當成字串，所以要用 JSON.stringify() 轉成字串格式，後端再用 JSON.parse() 轉回陣列格式
     fd.append('feature', values.feature)
+    fd.append('story', values.story)
+    fd.append('vaccine', JSON.stringify(values.vaccine))
     fd.append('sell', values.sell)
-    fd.append('counter', values.counter)
     // 判斷如果大於 0 時，才需要放檔案進去
     if (fileRecords.value.length > 0) {
       fd.append('image', fileRecords.value[0].file)
@@ -349,9 +525,10 @@ const itemsHeaders = [
   { title: '價格', align: 'center', sortable: true, key: 'price' },
   { title: '預約狀態', align: 'center', sortable: true, key: 'booking' },
   { title: '預約時段', align: 'center', sortable: true, key: 'bookingTime' },
-  { title: '性格、特徵', align: 'center', sortable: false, key: 'feature' },
-  { title: '點檯次數', align: 'center', sortable: true, key: 'counter' },
-  { title: '上下架', align: 'center', sortable: false, key: 'sell' },
+  { title: '特徵', align: 'center', sortable: false, key: 'feature' },
+  // { title: '小故事', align: 'center', sortable: false, key: 'story' },
+  { title: '疫苗紀錄', align: 'center', sortable: false, key: 'vaccine' },
+  { title: '上下架', align: 'center', sortable: true, key: 'sell' },
   { title: '編輯', align: 'center', sortable: false, key: 'edit' },
 ]
 // ● 顯示讀取狀態
@@ -360,6 +537,7 @@ const tableLoading = ref(true)
 const tableItemsLength = ref(0)
 // ● 搜尋
 const tableSearch = ref('')
+// ● 向後端抓取資料，並更新 items 的內容
 const tableLoadItems = async (reset) => {
   if (reset) tablePage.value = 1 //若重置表格讀取物件，表格頁數默認至第 1 頁
   tableLoading.value = true
@@ -375,7 +553,12 @@ const tableLoadItems = async (reset) => {
       }
     })
     items.value.splice(0, items.value.length, ...data.result.data)
+    // console.log('items.value', items.value)
     tableItemsLength.value = data.result.total
+
+    // 切換頁數，表格會自動滾動回頂部
+    resetTableScroll()
+
   } catch (error) {
     console.log(error)
     createSnackbar({
@@ -391,7 +574,6 @@ const tableLoadItems = async (reset) => {
 tableLoadItems()
 
 
-
 // ● 更改上架的勾選狀態
 const checkboxChange = async (id, newValue) => {
   try {
@@ -403,7 +585,7 @@ const checkboxChange = async (id, newValue) => {
     // 更新 items 中的相應 id 的 sell 的值，讓 checkbox 的勾選狀態同步顯示
     const item = items.value.find(item => item._id === id)
     if (item) {
-      item.sell = newValue // 更新状态
+      item.sell = newValue // 更新狀態
     }
 
     createSnackbar({

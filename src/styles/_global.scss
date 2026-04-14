@@ -349,6 +349,15 @@ hr {
 	}
 }
 
+// ● card 設定
+
+// ● 警告文字樣式
+.warning-txt {
+	color: #b00020; // vuetify 官方的 error color
+	font-size: calc(0.8rem + 0.1vw);
+	font-weight: 500;
+}
+
 // ● animation 動畫設定
 @keyframes scale_jump {
 	0% {

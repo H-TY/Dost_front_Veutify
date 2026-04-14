@@ -5,14 +5,11 @@
       <!-- 狗狗輪播 swiper 套件 -->
       <swiper class="dogSwiper" :centeredSlides="true" :spaceBetween="30" :pagination="{
         clickable: true,
-      }" :navigation="true" :hashNavigation="{
-        replaceState: true,
-        watchState: true
-      }" :breakpoints="{
+      }" :navigation="true" :breakpoints="{
         0: { slidesPerView: 1 },      // 小於 sm
         576: { slidesPerView: 'auto' } // sm 以上
-      }" :modules="modules" @swiper="onSwiper" @slideChangeTransitionEnd="onHashChange">
-        <swiper-slide v-for="item in items" :data-hash="`/booking#${item._id}`">
+      }" :modules="modules" @swiper="onSwiper" @slideChangeTransitionEnd="onDogIDChange">
+        <swiper-slide v-for="item in items">
           <!-- ● components/dogCard.vue 元件 -->
           <DogsCard v-bind="item"></DogsCard>
         </swiper-slide>
@@ -28,7 +25,7 @@
               <v-date-picker v-model="date" :allowed-dates="allowedSelectDate">
               </v-date-picker>
 
-              <dialogCloseBtn dialogName="dataDialog" @close="dialogClose"></dialogCloseBtn>
+              <dialogCloseBtn @click="dataDialog = false"></dialogCloseBtn>
             </v-dialog>
           </template>
 
@@ -66,28 +63,28 @@
 
             <template v-if="mobile">
               <!-- mobile 預約日期 -->
-              <v-text-field :label="chooseDateTitle" readonly variant="underlined" @click="dialogOpen($event, '預約日期')" :model-value="chooseBDate" :error-messages="bookingDate.errorMessage.value"></v-text-field>
+              <v-text-field :label="chooseDateTitle" readonly @click="dialogOpen($event, '預約日期')" :model-value="chooseBDate" :error-messages="bookingDate.errorMessage.value"></v-text-field>
 
               <!-- mobile 預約時段 -->
-              <v-textarea label="預約時段" readonly textarea auto-grow rows="1" variant="underlined" :model-value="BTimeTxt" :error-messages="bookingTime.errorMessage.value" @click="dialogOpen($event, '預約時段')"></v-textarea>
+              <v-textarea label="預約時段" readonly textarea auto-grow rows="1" :model-value="BTimeTxt" :error-messages="bookingTime.errorMessage.value" @click="dialogOpen($event, '預約時段')"></v-textarea>
             </template>
 
             <template v-else>
               <!-- 預約日期 -->
-              <v-text-field :label="chooseDateTitle" disabled variant="underlined" :model-value="chooseBDate" :error-messages="bookingDate.errorMessage.value"></v-text-field>
+              <v-text-field :label="chooseDateTitle" disabled :model-value="chooseBDate" :error-messages="bookingDate.errorMessage.value"></v-text-field>
 
               <!-- 預約時段 -->
-              <v-textarea label="預約時段" disabled textarea auto-grow rows="1" variant="underlined" :model-value="BTimeTxt" :error-messages="bookingTime.errorMessage.value"></v-textarea>
+              <v-textarea label="預約時段" disabled textarea auto-grow rows="1" :model-value="BTimeTxt" :error-messages="bookingTime.errorMessage.value"></v-textarea>
             </template>
 
 
             <!-- 預約總時數 -->
-            <v-text-field label=" 預約總時數" disabled variant="underlined" :model-value="totalBTimeTxt">
+            <v-text-field label=" 預約總時數" disabled :model-value="totalBTimeTxt">
               <span>預估</span>
             </v-text-field>
 
             <!-- 總計金額 -->
-            <v-text-field label="總計金額" disabled variant="underlined" :model-value="totalBPriceTxt">
+            <v-text-field label="總計金額" disabled :model-value="totalBPriceTxt">
               <span>預估</span>
             </v-text-field>
 
@@ -104,9 +101,9 @@
 
           <v-divider></v-divider>
 
-          <v-checkbox hide-details v-model="selectedTime" v-for="el in Dinfo.bookingTime.join(' ').split(',').sort((a, b) => parseInt(a) - parseInt(b))" :label="el" :value="el" false-icon="mdi-paw-outline" true-icon="mdi-paw"></v-checkbox>
+          <v-checkbox hide-details v-model="selectedTime" v-for="el in sortBookingTimeData" :label="el" :value="el" false-icon="mdi-paw-outline" true-icon="mdi-paw"></v-checkbox>
 
-          <dialogCloseBtn dialogName="chooseTimeDialog" @close="dialogClose"></dialogCloseBtn>
+          <dialogCloseBtn @click="chooseTimeDialog = false"></dialogCloseBtn>
         </div>
       </v-dialog>
 
@@ -174,9 +171,6 @@ const userName = computed(() => {
 
 
 
-
-
-
 // ● 綁定時間，讓日期和表格時間一致，並預設空字串
 const date = ref(null)
 // console.log(date.value)
@@ -229,10 +223,15 @@ const selectedTime = ref([])
 const items = ref([])
 // console.log('items', items.value)
 
+
+// ● 這個函式 loadItems() 用於後續讓 Swiper 使用（Swiper 依賴 DOM 操作），故函式在 onMounted() 裡面被呼叫的，保證 DOM 組件渲染完成後，就會執行 loadItems()，並更新 items.value 的內容，讓 Swiper 顯示出來；同時確保在資料更新後再執行 reSwiper()，讓 Swiper 移動到指定的圖片位置。
 const loadItems = async () => {
   try {
     const { data } = await backApi.get('/dogs')
     items.value.splice(0, items.value.length, ...data.result.data)
+
+    // 只有在「改資料後，馬上要用 DOM」時，才需要 nextTick()
+    await nextTick()
 
     // 確保 items.value 有值之後再執行 reSwiper()，讓後續 swiper 移動至指定的圖片
     reSwiper()
@@ -247,7 +246,8 @@ const loadItems = async () => {
     })
   }
 }
-loadItems()
+
+
 
 // ● dogSwiper 滑動圖片至指定位置
 // 把 Swiper 內部的實例（instance）存起來，讓你之後可以用 JS 控制 Swiper；以下物件就是 Swiper instance。
@@ -267,7 +267,7 @@ function onSwiper(swiper) {
   swiperInstance.value = swiper
 }
 
-// ● 用來判斷是否是從 "帥氣狗狗" 頁面點擊過來的（若是，會提供 id 值）
+// ● 用來判斷是否有提供 route.query.id
 // 取得目前網址的 query.id
 const currentID = route.query.id
 // console.log('currentID:', currentID)
@@ -314,11 +314,13 @@ function initSwiperHash() {
 
 
 
-// ● Swiper 事件 @slideChangeTransitionEnd 當滑動動畫結束時觸發函式 onHashChange
-const onHashChange = () => {
-  const changeHash = window.location.hash.split('#')[2]
-  // console.log('changeHash:', changeHash)
-  loadDinfo(changeHash)
+// ● Swiper 事件 @slideChangeTransitionEnd 當滑動動畫結束時觸發函式 onDogIDChange
+const onDogIDChange = (swiper) => {
+  // 邏輯說明：「現在滑到第幾張 → 去資料陣列找那一筆 → 拿它的 id」
+  const dogID = items.value[swiper.activeIndex]?._id
+  // console.log('dogID:', dogID)
+
+  loadDinfo(dogID) // 根據當前圖片的 id，去取該 id 的狗狗資料，並更新預約表格的資料
 }
 
 
@@ -336,9 +338,23 @@ const Dinfo = ref({
   counter: 0,
 })
 
-// 圖片變更，自動計算
+// ● 圖片變更，自動計算
 const dogImg = computed(() => {
   return Dinfo.value.image
+})
+
+
+// ● 來自後端的資料（bookingTime）重新排序
+const sortBookingTimeData = computed(() => {
+  // 因 .sort() 會修改原陣列「改了前端記憶體中的資料（同一份 reference）」，故需複製一個新陣列再排序
+  // 目前的 Dinfo.value.bookingTime 資料型態 => 陣列
+  // [
+  //   "10:00～12:00",
+  //   "13:00～15:00"
+  // ]
+  // [...Dinfo.bookingTime] 執行複製陣列的動作
+  // a.localeCompare(b) 比較 "字串" 順序；a-b 比較 "數字"
+  return [...Dinfo.value.bookingTime].sort((a, b) => a.localeCompare(b))
 })
 
 // ● 回傳指定 id 的狗狗訊息
@@ -426,56 +442,22 @@ const dialogOpen = (e, passInData) => {
   }
 }
 
-// ● 已預約的訂單資訊陣列
+// ● 已預約的訂單資料陣列
 const orderInfoData = reactive({})
 
 // 已預約的訂單資訊彈窗效果預設關閉
 const dialogOrderInfo = ref(false)
-
 
 // 送出預約表單成功後，彈出已預約的訂單資訊
 const openDialogOrderInfo = () => {
   dialogOrderInfo.value = true
 }
 
-// ● 關閉彈窗
-const dialogClose = (dialogName) => {
-  // 使用 switch/case value 會先跳到最符合的條件開始判斷，切記要加上 break，用來中斷後續的判斷，不然會接續跑後面程式
-  // value 必須是「單一值」（字串、數字、布林、符號等），沒辦法直接用 >, <, &&, || 等邏輯運算做匹配
-  // 優點：比較不會浪費效能去判斷其他條件
-  // 缺點：較難判斷複雜的狀況，若要判斷複雜條件，推薦用 if/else
-  switch (dialogName) {
-    case 'dataDialog':
-      dataDialog.value = false
-      break
-    case 'chooseTimeDialog':
-      chooseTimeDialog.value = false
-      break
-    case 'dialogOrderInfo':
-      dialogOrderInfo.value = false
-      break
-    default:
-      console.warn('不存在的 dialogName:', dialogName)
-    // 也可以用 console.log()
-  }
+// 關閉彈窗
+// 因 OrderInfoCard 元件內的關閉按鈕（dialogCloseBtn）是獨立的元件，無法直接操作 booking.vue 內的 dialogOrderInfo 變數，所以需要透過 props 傳遞一個函式（dialogClose）給 OrderInfoCard 元件，讓它在按下關閉按鈕時，可以呼叫這個函式來改變 booking.vue 內的 dialogOrderInfo 變數，達到關閉彈窗的效果。
+const dialogClose = () => {
+  dialogOrderInfo.value = false
 }
-
-// 個別關閉彈窗
-// const dialogClose = (e) => {
-//   console.log('DC-e', e)
-//   const dataDialogParent = e.target.closest('.data-dialog')
-//   const chooseTimeDialogParent = e.target.closest('.choose-time-dialog')
-
-//   if (dataDialogParent) {
-//     dataDialog.value = false
-//   } else if (chooseTimeDialogParent) {
-//     chooseTimeDialog.value = false
-//   } else {
-//     dialogOrderInfo.value = false
-//   }
-// }
-
-
 
 
 // ● 手動清除的表格欄位
@@ -597,7 +579,7 @@ const submit = handleSubmit(async (values) => {
     fd.append('image', values.image)
     fd.append('dogName', values.dogName)
     fd.append('bookingDate', values.bookingDate)
-    fd.append('bookingTime', values.bookingTime)
+    fd.append('bookingTime', JSON.stringify(values.bookingTime)) // 因為 bookingTime 是陣列格式，需轉成字串格式才能放進 FormData 裡面
     // fd.append('totalBookingTime', values.totalBookingTime)
     // fd.append('totalPrice', values.totalPrice)
     fd.append('accountName', values.accountName)
@@ -632,7 +614,8 @@ const submit = handleSubmit(async (values) => {
         { title: '電話', value: data.result.phone },
         { title: '預約狗狗', value: data.result.dogName },
         { title: '預約日期', value: data.result.bookingDate },
-        { title: '預約時段', value: data.result.bookingTime[0].replace(/,/g, '\n') },
+        // { title: '預約時段', value: data.result.bookingTime[0].replace(/,/g, '\n') },
+        { title: '預約時段', value: data.result.bookingTime },
         { title: '預約總金額', value: data.result.totalPrice + ' 元' }
       ],
       img: data.result.image
@@ -642,6 +625,7 @@ const submit = handleSubmit(async (values) => {
     // 因是物件合併物件，就不會要取 infor 陣列的值時，需要這樣寫 orderInfoData[0]infor
     // 後端回傳的資訊放進預設的空陣列
     Object.assign(orderInfoData, resOrderInfor)
+    // console.log('回傳後合併 orderInfoData', orderInfoData)
 
     // 成功預約後，跳出已預約訂單資訊
     openDialogOrderInfo()
@@ -689,6 +673,8 @@ onMounted(async () => {
   requestAnimationFrame(() => {
     updateChooseDateTitle()
   })
+
+  loadItems()
 })
 
 </script>
