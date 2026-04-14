@@ -1,1 +1,0 @@
-import{s as n,t as o,v as r,x as l,K as i,y as c,f as u}from"./index-1rIFBela.js";const m=n({fluid:{type:Boolean,default:!1},...o(),...r()},"VContainer"),p=l()({name:"VContainer",props:m(),setup(e,a){let{slots:s}=a;const{rtlClasses:t}=i();return c(()=>u(e.tag,{class:["v-container",{"v-container--fluid":e.fluid},t.value,e.class],style:e.style},s)),{}}});export{p as V};
