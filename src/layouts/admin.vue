@@ -4,11 +4,11 @@
     <v-navigation-drawer class="admin-navigation-drawer" :width="adminNavbarWidth" :location="mobileNarbarPosition" permanent :rail="mdAndUp" :rail-width="adminNavbarRailWidth" :expand-on-hover="lgAndUp" @mouseover="isExpanded = true" @mouseleave="isExpanded = false">
 
       <!-- ● Logo -->
-      <v-btn :to="logo.to">
-        <div class="logo-box">
+      <div class="logo-box">
+        <v-btn :to="logo.to">
           <img :src="logo.img">
-        </div>
-      </v-btn>
+        </v-btn>
+      </div>
 
       <!-- ● 導覽列項目 -->
       <v-list>

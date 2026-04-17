@@ -1,47 +1,33 @@
 <template>
-  <v-container fluid class="pa-0 fill-height">
+  <div class="user-account-bg">
     <!-- 帳戶背景圖片 -->
-    <v-sheet class="accountBgcss" :class="userAccountBgChange.includes('Dost_logo') ? 'accountBgRotateScale1' : 'accountBgRotateScale2'">
-      <v-img :src="userAccountBgChange" class="w-100 fill-height photoCss" cover></v-img>
-    </v-sheet>
-    <v-btn 
-      class="d-flex justify-center align-center pa-0" 
-      :class="mobile ? 'mobileIconBtnPosition': 'PCiconBtnPosition'"
-      flat 
-      @click="openDialog">
-        <v-icon icon="mdi-camera" :class="mobile ? 'mobileIconStyle' : 'PCiconStyle'"></v-icon>
-    </v-btn>
+    <div class="bg-box">
+      <img :class="isDefaultBg ? 'default-bg' : ''" :src="userAccountBg"></img>
+    </div>
 
-    <!-- 彈窗替換帳戶背景圖 -->
-    <v-dialog v-model="dialog" width="320" persistent>
-      <v-form @submit.prevent="submit" :disabled="isSubmitting">
-        <v-card height="370">
-          <v-card-title class="text-h6 font-weight-bold text-center pa-0 pt-7">目前背景圖</v-card-title>
-          <v-card-text class="pa-0 px-6 py-7 flex-grow-0">
-            <vue-file-agent 
-              v-model="fileRecords" 
-              v-model:raw-model-value="rawFileRecords" 
-              accept="image/jpg,image/jpeg,image/png" 
-              max-size="1MB"
-              help-text="選擇檔案或拖曳到這裡" 
-              :error-text="{ type: '檔案格式不支援', size: '檔案大小不能超過 1MB' }" 
-              deletable 
-              ref="fileAgent"></vue-file-agent>
-          </v-card-text>
-          <!-- 送出 & 恢復預設 按鈕 -->
-          <v-card-actions class="justify-center pa-0 pb-7">
-            <v-btn class="bg-grey-darken-2 me-5" type="submit" :loading="isSubmitting" @click="defaultPhoto">預設圖片</v-btn>
-            <v-btn class="bg-green w-25" type="submit" :loading="isSubmitting">送出</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-form>
-      <v-sheet class="dialogClosePosition rounded-circle bg-transparent d-flex">
-        <v-btn class="rounded-circle d-flex pa-0 bg-grey-lighten-3 opacity-100" min-width="60" min-height="60" variant="plain" @click="dialogClose" flat>
-          <v-icon :icon="mouseToggle ? 'mdi-close-circle' : 'mdi-close-circle-outline'" size="48" color="red-darken-4" @mouseover="mouseoverHandle" @mouseout="mouseoverHandle" @click="clickHandleOff"></v-icon>
-        </v-btn>
-      </v-sheet>
-    </v-dialog>
-  </v-container>
+    <v-btn class="chang-photo-btn" @click="openDialog">
+      <v-icon icon="mdi-camera"></v-icon>
+    </v-btn>
+  </div>
+
+  <!-- 彈窗替換帳戶背景圖 -->
+  <v-dialog content-class="user-account-bg-dialog" v-model="dialog" persistent>
+    <v-form @submit.prevent="submit" :disabled="isSubmitting">
+      <div class="box">
+        <h6 class="title">目前背景圖</h6>
+        <vue-file-agent v-model="fileRecords" v-model:raw-model-value="rawFileRecords" accept="image/jpg,image/jpeg,image/png" max-size="1MB" help-text="選擇檔案或拖曳到這裡" :error-text="{ type: '檔案格式不支援', size: '檔案大小不能超過 1MB' }" deletable ref="fileAgent"></vue-file-agent>
+
+        <!-- 送出 & 恢復預設 按鈕 -->
+        <div class="btn-box">
+          <v-btn type="submit" :loading="isSubmitting" @click="defaultPhoto">預設圖片</v-btn>
+          <v-btn type="submit" :loading="isSubmitting">送出</v-btn>
+        </div>
+      </div>
+    </v-form>
+
+    <!-- 關閉彈窗按鈕 -->
+    <dialogCloseBtn @click="closeDialog"></dialogCloseBtn>
+  </v-dialog>
 </template>
 
 
@@ -53,6 +39,8 @@ import { useForm, useField } from 'vee-validate'
 import { useUserStore } from '@/stores/user'
 import { useApi } from '@/composables/axios'
 import { useSnackbar } from 'vuetify-use-dialog'
+import dialogCloseBtn from './dialogCloseBtn.vue'
+import { logo } from '@/plugins/data_json'
 
 
 const User = useUserStore()
@@ -61,11 +49,8 @@ const { apiAuth } = useApi()
 const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 
-// Logo
-const logo = { to: '/userZone', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
-
 // 宣告使用者大頭照變數
-const userAccountBgChange = ref(User.accountBgImage)
+const userAccountBg = ref(User.accountBgImage)
 
 // 宣告選擇上傳的圖片，但尚未送出至後端（僅是上傳至當前頁面）
 const fileAgent = ref(null)
@@ -77,7 +62,7 @@ const defaultPhotoBtn = ref(false)
 // })
 
 // 恢復預設大頭照按鈕觸發點擊狀態 並 刪除目前已上傳的圖片
-const defaultPhoto = () =>{
+const defaultPhoto = () => {
   defaultPhotoBtn.value = true
   deletePhoto()
 
@@ -87,35 +72,35 @@ const defaultPhoto = () =>{
   }, 1000);
 }
 
+// 移除已選定上傳的圖片紀錄（尚未送出至後端）
 const deletePhoto = () => {
   fileAgent.value.deleteFileRecord()
 }
 
+
+// 使用者背景圖片更換時，依據圖片路徑的名稱來判斷是否為預設圖片，並變更樣式設定
+const isDefaultBg = computed(() => {
+  if (userAccountBg.value.includes('Dost_logo')) {
+    return true
+  } else {
+    return false
+  }
+})
+
 // 宣告彈窗
-// 設定 id 值
 const dialog = ref(false)
+
 // 開啟彈窗函式
 const openDialog = () => {
   dialog.value = true
 }
+
 // 關閉彈窗函式
 const closeDialog = () => {
   dialog.value = false
-}
-
-
-// ● 用來觸發滑鼠滑入、滑出的值，進而控制要顯示的圖示。
-const mouseToggle = ref(false)
-// 滑鼠懸浮於上時
-const mouseoverHandle = () => {
-  mouseToggle.value = !mouseToggle.value
-}
-// 滑鼠點擊時，關閉彈窗
-const clickHandleOff = () => {
-  closeDialog()
   deletePhoto()
-  mouseToggle.value = false
 }
+
 
 // ● 綁定上傳圖片/檔案的動作
 // fileRecords 上傳圖片/檔案資料的物件陣列，用於展示和管理文件。
@@ -146,14 +131,14 @@ const submit = handleSubmit(async (userEditData) => {
       userEditData.accountBgImage = fileRecords.value[0].file
       console.log('userEditData.accountBgImage1', userEditData.accountBgImage)
 
-    // 判斷是否按下 "恢復預設按鈕"
-    } else if (defaultPhotoBtn.value === true){
+      // 判斷是否按下 "恢復預設按鈕"
+    } else if (defaultPhotoBtn.value === true) {
       // console.log('觸發 defaultPhotoBtn')
       userEditData.accountBgImage = logo.img
-    
-    // 恢復預設按鈕的值為 false 且 未上傳圖片
+
+      // 恢復預設按鈕的值為 false 且 未上傳圖片
     } else if (defaultPhotoBtn.value === false && fileRecords.value.length < 1) {
-        createSnackbar({
+      createSnackbar({
         text: '未選擇圖片上傳',
         snackbarProps: {
           color: 'red',
@@ -173,7 +158,7 @@ const submit = handleSubmit(async (userEditData) => {
 
     if (result.text) {
       // 即時更新前端使用者大頭照
-      userAccountBgChange.value = result.reAccountBgImage
+      userAccountBg.value = result.reAccountBgImage
 
       createSnackbar({
         text: result.text,
@@ -197,87 +182,3 @@ const submit = handleSubmit(async (userEditData) => {
 })
 
 </script>
-
-
-<style scoped>
-/* 大頭照樣式 */
-.photoCss{
-  top: 12px;
-  left: 12px;
-}
-
-/* 大頭照背景樣式 */
-.accountBgcss{
-  width: 100%;
-  height: 100%;
-  background-size: contain;
-  filter: blur(1px) opacity(20%);
-}
-
-.accountBgRotateScale1{
-  transform: rotate(30deg) scale(1.2);
-}
-
-.accountBgRotateScale2{
-  transform: scale(1.2);
-}
-
-/* mobile版 iconBtn 定位設定 */
-.mobileIconBtnPosition {
-  position: absolute;
-  background: transparent;
-  top: 0;
-  right: 0;
-  transform: translate(-60%, 60%);
-  border-radius: 50%;
-  min-width: fit-content;
-  min-height: fit-content;
-}
-
-/* PC版 iconBtn 定位設定 */
-.PCiconBtnPosition {
-  position: absolute;
-  background: transparent;
-  bottom: 0;
-  right: 0;
-  transform: translate(-60%, -60%);
-  border-radius: 50%;
-  min-width: fit-content;
-  min-height: fit-content;
-}
-
-/* mobile版 iconStyle 樣式設定 */
-.mobileIconStyle {
-  font-size: 22px;
-  background: #FFFDE7;
-  color: #BDBDBD;
-  border: 2px solid #BDBDBD;
-  border-radius: 50%;
-  padding: 16px;
-}
-
-/* PC版 iconStyle 樣式設定 */
-.PCiconStyle {
-  font-size: 22px;
-  background: #ffffff;
-  color: #BDBDBD;
-  border: 2px solid #BDBDBD;
-  border-radius: 50%;
-  padding: 16px;
-}
-
-::v-deep .v-btn__overlay .v-btn__underlay {
-  display: none;
-  min-width: none;
-  opacity: 0;
-}
-
-/* 彈窗關閉按鈕設定樣式 */
-.dialogClosePosition {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-</style>

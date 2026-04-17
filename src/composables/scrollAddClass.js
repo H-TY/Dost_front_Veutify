@@ -72,7 +72,7 @@ export const useTableScroll = () => {
     if (top > 0 || left > 0) {
       tableWrapper.scrollTop = 0;
       tableWrapper.scrollLeft = 0;
-      console.log("有觸發表格復位動作");
+      // console.log("有觸發表格復位動作");
     }
   };
 

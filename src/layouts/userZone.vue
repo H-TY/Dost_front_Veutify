@@ -1,80 +1,76 @@
 <template>
-  <!-- Mobile 版 -->
-  <template v-if="mobile">
-    <v-container class="pa-0" fluid>
-      <!-- 使用者帳戶版面 -->
-      <v-sheet class="bg-transparent position-relative">
-        <!-- 帳戶背景圖 -->
-        <v-sheet class="overflow-hidden" height="340px">
+  <div class="userZone-all">
+    <!-- Mobile 版 -->
+    <template v-if="mobile">
+      <v-container class="userZone-mobile-navbar" fluid>
+        <!-- 使用者帳戶版面 -->
+        <div class="user-panel">
+          <!-- 帳戶背景圖 -->
           <userAccountBg></userAccountBg>
+          <!-- 大頭照 & 帳戶名稱 -->
+          <div class="user-info">
+            <userPhoto></userPhoto>
+            <div class="user-name">
+              {{ User.account }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 導覽項目 -->
+        <div class="navbar-box">
+          <template v-for="item in userZoneNavItems" :key="item.to">
+            <div class="navbar-item-box">
+              <v-btn :to="item.to">
+                <v-icon :icon="item.icon"></v-icon>
+              </v-btn>
+              <p>
+                {{ item.text }}
+              </p>
+            </div>
+          </template>
+        </div>
+      </v-container>
+    </template>
+
+    <!-- PC 版導覽列 -->
+    <template v-else>
+      <v-navigation-drawer class="userZone-pc-navbar" v-model="drawer" :permanent="drawerHandle">
+        <!-- 使用者帳戶版面 -->
+        <!-- 帳戶背景圖 -->
+        <v-sheet class="bg-transparent w-100 fill-height position-absolute">
+          <v-sheet class="overflow-hidden PCuserBgPosition BgOverlay">
+            <userAccountBg></userAccountBg>
+          </v-sheet>
         </v-sheet>
         <!-- 大頭照 & 帳戶名稱 -->
-        <v-sheet class="bg-transparent mobileUserPhotoPosition">
-          <v-sheet class="d-flex justify-center mobileUserPhotoBorder">
+        <v-sheet class="bg-transparent PCuserPhotoPosition pa-5">
+          <v-sheet class="PCuserPhoto">
             <userPhoto></userPhoto>
           </v-sheet>
-          <v-sheet class="bg-transparent text-center accountName">
+          <v-sheet class="bg-transparent text-center accountName mt-3">
             {{ User.account }}
           </v-sheet>
         </v-sheet>
-      </v-sheet>
-      <!-- 導覽項目 -->
-      <v-sheet class="bg-transparent mobileNavMargin">
-        <v-row class="px-5 ma-0">
-          <template v-for="item in navItems" :key="item.to">
-            <v-col cols="6" class="text-center pa-5">
-              <v-btn class="mobileNavCss bg-white" :to="item.to" size="80" variant="flat" flat active-color="green-darken-1">
-                <v-icon class="text-light-blue-darken-4" :icon="item.icon" size="40"></v-icon>
-              </v-btn>
-              <v-sheet class="bg-transparent mt-3 text-blue-darken-4">
-                {{ item.text }}
-              </v-sheet>
-            </v-col>
-          </template>
-        </v-row>
-      </v-sheet>
-    </v-container>
-  </template>
 
-  <!-- PC 版導覽列 -->
-  <template v-if="!mobile">
-    <v-navigation-drawer class="userZone-navigation-drawer border-0 shadow-lg" position="relative" v-model="drawer" :permanent="drawerHandle">
-      <!-- 使用者帳戶版面 -->
-      <!-- 帳戶背景圖 -->
-      <v-sheet class="bg-transparent w-100 fill-height position-absolute">
-        <v-sheet class="overflow-hidden PCuserBgPosition BgOverlay">
-          <userAccountBg></userAccountBg>
-        </v-sheet>
-      </v-sheet>
-      <!-- 大頭照 & 帳戶名稱 -->
-      <v-sheet class="bg-transparent PCuserPhotoPosition pa-5">
-        <v-sheet class="PCuserPhoto">
-          <userPhoto></userPhoto>
-        </v-sheet>
-        <v-sheet class="bg-transparent text-center accountName mt-3">
-          {{ User.account }}
-        </v-sheet>
-      </v-sheet>
+        <!-- 水平線 -->
+        <!-- <v-divider></v-divider> -->
 
-      <!-- 水平線 -->
-      <!-- <v-divider></v-divider> -->
+        <!-- 導覽項目 & 登出 -->
+        <v-list class="ps-6 py-4 Zindex text-grey-darken-2">
+          <!-- 導覽項目 -->
+          <v-list-item v-for="item in userZoneNavItems" :key="item.to" :to="item.to" :title="item.text" :prepend-icon="item.icon" class="rounded-s-pill" active-class="selectedStatus"></v-list-item>
 
-      <!-- 導覽項目 & 登出 -->
-      <v-list class="ps-6 py-4 Zindex text-grey-darken-2">
-        <!-- 導覽項目 -->
-        <v-list-item v-for="item in navItems" :key="item.to" :to="item.to" :title="item.text" :prepend-icon="item.icon" class="rounded-s-pill" active-class="selectedStatus"></v-list-item>
-        <!-- 登出按鈕 -->
-        <v-col class="d-flex justify-center mt-15">
-          <v-btn v-if="User.isLogin" prepend-icon="mdi-account-arrow-right" class="bg-deep-orange-darken-2" variant="outlined" rounded :ripple="false" @click="logout">登出</v-btn>
-        </v-col>
-      </v-list>
-    </v-navigation-drawer>
-  </template>
+          <!-- 登出按鈕 -->
+          <logoOutBtn></logoOutBtn>
+        </v-list>
+      </v-navigation-drawer>
+    </template>
 
-  <!-- 告知 Router 要渲染頁面的組件和當前路徑。 -->
-  <v-main>
-    <router-view></router-view>
-  </v-main>
+    <!-- 告知 Router 要渲染頁面的組件和當前路徑。 -->
+    <v-main class="userZone-main">
+      <router-view></router-view>
+    </v-main>
+  </div>
 </template>
 
 
@@ -82,18 +78,16 @@
 import { ref, computed, onMounted } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useUserStore } from '@/stores/user'
-import { useRouter } from 'vue-router'
-import { useSnackbar } from 'vuetify-use-dialog'
+import logoOutBtn from '@/components/logoOutBtn.vue'
 import userPhoto from '@/components/userPhoto.vue'
 import userAccountBg from '@/components/userAccountBg.vue'
+import { logo, userZoneNavItems } from '@/plugins/data_json'
 
 
 
 // 解構出 mobile的斷點
 const { mobile } = useDisplay()
 const User = useUserStore()
-const router = useRouter()
-const createSnackbar = useSnackbar()
 
 
 // 漢堡按鈕預設為折疊起來
@@ -108,37 +102,6 @@ const drawerHandle = computed(() => {
   }
 })
 
-// 取帳號名稱
-const userAccountName = ref(User.account)
-
-// Logo
-const logo = { to: '/userZone', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
-
-// 導覽列項目
-const navItems = computed(() => {
-  return [
-    { to: '/', text: '回首頁', icon: 'mdi-home' },
-    { to: '/userZone', text: '會員基本資料', icon: 'mdi-list-box' },
-    { to: '/userZone/dogBookingSearch', text: '預約狗狗查詢', icon: 'mdi-dog' },
-    { to: '/', text: '狗狗適性測試結果', icon: 'mdi-tooltip-edit' },
-    { to: '/', text: '設定', icon: 'mdi-cog-outline' },
-    // { to: '/', text: '預約住宿查詢', icon: 'mdi-bed' },
-    // { to: '/', text: '喜愛商品追蹤', icon: 'mdi-heart' },
-    // { to: '/', text: '訂單查詢', icon: 'mdi-text-box-search' },
-  ]
-})
-
-// 登出函式
-const logout = async () => {
-  await User.logout()
-  createSnackbar({
-    text: '登出成功',
-    snackbarProps: {
-      color: 'green'
-    }
-  })
-  return router.push('/')
-}
 
 </script>
 

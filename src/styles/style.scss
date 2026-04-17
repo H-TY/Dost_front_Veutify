@@ -104,6 +104,76 @@ body {
 		}
 	}
 
+	.user-photo {
+		width: 130px;
+		height: 130px;
+		aspect-ratio: 1;
+		background: white;
+		border-radius: 50%;
+		border: 6px solid white;
+		position: relative;
+
+		.icon-box {
+			background: white;
+			border-radius: 50%;
+			padding: 0.3rem;
+			position: absolute;
+			bottom: 0;
+			right: 0px;
+
+			i {
+				font-size: calc(1.3rem + 0.2vw);
+				color: $gtext;
+				opacity: 0.6;
+			}
+		}
+	}
+
+	.user-account-bg {
+		height: 100%;
+		position: relative;
+		isolation: isolate;
+
+		.bg-box {
+			height: 100%;
+			overflow: hidden;
+
+			img {
+				opacity: 0.7;
+
+				&.default-bg {
+					object-fit: contain;
+					object-position: center 90px;
+					transform: rotate(25deg) scale(1.2);
+
+					@include rsp-down-excl(sm) {
+						object-position: center;
+						transform: rotate(15deg) scale(1);
+					}
+				}
+			}
+		}
+
+		.chang-photo-btn {
+			background: white;
+			border: 1px solid rgba($gtext, 0.3);
+			border-radius: 50%;
+			position: absolute;
+			top: 0;
+			right: 0;
+			padding: 0.6rem;
+			margin: 1rem;
+			box-shadow: rgba($gtext, 0.3) 8px 8px 12px;
+
+			i {
+				font-size: calc(1.5rem + 0.4vw);
+				color: $gtext;
+				opacity: 0.6;
+			}
+		}
+	}
+
+	// ===========
 	// ● v-dialog 彈窗樣式設定
 	.v-overlay-container {
 		.v-dialog {
@@ -212,9 +282,9 @@ body {
 					}
 				}
 
-				// 成功預約後，彈窗預約資訊
+				// 成功預約後/準備取消預約，彈窗預約資訊
 				.order-info {
-					max-width: 600px;
+					max-width: 620px;
 					min-width: 320px;
 					margin: auto;
 
@@ -303,6 +373,15 @@ body {
 									background: var(--a-hover-color);
 									border-color: var(--a-hover-color);
 								}
+							}
+						}
+
+						.cancel-btn {
+							background: $gtext;
+							padding: 6px 12px;
+
+							&:hover {
+								background: $btnRed;
 							}
 						}
 					}
@@ -526,6 +605,33 @@ body {
 				&:nth-child(1) {
 					background: $btnRed;
 				}
+			}
+		}
+	}
+
+	.user-account-bg-dialog {
+		// 變數宣告
+		--padding-space: 1.6rem;
+
+		min-width: 320px;
+		height: auto;
+		background: white;
+		border-radius: 10px;
+		padding: var(--padding-space) 2rem;
+
+		@include rsp-down-excl(sm) {
+			min-width: 280px;
+		}
+
+		.box {
+			.title {
+				text-align: center;
+				padding-bottom: var(--padding-space);
+			}
+
+			.btn-box {
+				text-align: center;
+				padding: var(--padding-space) 0;
 			}
 		}
 	}
@@ -2344,13 +2450,16 @@ body {
 		}
 
 		.logo-box {
-			background: $bg;
-			border-radius: 50%;
+			.v-btn {
+				background: $bg;
+				border-radius: 50%;
+				padding: 0;
+			}
 
 			img {
 				width: 56px;
 				height: 56px;
-				padding: 8px;
+				padding: 10px;
 			}
 		}
 
@@ -2431,7 +2540,7 @@ body {
 		// 頁面標題樣式設定
 		.admin-page-title {
 			background: $bg;
-			margin-bottom: 2.2rem;
+			margin-bottom: 2rem;
 
 			&.scroll-down {
 				width: calc(100% + var(--admin-bg-padding) * 2);
@@ -2516,8 +2625,8 @@ body {
 					}
 				}
 
+				// 凍結表頭，需要在 .table-box 設定固定的高度，才能讓 position: sticky 正常運作
 				thead {
-					// 凍結表頭，需要在 .table-box 設定固定的高度，才能讓 position: sticky 正常運作
 					position: sticky;
 					top: 0px;
 					z-index: 2;
@@ -2552,6 +2661,10 @@ body {
 				.v-data-table-footer {
 					padding-top: 2rem;
 
+					@include rsp-down-excl(sm) {
+						row-gap: 0.7rem;
+					}
+
 					.v-data-table-footer__pagination {
 						ul {
 							flex-direction: row;
@@ -2562,6 +2675,7 @@ body {
 				.v-chip {
 					color: white;
 					letter-spacing: 1px;
+					isolation: isolate;
 
 					&.fill {
 						.v-chip__underlay {
@@ -2682,6 +2796,7 @@ body {
 
 			.admin-page-title {
 				padding: 2.5rem 0;
+				margin-bottom: unset;
 			}
 
 			.card-box {
@@ -2807,6 +2922,13 @@ body {
 						&:nth-last-child(3) {
 							min-width: 164px;
 						}
+
+						@include rsp-down-excl(sm) {
+							&:nth-child(1) {
+								min-width: 96px;
+								word-break: break-all;
+							}
+						}
 					}
 
 					.status-box {
@@ -2815,6 +2937,7 @@ body {
 						flex-direction: column;
 						justify-content: center;
 						align-items: center;
+						// isolation: isolate;
 
 						.cancel-btn {
 							span {
@@ -2871,6 +2994,43 @@ body {
 				padding: var(--section-padding-x);
 			}
 		}
+	}
+}
+
+// userZone 使用者後台
+.userZone-all {
+	// background: white;
+
+	// mobile 導覽列
+	.userZone-mobile-navbar {
+		padding: 0;
+
+		.user-panel {
+			height: 320px;
+			background: white;
+			position: relative;
+
+			.user-info {
+				.user-photo {
+					// border-width: 12px;
+					position: absolute;
+					top: 100%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+				}
+			}
+		}
+
+		.navbar-box {
+		}
+	}
+
+	// PC 導覽列
+	.userZone-pc-navbar {
+	}
+
+	// 內容渲染區
+	.userZone-main {
 	}
 }
 

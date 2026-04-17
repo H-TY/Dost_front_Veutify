@@ -30,6 +30,7 @@
 export const logo = {
   to: "/",
   img: new URL("@/assets/Dost_logo.png", import.meta.url).href,
+  desc: "logo_img",
 };
 
 // ● 輸出 admin 導覽列項目
@@ -52,4 +53,16 @@ export const adminNavItems = [
     icon: "mdi-list-box",
     desc: "查看所有狗狗預約訂單，掌握預約時間與訂單狀態。",
   },
+];
+
+// ● 輸出 userZone 導覽列項目
+export const userZoneNavItems = [
+  { to: "/", text: "回首頁", icon: "mdi-home" },
+  { to: "/userZone", text: "會員基本資料", icon: "mdi-list-box" },
+  { to: "/userZone/dogBookingSearch", text: "預約狗狗查詢", icon: "mdi-dog" },
+  { to: "/", text: "狗狗適性測試結果", icon: "mdi-tooltip-edit" },
+  { to: "/", text: "設定", icon: "mdi-cog-outline" },
+  // { to: '/', text: '預約住宿查詢', icon: 'mdi-bed' },
+  // { to: '/', text: '喜愛商品追蹤', icon: 'mdi-heart' },
+  // { to: '/', text: '訂單查詢', icon: 'mdi-text-box-search' },
 ];

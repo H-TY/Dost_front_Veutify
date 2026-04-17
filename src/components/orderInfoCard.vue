@@ -33,20 +33,11 @@
           </div>
         </div>
 
-        <!-- 確認取消訂單按鈕 -->
-        <template v-if="displayCancelBtn">
-          <v-btn class="cancel-btn" type="submit" @click="changeOrderStatus" :loading="isSubmitting">確認取消</v-btn>
-        </template>
+        <!-- slot 插拔區塊：確認取消訂單按鈕 -->
+        <slot name="cancelOrderBtn"></slot>
 
-        <!-- 提示取消訂單的方法 -->
-        <template v-else>
-          <p>
-            <v-icon icon="mdi-message-alert"></v-icon>
-            如需<span>取消預約訂單</span>，請前往
-            <router-link :to="{ path: '/userZone/dogBookingSearch' }">會員專區</router-link>
-            做取消，謝謝！
-          </p>
-        </template>
+        <!-- slot 插拔區塊：提示取消訂單的方法 -->
+        <slot name="noticeInfo"></slot>
       </div>
 
       <dialogCloseBtn @click="dialogClose()"></dialogCloseBtn>
@@ -57,22 +48,10 @@
 
 
 <script setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import dialogCloseBtn from '@/components/dialogCloseBtn.vue'
-
-const route = useRoute()
 
 // ● 定義從外部接收資料的 props 名稱
 const props = defineProps(['bigTitle', 'orderInfoData', 'orderInfoDataImg', 'changeOrderStatus', 'dialogClose', 'submit', 'isSubmitting'])
-
-// ● 在指定頁面顯示 "取消訂單按鈕"
-const CancelBtnPage = ['/userZone/dogBookingSearch',]
-
-// ● 用 computed 自動計算前進的頁面是否需要顯示 "取消訂單按鈕"
-const displayCancelBtn = computed(() =>
-  CancelBtnPage.includes(route.path)
-)
 
 // ● 判斷資料型態是否為陣列
 const isArray = (passInData) => {

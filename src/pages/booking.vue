@@ -109,7 +109,17 @@
 
       <!-- ● 送出訂單成功後，彈出已預約的訂單資訊 -->
       <v-dialog v-model="dialogOrderInfo">
-        <OrderInfoCard class="order-info" :bigTitle="'已成功預約'" :orderInfoData="orderInfoData.infor" :orderInfoDataImg="orderInfoData.img" :dialogClose="dialogClose"></OrderInfoCard>
+        <OrderInfoCard class="order-info" :bigTitle="'已成功預約'" :orderInfoData="orderInfoData.infor" :orderInfoDataImg="orderInfoData.img" :dialogClose="dialogClose">
+          <!-- noticeInfo 是預定要插在 orderInfoCard 內的 slot 區塊（相對應 name）-->
+          <template #noticeInfo>
+            <p>
+              <v-icon icon="mdi-message-alert"></v-icon>
+              如需<span>取消預約訂單</span>，請前往
+              <router-link :to="{ path: '/userZone/dogBookingSearch' }">會員專區</router-link>
+              做取消，謝謝！
+            </p>
+          </template>
+        </OrderInfoCard>
       </v-dialog>
     </v-container>
   </section>

@@ -11,7 +11,7 @@
       <v-divider></v-divider>
 
       <!-- ● 已預約訂單清單 -->
-      <v-data-table ref="refTableBox" class="table-box" :class="isSlideTable ? 'right-slide' : ''" :headers="headers" :items="items" :search="search">
+      <v-data-table ref="refTableBox" class="table-box" :class="isSlideTable ? 'right-slide' : ''" :headers="headers" :items="items" :search="search" @update:page="resetTableScroll">
         <!-- 訂單狀態欄位 -->
         <template #['item.orderStatus']='{ value, item }'>
           <div class="status-box">
@@ -40,12 +40,6 @@
         <!-- 預約時段欄位 -->
         <template #['item.bookingTime']='{ value }'>
           <v-list>
-            <!--
-              ● 因 value 是雖然是陣列，但時間段未分割（"value": ["15:00～17:00,13:00～15:00"]）
-              ● 故用 .join(' ') 先轉成純文字串
-              ● 供後續 .split(',') 轉成有分割時間段的陣列（["15:00～17:00", "10:00～12:00"]）
-              ● 最後再用排序 .sort((a, b) => parseInt(a) - parseInt(b)) 由小到大排列，加 parseInt() 是為了將 a、b 參數從文字轉數字才可以做比較排序
-              -->
             <v-list-item v-for="(el, index) in value" :key="index">● {{ el }}</v-list-item>
           </v-list>
         </template>
@@ -64,37 +58,12 @@
 
     <!-- ● 取消訂單彈窗 -->
     <v-dialog v-model="dialog">
-      <v-form @submit.prevent="submit" :disabled="isSubmitting">
-        <v-sheet class="bg-white d-flex flex-column justify-self-center align-self-center justify-center pa-7" max-width="600" height="auto">
-          <v-sheet class="bg-transparent d-flex flex-wrap justify-center align-self-center">
-            <h3 class="confirmCancelText">是否要取消訂單？</h3>
-            <v-sheet class="bg-transparent d-flex w-100 my-6">
-              <v-col>
-                <template v-for="el in confirmCancelData" :key="el.value">
-                  <v-row>
-                    <v-col class="confirmCancelDataBorderCss">{{ el.title }}</v-col>
-                  </v-row>
-                </template>
-              </v-col>
-              <v-col>
-                <template v-for="el in confirmCancelData" :key="el.value">
-                  <v-row>
-                    <v-col class="confirmCancelDataBorderCss">
-                      {{ el.value }}
-                    </v-col>
-                  </v-row>
-                </template>
-              </v-col>
-              <v-col class="pa-0 ms-4 d-flex justify-center  align-center">
-                <v-img :src="confirmCancelDataImg.image" width="160" height="100%" cover=""></v-img>
-              </v-col>
-            </v-sheet>
-            <!-- 確認取消訂單按鈕 -->
-            <v-btn class="confirmCancelBtn my-6" type="submit" variant="plain" flat @click="changeOrderStatus" :loading="isSubmitting">確認取消</v-btn>
-          </v-sheet>
-          <dialogCloseBtn @click="dialog = false"></dialogCloseBtn>
-        </v-sheet>
-      </v-form>
+      <OrderInfoCard class="order-info" :bigTitle="'是否要取消訂單？'" :orderInfoData="confirmCancelData" :orderInfoDataImg="confirmCancelDataImg.image" :submit="submit" :dialogClose="dialogClose">
+        <!-- cancelOrderBtn 是預定要插在 orderInfoCard 內的 slot 區塊（相對應 name）-->
+        <template #cancelOrderBtn>
+          <v-btn class="cancel-btn" type="submit" @click="changeOrderStatus" :loading="isSubmitting">確認取消</v-btn>
+        </template>
+      </OrderInfoCard>
     </v-dialog>
   </div>
 </template>
@@ -108,7 +77,7 @@ import { useUserStore } from '@/stores/user'
 import { useBookingOrderStore } from '@/stores/bookingOrder'
 import { useApi } from '@/composables/axios'
 import { useTitleScrollDown, useTableScroll } from '@/composables/scrollAddClass'
-import dialogCloseBtn from '@/components/dialogCloseBtn.vue'
+import OrderInfoCard from '@/components/orderInfoCard'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
@@ -160,9 +129,6 @@ const loadItems = async () => {
     const { data } = await apiAuth.get('/order/all')
     items.value.splice(0, items.value.length, ...data.result.data)
 
-    // 切換頁數，表格會自動滾動回頂部
-    resetTableScroll()
-
   } catch (error) {
     console.log(error)
     createSnackbar({
@@ -211,6 +177,7 @@ const confirmCancelData = ref([
   { title: '電話', value: 0, },
   { title: '預約狗狗', value: '', },
   { title: '預約日期', value: '', },
+  // { title: '預約時段', value: [], },
   { title: '預約總金額', value: 0 + ' 元', },
 ])
 
@@ -231,14 +198,14 @@ const dialog = ref(false)
 
 // ● 開啟彈窗
 const openDialog = (item) => {
+  // console.log('item', item)
   if (item) {
-    console.log('item', item.value)
-
     confirmCancelData.value[0].value = item.bookingOrderNumber
     confirmCancelData.value[1].value = item.name
     confirmCancelData.value[2].value = item.phone
     confirmCancelData.value[3].value = item.dogName
     confirmCancelData.value[4].value = item.bookingDate
+    // confirmCancelData.value[5].value = item.bookingTime
     confirmCancelData.value[5].value = item.totalPrice
     confirmCancelDataImg.value.image = item.image
     confirmCancelDataId.value.id = item._id
@@ -283,7 +250,7 @@ const submit = handleSubmit(async (orderEditData) => {
     orderEditData.orderStatus = nowOrderStatus.value
 
     const result = await BookingOrderStore.edit(orderEditData)
-    // console.log('result', result)
+    console.log('result', result)
 
 
     if (result.text === '修改訂單成功') {
@@ -312,53 +279,7 @@ const submit = handleSubmit(async (orderEditData) => {
   }
 })
 
-
-
 </script>
-
-
-<!-- <style scoped>
-/* 取消按鈕樣式 */
-.cancelBtnCss {
-  width: 72px;
-  height: 32px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #613f0096;
-  border: 1px solid #613f0096;
-}
-
-.cancelBtnCss:hover {
-  color: white;
-  background: #613f0096;
-  border: none;
-}
-
-/* 在彈窗選擇時段物件添加關閉安鈕的 class 設定 */
-.dialogClosePosition {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-/* 確認取消文字的樣式 */
-.confirmCancelText {
-  letter-spacing: 2px;
-}
-
-/* 確認取消按鈕的樣式 */
-.confirmCancelBtn {
-  width: 100px;
-  background: #616161;
-  color: white;
-}
-
-/* 確認取消資料的邊框樣式 */
-.confirmCancelDataBorderCss {
-  border: 1px solid #dfdfdf;
-}
-</style> -->
 
 
 
