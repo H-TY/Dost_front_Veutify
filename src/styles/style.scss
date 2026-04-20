@@ -105,8 +105,11 @@ body {
 	}
 
 	.user-photo {
-		width: 130px;
-		height: 130px;
+		// 宣告變數
+		--user-photo-size: 110px;
+
+		width: var(--user-photo-size);
+		height: var(--user-photo-size);
 		aspect-ratio: 1;
 		background: white;
 		border-radius: 50%;
@@ -119,7 +122,7 @@ body {
 			padding: 0.3rem;
 			position: absolute;
 			bottom: 0;
-			right: 0px;
+			right: -8px;
 
 			i {
 				font-size: calc(1.3rem + 0.2vw);
@@ -609,7 +612,7 @@ body {
 		}
 	}
 
-	.user-account-bg-dialog {
+	.user-photo-bg-dialog {
 		// 變數宣告
 		--padding-space: 1.6rem;
 
@@ -630,8 +633,22 @@ body {
 			}
 
 			.btn-box {
-				text-align: center;
+				display: flex;
+				// gap: 1rem;
+				flex-direction: row;
+				justify-content: space-around;
+				align-items: center;
 				padding: var(--padding-space) 0;
+
+				.v-btn {
+					color: white;
+					background: $btnGreen;
+					padding: 8px 16px;
+
+					&:nth-child(1) {
+						background: rgba($gtext, 0.6);
+					}
+				}
 			}
 		}
 	}
@@ -674,44 +691,9 @@ body {
 		}
 	}
 
-	// 漢堡按鈕
+	// 漢堡按鈕設定
 	.hamburger-btn {
-		width: 50%;
-		height: 100%;
 		padding: 0 0.5rem;
-
-		.navbar-icon {
-			display: flex;
-			gap: 0.5rem;
-			flex-direction: column;
-			justify-content: center;
-			align-items: end;
-			position: relative;
-			isolation: isolate;
-
-			hr {
-				width: calc(15% + 0.2vw);
-				border-top: 1px solid $thirdColor;
-				transition: 0.2s ease-in;
-			}
-
-			&.closeIcon {
-				hr {
-					border-color: $forthColor;
-					position: absolute;
-					top: -50%;
-					transform: rotate(45deg) translate(0%, -50%);
-
-					&:nth-of-type(2) {
-						transform: rotate(-45deg) translate(0%, -50%);
-					}
-
-					&:nth-last-of-type(1) {
-						display: none;
-					}
-				}
-			}
-		}
 	}
 
 	// 導覽列 Logo
@@ -2999,29 +2981,116 @@ body {
 
 // userZone 使用者後台
 .userZone-all {
-	// background: white;
+	position: relative;
+
+	.userZone-main {
+		display: inline-block;
+		width: 100%;
+		height: auto;
+	}
 
 	// mobile 導覽列
 	.userZone-mobile-navbar {
-		padding: 0;
+		// 變數宣告
+		--padding-space: 1.2rem;
+		--user-panel-height: 40%;
 
-		.user-panel {
-			height: 320px;
-			background: white;
-			position: relative;
+		.hamburger-btn {
+			position: fixed;
+			top: var(--padding-space);
+			right: var(--padding-space);
+			z-index: 1000;
 
-			.user-info {
-				.user-photo {
-					// border-width: 12px;
-					position: absolute;
-					top: 100%;
-					left: 50%;
-					transform: translate(-50%, -50%);
+			.navbar-icon-dogFoot {
+				background: $mainColor;
+				border-radius: 50%;
+				padding: 0.5rem;
+				transform-origin: top right; // 設定縮放錨點為右上角
+				transform: scale(1); // 預設完整顯示
+				transition: all 0.3s ease;
+
+				i {
+					font-size: calc(1.8rem + 0.2vw);
+					color: $thirdColor;
+				}
+
+				&.noneIcon {
+					// ✅ 改用 scale(0) 取代 width/height 歸零
+					transform: scale(0);
+					padding: unset;
+				}
+			}
+
+			.navbar-icon {
+				position: absolute;
+				top: 0;
+				transform: scale(0);
+
+				hr {
+					outline: 1px solid rgba($mainColor, 0.5);
+					border-color: $mainColor;
+				}
+
+				&.closeIcon {
+					transform: scale(1);
 				}
 			}
 		}
 
-		.navbar-box {
+		.v-navigation-drawer {
+			background: $mainColor;
+
+			.user-panel {
+				height: var(--user-panel-height);
+
+				.box {
+					height: 70%;
+					background: white;
+					position: relative;
+
+					.user-info {
+						display: flex;
+						gap: 12px;
+						flex-direction: column;
+						justify-content: center;
+						align-items: center;
+						position: absolute;
+						bottom: -45%;
+						left: 50%;
+						transform: translate(-50%, 0%);
+
+						.user-name {
+							color: white;
+						}
+					}
+				}
+			}
+
+			.navbar-box {
+				height: calc(100% - var(--user-panel-height));
+				display: grid;
+				row-gap: 3rem; /* 行間距 */
+				grid-template-columns: repeat(2, 1fr); /* 一行 n 個 */
+				justify-items: center; /* 每個 item 水平置中 */
+				align-items: center; /* 每個 item 垂直置中 */
+				padding: 2rem 1rem;
+
+				.navbar-item-box {
+					color: white;
+
+					.v-btn__content {
+						display: flex;
+						gap: 8px;
+						flex-direction: column;
+						justify-content: center;
+						align-items: center;
+					}
+
+					i {
+						font-size: calc(2.3rem + 0.2vw);
+					}
+				}
+			}
 		}
 	}
 

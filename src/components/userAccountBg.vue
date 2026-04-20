@@ -11,7 +11,7 @@
   </div>
 
   <!-- 彈窗替換帳戶背景圖 -->
-  <v-dialog content-class="user-account-bg-dialog" v-model="dialog" persistent>
+  <v-dialog content-class="user-photo-bg-dialog" v-model="dialog" persistent>
     <v-form @submit.prevent="submit" :disabled="isSubmitting">
       <div class="box">
         <h6 class="title">目前背景圖</h6>

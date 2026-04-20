@@ -58,9 +58,9 @@ export const adminNavItems = [
 // ● 輸出 userZone 導覽列項目
 export const userZoneNavItems = [
   { to: "/", text: "回首頁", icon: "mdi-home" },
-  { to: "/userZone", text: "會員基本資料", icon: "mdi-list-box" },
-  { to: "/userZone/dogBookingSearch", text: "預約狗狗查詢", icon: "mdi-dog" },
-  { to: "/", text: "狗狗適性測試結果", icon: "mdi-tooltip-edit" },
+  { to: "/userZone", text: "基本資料", icon: "mdi-list-box" },
+  { to: "/userZone/dogBookingSearch", text: "預約查詢", icon: "mdi-dog" },
+  { to: "/", text: "測試結果", icon: "mdi-tooltip-edit" },
   { to: "/", text: "設定", icon: "mdi-cog-outline" },
   // { to: '/', text: '預約住宿查詢', icon: 'mdi-bed' },
   // { to: '/', text: '喜愛商品追蹤', icon: 'mdi-heart' },

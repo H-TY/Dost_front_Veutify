@@ -7,19 +7,18 @@
   </div>
 
   <!-- 彈窗替換大頭照 -->
-  <v-dialog v-model="dialog" width="320" persistent>
+  <v-dialog content-class="user-photo-bg-dialog" v-model="dialog" persistent>
     <v-form @submit.prevent="submit" :disabled="isSubmitting">
-      <v-card height="370">
-        <v-card-title class="text-h6 font-weight-bold text-center pa-0 pt-7">目前大頭照</v-card-title>
-        <v-card-text class="pa-0 px-6 py-7 flex-grow-0">
-          <vue-file-agent v-model="fileRecords" v-model:raw-model-value="rawFileRecords" accept="image/jpg,image/jpeg,image/png" max-size="1MB" help-text="選擇檔案或拖曳到這裡" :error-text="{ type: '檔案格式不支援', size: '檔案大小不能超過 1MB' }" deletable ref="fileAgent"></vue-file-agent>
-        </v-card-text>
+      <div class="box">
+        <h6 class="title">目前大頭照</h6>
+        <vue-file-agent v-model="fileRecords" v-model:raw-model-value="rawFileRecords" accept="image/jpg,image/jpeg,image/png" max-size="1MB" help-text="選擇檔案或拖曳到這裡" :error-text="{ type: '檔案格式不支援', size: '檔案大小不能超過 1MB' }" deletable ref="fileAgent"></vue-file-agent>
+
         <!-- 送出 & 恢復預設 按鈕 -->
-        <v-card-actions class="justify-center pa-0 pb-7">
-          <v-btn class="bg-grey-darken-2 me-5" type="submit" :loading="isSubmitting" @click="defaultPhoto">預設圖片</v-btn>
-          <v-btn class="bg-green w-25" type="submit" :loading="isSubmitting">送出</v-btn>
-        </v-card-actions>
-      </v-card>
+        <div class="btn-box">
+          <v-btn type="submit" :loading="isSubmitting" @click="defaultPhoto">預設圖片</v-btn>
+          <v-btn type="submit" :loading="isSubmitting">送出</v-btn>
+        </div>
+      </div>
     </v-form>
 
     <!-- 關閉彈窗按鈕 -->

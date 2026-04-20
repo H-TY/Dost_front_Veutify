@@ -319,6 +319,65 @@ hr {
 	border-color: $text;
 }
 
+// ● 漢堡按鈕設定
+.hamburger-btn {
+	width: fit-content;
+	height: fit-content;
+
+	.navbar-icon {
+		// 變數宣告
+		--icon-size: 30px;
+
+		width: var(--icon-size);
+		height: var(--icon-size);
+		display: flex;
+		gap: 0.5rem;
+		flex-direction: column;
+		justify-content: center;
+		align-items: end;
+		position: relative;
+		isolation: isolate;
+
+		hr {
+			width: 100%;
+			border-top: 1px solid $thirdColor;
+			transition: 0.2s ease-in;
+		}
+
+		&.closeIcon {
+			hr {
+				border-color: $forthColor;
+				position: absolute;
+				top: 50%;
+				transform: rotate(45deg) translate(0%, 0%);
+
+				&:nth-of-type(2) {
+					transform: rotate(-45deg) translate(0%, 0%);
+				}
+
+				&:nth-last-of-type(1) {
+					display: none;
+				}
+			}
+
+			// hr {
+			// 	border-color: $forthColor;
+			// 	position: absolute;
+			// 	top: -50%;
+			// 	transform: rotate(45deg) translate(0%, -50%);
+
+			// 	&:nth-of-type(2) {
+			// 		transform: rotate(-45deg) translate(0%, -50%);
+			// 	}
+
+			// 	&:nth-child(1) {
+			// 		display: none;
+			// 	}
+			// }
+		}
+	}
+}
+
 // ● btn 設定
 .v-btn {
 	&.v-btn--variant-plain {
