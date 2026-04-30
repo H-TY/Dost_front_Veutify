@@ -78,7 +78,7 @@ const { backApi } = useApi()
 const router = useRouter()
 const createSnackbar = useSnackbar()
 
-// 用 yup 將要驗證的資料建立成物件陣列
+// 用 yup.object({}) 將要驗證的資料建立成物件陣列
 const registerFormData = yup.object({
   account: yup
     .string()

@@ -37,31 +37,41 @@ export const logo = {
 export const adminNavItems = [
   {
     to: "/admin",
-    text: "管理首頁",
+    title: "管理首頁",
     icon: "mdi-view-dashboard",
     desc: "歡迎使用管理後台，您可以在此管理狗狗資訊並查看所有預約訂單。",
   },
   {
     to: "/admin/dogInfo",
-    text: "狗狗資訊",
+    title: "狗狗資訊",
     icon: "mdi-dog",
     desc: "新增或編輯狗狗資料，管理每隻狗狗的基本資訊與介紹內容。",
   },
   {
     to: "/admin/manageBooking",
-    text: "預約管理",
+    title: "預約管理",
     icon: "mdi-list-box",
     desc: "查看所有狗狗預約訂單，掌握預約時間與訂單狀態。",
+  },
+  {
+    to: "/settingsConfig",
+    title: "設定",
+    icon: "mdi-cog-outline",
+    desc: "調整您的使用偏好與系統設定",
   },
 ];
 
 // ● 輸出 userZone 導覽列項目
 export const userZoneNavItems = [
-  { to: "/", text: "回首頁", icon: "mdi-home" },
-  { to: "/userZone", text: "基本資料", icon: "mdi-list-box" },
-  { to: "/userZone/dogBookingSearch", text: "預約查詢", icon: "mdi-dog" },
-  { to: "/", text: "測試結果", icon: "mdi-tooltip-edit" },
-  { to: "/", text: "設定", icon: "mdi-cog-outline" },
+  { to: "/", title: "回首頁", icon: "mdi-home" },
+  { to: "/userZone", title: "基本資料", icon: "mdi-list-box" },
+  { to: "/userZone/dogBookingSearch", title: "預約查詢", icon: "mdi-dog" },
+  {
+    to: "/userZone/adaptiveTestResult",
+    title: "測驗結果",
+    icon: "mdi-tooltip-edit",
+  },
+  { to: "/settingsConfig", title: "設定", icon: "mdi-cog-outline" },
   // { to: '/', text: '預約住宿查詢', icon: 'mdi-bed' },
   // { to: '/', text: '喜愛商品追蹤', icon: 'mdi-heart' },
   // { to: '/', text: '訂單查詢', icon: 'mdi-text-box-search' },

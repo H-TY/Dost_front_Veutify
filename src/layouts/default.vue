@@ -283,4 +283,14 @@ onMounted(() => {
   updateNH()
 })
 
+
+// ● 根據是否管理者登入，決定要套用的哪一個版面（admin 或 userZone）
+// const layoutChange = computed(() => {
+//   if (user.isAdmin) {
+//     return "admin";
+//   } else if (user.isLogin && !user.isAdmin) {
+//     return "userZone";
+//   }
+// });
+
 </script>

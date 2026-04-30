@@ -339,9 +339,6 @@ onMounted(async () => {
   function initScrollTrigger() {
     // 因有用到 Vutify 的元件(v-container、v-col ... 等)，故需要 requestAnimationFrame() 才能抓取到掛載後的正確位置
     requestAnimationFrame(() => {
-
-
-
       footImgs.forEach(el => {
         gsap.to(el, {
           scrollTrigger: {

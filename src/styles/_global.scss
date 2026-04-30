@@ -398,6 +398,18 @@ hr {
 	}
 }
 
+// ● 送出表單按鈕
+.submit-btn {
+	&.v-btn {
+		display: flex;
+		color: white;
+		background: $btnGreen;
+		padding: 0.5rem 1rem;
+		margin: auto;
+		margin-top: 30px;
+	}
+}
+
 // ● card 設定
 .v-card {
 	width: 100%;
@@ -407,8 +419,6 @@ hr {
 		opacity: unset;
 	}
 }
-
-// ● card 設定
 
 // ● 警告文字樣式
 .warning-txt {

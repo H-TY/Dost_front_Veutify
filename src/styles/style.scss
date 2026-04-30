@@ -146,7 +146,6 @@ body {
 
 				&.default-bg {
 					object-fit: contain;
-					object-position: center 90px;
 					transform: rotate(25deg) scale(1.2);
 
 					@include rsp-down-excl(sm) {
@@ -172,6 +171,216 @@ body {
 				font-size: calc(1.5rem + 0.4vw);
 				color: $gtext;
 				opacity: 0.6;
+			}
+		}
+	}
+
+	.order-list {
+		width: 100%;
+
+		.search-box {
+			width: 25%;
+			margin-bottom: 1.5rem;
+
+			@include rsp-down(xl) {
+				width: 27%;
+			}
+
+			@include rsp-down(lg) {
+				width: 35%;
+			}
+
+			@include rsp-down(md) {
+				width: 50%;
+			}
+
+			@include rsp-down(sm) {
+				margin-left: auto;
+			}
+
+			@include rsp-down-excl(sm) {
+				width: 100%;
+			}
+		}
+
+		.v-divider {
+			margin: 0;
+		}
+
+		.table-box {
+			text-align: center;
+			height: 600px;
+
+			&.right-slide {
+				.v-data-table__td:nth-child(1) {
+					box-shadow: rgba($gtext, 0.15) 0px 10px 12px 0px;
+					background: white;
+				}
+
+				// 凍結的表頭和首欄的交叉區域
+				thead {
+					.v-data-table__td:nth-child(1) {
+						box-shadow: rgba($gtext, 0.15) 0px 0px 12px 0px;
+					}
+				}
+			}
+
+			// 凍結表頭，需要在 .table-box 設定固定的高度，才能讓 position: sticky 正常運作
+			thead {
+				position: sticky;
+				top: 0px;
+				z-index: 2;
+				background: white;
+
+				span {
+					font-weight: 500;
+					color: $gtext;
+				}
+			}
+
+			// 凍結首欄
+			.v-data-table__td:nth-child(1) {
+				position: sticky;
+				left: 0;
+				z-index: 1;
+			}
+
+			// 凍結的表頭和首欄的交叉區域
+			thead {
+				.v-data-table__td:nth-child(1) {
+					z-index: 3;
+				}
+			}
+
+			// 表格每一格寬度
+			.v-data-table__td {
+				min-width: 100px;
+				padding: 1rem;
+			}
+
+			.v-data-table-footer {
+				padding-top: 2rem;
+
+				@include rsp-down-excl(sm) {
+					row-gap: 0.7rem;
+				}
+
+				.v-data-table-footer__pagination {
+					ul {
+						flex-direction: row;
+					}
+				}
+			}
+
+			.v-chip {
+				color: white;
+				letter-spacing: 1px;
+				isolation: isolate;
+
+				&.fill {
+					.v-chip__underlay {
+						background: $btnRed;
+					}
+				}
+
+				&.no-fill {
+					.v-chip__underlay {
+						background: $btnGreen;
+					}
+				}
+
+				.v-chip__underlay {
+					opacity: 1;
+				}
+
+				.v-chip__content {
+					z-index: 1;
+				}
+			}
+
+			.status-box {
+				display: flex;
+				gap: 0.5rem;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				// isolation: isolate;
+
+				.cancel-btn {
+					span {
+						font-size: calc(0.8rem + 0.2vw);
+						color: $gtext;
+					}
+				}
+			}
+
+			.img-box {
+				width: 100px;
+				aspect-ratio: 1;
+				height: 100px;
+
+				img {
+					border-radius: 8px;
+				}
+			}
+
+			.v-list {
+				p {
+					font-size: calc(0.7rem + 0.2vw);
+				}
+
+				small {
+					opacity: 0.7;
+				}
+
+				i {
+					font-size: calc(1rem + 0.2vw);
+					opacity: 0.5;
+				}
+			}
+		}
+	}
+
+	.custom-card {
+		.card-title {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			margin-bottom: 1rem;
+
+			i {
+				font-size: calc(1.3rem + 0.2vw);
+			}
+
+			h6 {
+				padding-left: 8px;
+			}
+		}
+
+		.detail-box {
+			.v-btn {
+				border-radius: 50px;
+				padding: 4px 12px;
+				margin-bottom: 1rem;
+			}
+
+			ul {
+				align-items: start;
+				padding-left: 2rem;
+
+				li {
+					list-style-type: disc;
+
+					p {
+						text-indent: 0.5rem;
+
+						span {
+							display: inline-block;
+							width: 100%;
+							text-indent: 1rem;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -2279,16 +2488,6 @@ body {
 						}
 					}
 				}
-
-				// 送出表單按鈕
-				.submit-btn {
-					display: flex;
-					color: white;
-					background: $btnGreen;
-					padding: 0.5rem 1rem;
-					margin: auto;
-					margin-top: 30px;
-				}
 			}
 		}
 	}
@@ -2891,7 +3090,7 @@ body {
 
 		// ▲ 管理區後台 - 預約訂單管理
 		.booking-info {
-			.list-box {
+			.order-list {
 				.table-box {
 					.v-data-table__td {
 						min-width: 124px;
@@ -2979,18 +3178,13 @@ body {
 	}
 }
 
-// userZone 使用者後台
+// userZone 會員專區後台
 .userZone-all {
+	height: 100%;
 	position: relative;
 
-	.userZone-main {
-		display: inline-block;
-		width: 100%;
-		height: auto;
-	}
-
-	// mobile 導覽列
-	.userZone-mobile-navbar {
+	// 導覽列
+	.userZone-navbar {
 		// 變數宣告
 		--padding-space: 1.2rem;
 		--user-panel-height: 40%;
@@ -3068,38 +3262,202 @@ body {
 
 			.navbar-box {
 				height: calc(100% - var(--user-panel-height));
+				color: white;
 				display: grid;
+				gap: 12px;
 				row-gap: 3rem; /* 行間距 */
 				grid-template-columns: repeat(2, 1fr); /* 一行 n 個 */
 				justify-items: center; /* 每個 item 水平置中 */
 				align-items: center; /* 每個 item 垂直置中 */
-				padding: 2rem 1rem;
+				padding: 2rem;
+
+				// 變數宣告
+				--gap-space: 6px;
+				--icon-size: calc(2.3rem + 0.2vw);
+				--layout-direction: column;
 
 				.navbar-item-box {
-					color: white;
+					width: 100%;
+					height: 100%;
+
+					&.v-btn--active {
+						color: darken($secColor, 25%);
+						// color: $mainColor;
+						background: white;
+						border-radius: 12px;
+					}
 
 					.v-btn__content {
 						display: flex;
-						gap: 8px;
-						flex-direction: column;
+						gap: var(--gap-space);
+						flex-direction: var(--layout-direction);
 						justify-content: center;
 						align-items: center;
 					}
 
 					i {
-						font-size: calc(2.3rem + 0.2vw);
+						font-size: var(--icon-size);
+					}
+				}
+
+				.logoOut-btn {
+					display: flex;
+					gap: var(--gap-space);
+					flex-direction: var(--layout-direction);
+					justify-content: center;
+					align-items: center;
+
+					i {
+						font-size: var(--icon-size);
 					}
 				}
 			}
 		}
 	}
 
-	// PC 導覽列
-	.userZone-pc-navbar {
-	}
-
 	// 內容渲染區
 	.userZone-main {
+		display: inline-block;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+
+		@include rsp-down-excl(md) {
+			padding: 0;
+		}
+
+		section {
+			padding: 2rem;
+		}
+
+		.userZone-page-title {
+			text-align: center;
+			margin-bottom: 1.5rem;
+		}
+
+		.subtitle-box {
+			color: lighten($text, 25%);
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+
+			i {
+				margin-right: 4px;
+			}
+		}
+
+		// ▲ 會員專區 - 首頁（基本資料）
+		.userZone-home {
+			display: flex;
+			row-gap: 2rem;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			padding: 0 1rem;
+
+			.member-info {
+				width: 100%;
+
+				.box {
+					display: grid;
+					grid-template-columns: repeat(2, 1fr); /* 每行 2 個欄位 */
+					column-gap: 2rem;
+
+					*:last-child {
+						grid-column: 1 / -1;
+					}
+
+					.submit-btn {
+						margin: 1.5rem auto;
+					}
+				}
+			}
+
+			.other-info {
+				width: 100%;
+				display: flex;
+				row-gap: 2rem;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+
+				@include rsp-up(xl) {
+					gap: 2rem;
+					flex-direction: row;
+					align-items: center;
+					justify-content: center;
+				}
+
+				.custom-card {
+					height: stretch;
+					// color: white;
+					background: darken($noticeColor, 10%);
+					padding: 1.5rem;
+
+					.detail-box {
+						.v-btn {
+							color: white;
+							background: darken($noticeColor, 32%);
+						}
+					}
+
+					&.cancel-status {
+						background: rgba($gtext, 0.4);
+
+						.detail-box {
+							.v-btn {
+								background: $btnRed;
+							}
+						}
+					}
+
+					// &:nth-child(1) {
+					// 	&.cancel-status {
+					// 		background: rgba($gtext, 0.4);
+
+					// 		.detail-box {
+					// 			.v-btn {
+					// 				background: $btnRed;
+					// 			}
+					// 		}
+					// 	}
+					// }
+				}
+			}
+		}
+
+		// ▲ 會員專區 - 預約查詢
+		.booking-search {
+			.order-list {
+				.search-box {
+					justify-self: center;
+				}
+
+				.table-box {
+					.v-data-table__td {
+						min-width: 124px;
+
+						&:nth-last-child(1),
+						&:nth-last-child(2) {
+							min-width: 140px;
+						}
+
+						&:nth-last-child(3) {
+							min-width: 164px;
+						}
+
+						@include rsp-down-excl(sm) {
+							&:nth-child(1) {
+								min-width: 96px;
+								word-break: break-all;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// ▲ 會員專區 - 測試結果
 	}
 }
 

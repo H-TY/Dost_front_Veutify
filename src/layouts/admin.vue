@@ -12,7 +12,7 @@
 
       <!-- ● 導覽列項目 -->
       <v-list>
-        <v-list-item v-for="(item, index) in adminNavItems" :key="index" :to="item.to" :title="item.text" :prepend-icon="item.icon"></v-list-item>
+        <v-list-item v-for="(item, index) in adminNavItems" :key="index" :to="item.to" :title="item.title" :prepend-icon="item.icon"></v-list-item>
       </v-list>
 
       <!-- ● 登出按鈕 -->
