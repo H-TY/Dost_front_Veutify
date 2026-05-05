@@ -380,6 +380,9 @@ hr {
 
 // ● btn 設定
 .v-btn {
+	// 變數宣告：按鈕留白距離
+	--btn-padding: 0.4rem 0.8rem;
+
 	&.v-btn--variant-plain {
 		opacity: 1;
 	}
@@ -389,6 +392,11 @@ hr {
 		--v-btn-size: unset;
 		--v-btn-height: unset;
 		min-width: unset;
+	}
+
+	&.v-btn--disabled {
+		background: $gtext !important;
+		opacity: 0.5;
 	}
 
 	.v-btn__content {
@@ -404,9 +412,49 @@ hr {
 		display: flex;
 		color: white;
 		background: $btnGreen;
-		padding: 0.5rem 1rem;
+		padding: var(--btn-padding);
 		margin: auto;
-		margin-top: 30px;
+	}
+}
+
+// 取消按鈕
+.cancle-btn {
+	&.v-btn {
+		color: white;
+		background: $btnRed;
+		padding: var(--btn-padding);
+		margin: auto;
+	}
+}
+
+// ● snackbar 彈窗設定
+.v-snackbar {
+	&.snackbar-success {
+		.v-snackbar__wrapper {
+			background: darken($btnGreen, 15%);
+		}
+	}
+
+	&.snackbar-fail {
+		.v-snackbar__wrapper {
+			background: darken($btnRed, 15%);
+		}
+	}
+
+	.v-snackbar__wrapper {
+		width: 100%;
+		max-width: unset;
+		min-width: unset;
+		// align-self: center;
+		padding: 0.2rem 2rem;
+
+		.v-snackbar__content {
+			color: white;
+			font-size: calc(1.05rem + 0.2vw);
+			font-weight: 500;
+			letter-spacing: 1.5px;
+			text-align: center;
+		}
 	}
 }
 

@@ -34,7 +34,7 @@
         </div>
 
         <!-- 導覽項目 -->
-        <div class="navbar-box">
+        <div ref="refNavbarBox" class="navbar-box">
           <template v-for="item in userZoneNavItems" :key="item.to">
             <v-btn class="navbar-item-box" :to="item.to" @click="drawerHandle">
               <v-icon :icon="item.icon"></v-icon>
@@ -82,7 +82,6 @@ const User = useUserStore()
 // ● 用來記錄是否第一次進入頁面
 // 需求是：「第一次進入頁面 → true」
 // 而 👉 第一次根本沒有資料（是 null），「只要不是明確被設成 false，就當作第一次」，結果也會判定為 true
-// const isFirstEnter = ref(true)
 const isFirstEnter = ref(
   localStorage.getItem('isFirstEnter') !== 'false'
 )
@@ -95,6 +94,9 @@ const deMobileSize = 300
 const deMdupSize = 320
 const NDrawerWidth = ref(deMobileSize)
 
+// 抓取 navbar 的 DOM 元素，準備在 watchEffect 和 hamburgerBtnClick 裡面操作它
+const refNavbarBox = ref(null)
+
 
 // ● mobile 時，判斷是否為第一次進入頁面，第一次進入頁面觸發 navbar 全版面樣式，不是就不展開 navbar
 // 使用 watchEffect：
@@ -103,12 +105,17 @@ const NDrawerWidth = ref(deMobileSize)
 // 初始化時會立即執行一次
 watchEffect(() => {
   if (smAndDown.value && isFirstEnter.value) {
-    // console.log('有觸發1'))
+    // console.log('有觸發1')
     isFirstEnter.value = false
     drawer.value = true
     NDrawerWidth.value = width.value
     // 在 localStorage 記錄 isFirstEnter 的值
     localStorage.setItem('isFirstEnter', isFirstEnter.value)
+
+    // 因 navbar-box 的 DOM 元素包在 vuetify 的元件中 <v-navigation-drawer>，可能還沒被渲染出來，所以用 requestAnimationFrame 來確保 DOM 已經更新
+    requestAnimationFrame(() => {
+      refNavbarBox.value.classList.add('first-enter-navbar')
+    })
 
   } else if (mdAndUp.value) {
     // 當螢幕寬度 md 以上，navbar 固定展開不收闔
@@ -129,6 +136,9 @@ const hamburgerBtnClick = () => {
   if (NDrawerWidth.value > deMobileSize) {
     // 恢復預設 navigation-drawer 的寬度
     NDrawerWidth.value = deMobileSize
+
+    // 移除 navbar 第一次進入的指定樣式
+    refNavbarBox.value.classList.remove('first-enter-navbar')
   }
 }
 

@@ -64,7 +64,7 @@ export const adminNavItems = [
 // ● 輸出 userZone 導覽列項目
 export const userZoneNavItems = [
   { to: "/", title: "回首頁", icon: "mdi-home" },
-  { to: "/userZone", title: "基本資料", icon: "mdi-list-box" },
+  { to: "/userZone", title: "帳戶總覽", icon: "mdi-list-box" },
   { to: "/userZone/dogBookingSearch", title: "預約查詢", icon: "mdi-dog" },
   {
     to: "/userZone/adaptiveTestResult",

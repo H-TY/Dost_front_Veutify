@@ -211,10 +211,12 @@ body {
 			text-align: center;
 			height: 600px;
 
+			// 變數宣告
+			--table-BG: white;
+
 			&.right-slide {
 				.v-data-table__td:nth-child(1) {
 					box-shadow: rgba($gtext, 0.15) 0px 10px 12px 0px;
-					background: white;
 				}
 
 				// 凍結的表頭和首欄的交叉區域
@@ -227,10 +229,10 @@ body {
 
 			// 凍結表頭，需要在 .table-box 設定固定的高度，才能讓 position: sticky 正常運作
 			thead {
+				background: var(--table-BG);
 				position: sticky;
 				top: 0px;
 				z-index: 2;
-				background: white;
 
 				span {
 					font-weight: 500;
@@ -240,6 +242,7 @@ body {
 
 			// 凍結首欄
 			.v-data-table__td:nth-child(1) {
+				background: var(--table-BG);
 				position: sticky;
 				left: 0;
 				z-index: 1;
@@ -3276,13 +3279,23 @@ body {
 				--icon-size: calc(2.3rem + 0.2vw);
 				--layout-direction: column;
 
+				&.first-enter-navbar {
+					.v-btn--active {
+						transition: unset;
+
+						@include rsp-down(sm) {
+							color: white !important;
+							background: transparent !important;
+						}
+					}
+				}
+
 				.navbar-item-box {
 					width: 100%;
 					height: 100%;
 
 					&.v-btn--active {
 						color: darken($secColor, 25%);
-						// color: $mainColor;
 						background: white;
 						border-radius: 12px;
 					}
@@ -3367,8 +3380,13 @@ body {
 						grid-column: 1 / -1;
 					}
 
-					.submit-btn {
+					.btn-box {
 						margin: 1.5rem auto;
+						display: flex;
+						gap: 2rem;
+						flex-direction: row;
+						justify-content: center;
+						align-items: center;
 					}
 				}
 			}
@@ -3410,18 +3428,6 @@ body {
 							}
 						}
 					}
-
-					// &:nth-child(1) {
-					// 	&.cancel-status {
-					// 		background: rgba($gtext, 0.4);
-
-					// 		.detail-box {
-					// 			.v-btn {
-					// 				background: $btnRed;
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 		}

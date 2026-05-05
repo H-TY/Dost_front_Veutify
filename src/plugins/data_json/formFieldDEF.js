@@ -29,16 +29,64 @@ export const accountFields = {
     .test("驗證 Email", "使用者信箱格式錯誤", (value) => {
       return validator.isEmail(value);
     }),
-  phone: yup.string(),
-  birthday: yup.string(),
+  phone: yup.string().test("驗證 phone", "電話格式錯誤", (value) => {
+    if (!value) return true;
+    return validator.isMobilePhone(value);
+  }),
+  birthday: yup
+    .string()
+    // d => digit 數字的縮寫語法
+    // \（反斜線）作用，\ + 字母（/d） 表示「特殊語法：數字」；若直接寫 d 就只是表示字母 d
+    // ■ 相關語法：
+    // \d	數字 => [0-9]
+    // \D	非數字 => [^0-9]
+    // \w	英數字+底線 => [a-zA-Z0-9_]
+    // \W	非上述
+    // \s	空白（空格、tab）
+    // \S	非空白
+    // \d{4} 表示「剛好 4 個數字」
+    // \d{2,4} 表示「2～4 個」
+    // \d+「1 個以上」
+    // \d*「0 個以上」
+    .matches(/^\d{4}-\d{2}-\d{2}$/, {
+      message: "格式必須為 YYYY-MM-DD",
+      excludeEmptyString: true, // 如果是 "" → 直接跳過 regex 驗證
+    })
+    .test("驗證 birthday", "生日日期不存在", (value) => {
+      // 當 value = ''、null、undefined 👉 這些都不是有效日期 → 直接不通過 false
+      // 但是這邊要預設不填寫或維持原來的 value 也通過，故改為 true
+      if (!value) return true;
+
+      // 先將使用者輸入的日期拆成陣列，後續再轉換成 JS 格式的日期
+      const [year, month, day] = value.split("-").map(Number);
+      // JS 的月份計算方式：
+      // 1 月	0
+      // 2 月 1
+      // 3 月 2
+      // ...
+      // 12 月 11
+      // 所以這邊要 -1 才會等於使用者輸入的月份（例：使用者輸入 5 月，SJ 月份則是為 4）
+      const JSdate = new Date(year, month - 1, day);
+      // console.log("JSdate", JSdate);
+
+      // 最後將 JSdate 取出年、月、日比對使用者輸入的年、月、日是否完全一樣
+      return (
+        JSdate.getFullYear() === year &&
+        // 這邊因需比對使用者輸入的月份是否正確，故要將 SJ 月份 +1
+        JSdate.getMonth() + 1 === month &&
+        JSdate.getDate() === day
+      );
+    }),
   nickname: yup
     .string()
+    // .transform((v) => v?.trim() || null)
+    // .nullable()
     .min(4, "暱稱文字最少 4 個字")
     .max(20, "暱稱文字最多 20 個字")
     // .test(自訂驗證名稱, 錯誤訊息, 驗證 function)
     .test("驗證 nickname", "暱稱格式錯誤", (value) => {
       // ✔ 空值直接放行
-      if (value === null || value === undefined) return true;
+      if (!value) return true;
 
       // ✔ 長度檢查（避免 minLength 提前炸）
       if (value.length < 4 || value.length > 20) return false;

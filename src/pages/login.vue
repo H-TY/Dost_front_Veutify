@@ -102,7 +102,7 @@ const submit = handleSubmit(async (formData) => {
     createSnackbar({
       text: result,
       snackbarProps: {
-        color: 'green'
+        class: 'snackbar-success'
       }
     })
     // 登入後導向首頁
@@ -111,7 +111,7 @@ const submit = handleSubmit(async (formData) => {
     createSnackbar({
       text: result,
       snackbarProps: {
-        color: 'red'
+        class: 'snackbar-fail'
       }
     })
   }

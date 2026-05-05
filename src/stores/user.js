@@ -110,26 +110,27 @@ export const useUserStore = defineStore(
     const edit = async (values) => {
       // 因 values 為 FormData 物件，直接 console.log(values)，看不到東西，需用"迴圈"或使用擴展運算符（...）或 Array.from() 將這些鍵值對轉換為陣列，檢查陣列是否有有效的值。
       const valuesArray = [...values.entries()];
-      console.log("valuesArray", valuesArray); // [Array(2)]
-      // console.log('valuesArray[0]', valuesArray[0]) // ['image', File]
-      // console.log('valuesArray[0][0]', valuesArray[0][0]) // image
+      // console.log("valuesArray", valuesArray);
 
       // 先判斷是否為登入狀態
       if (!isLogin.value) return;
 
       try {
-        const { data } = await apiAuth.patch("/user/" + account.value, values);
-        console.log("data.result", data.result);
-        // console.log('data.result.image', data.result.image)
-        // console.log('data.result.accountBgImage', data.result.accountBgImage)
-        // 將後端回傳的資料，替換掉原本 pinia 的欄位的資料
-        image.value = data.result.image;
-        accountBgImage.value = data.result.accountBgImage;
+        const { data } = await apiAuth.patch("/user/" + id.value, values);
+        // console.log("store_data.result", data.result);
 
-        // 用來判斷是 使用者"頭像" 還是 "背景圖" 上傳圖片成功、恢復預設圖片
+        // 將後端回傳的資料，替換掉原本 pinia 的欄位的資料（同步更新修改後的資料）
+        nickname.value = data.result.userUpdate.nickname;
+        phone.value = data.result.userUpdate.phone;
+        birthday.value = data.result.userUpdate.birthday;
+        email.value = data.result.userUpdate.email;
+        image.value = data.result.userUpdate.image;
+        accountBgImage.value = data.result.userUpdate.accountBgImage;
+
+        // 用來判斷是使用者"頭像" 還是 "背景圖"，決定後續要顯示的訊息 => 上傳圖片成功、恢復預設圖片
         const renewUserItem = data.result.renewUserItem;
 
-        const replaytext = computed(() => {
+        const replaytext = (renewUserItem) => {
           if (renewUserItem === "userPhoto") {
             return image.value.includes("database-1")
               ? "上傳圖片成功"
@@ -139,20 +140,23 @@ export const useUserStore = defineStore(
               ? "上傳圖片成功"
               : "恢復預設圖片";
           } else {
-            return "其他：上傳圖片成功";
+            return "使用者資料修改成功";
           }
-        });
+        };
 
         return {
-          // 判斷 image.value 或 accountBgImage.valu 是否包含關鍵字 upload
-          text: replaytext.value,
-          // 回傳圖片更新資料，供前端即時替換圖片
+          // 要顯示的訊息
+          text: replaytext(renewUserItem),
+          // 回傳圖片更新資料
           reImage: image.value,
           reAccountBgImage: accountBgImage.value,
         };
       } catch (error) {
         console.log(error);
-        return error?.response?.data?.message || "上傳圖片發生錯誤，請稍後再試";
+        return (
+          error?.response?.data?.message ||
+          "使用者資料修改發生未知錯誤，請稍後再試"
+        );
       }
     };
 
@@ -163,7 +167,8 @@ export const useUserStore = defineStore(
       } catch (error) {
         console.log(error);
       }
-      // 清空所有資料
+
+      // 將 store 所有儲存的資料清空
       token.value = "";
       id.value = "";
       account.value = "";
