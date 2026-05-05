@@ -1,1 +1,0 @@
-import{b as t}from"./route-block-B_A1xBdJ.js";import{P as e,Q as o}from"./index-DER48mkb.js";const n={__name:"settingsConfig",setup(r){return(c,s)=>(e(),o("p",null,"設定頁面"))}};typeof t=="function"&&t(n);export{n as default};
