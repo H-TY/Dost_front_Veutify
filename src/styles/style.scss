@@ -209,7 +209,7 @@ body {
 
 		.table-box {
 			text-align: center;
-			height: 600px;
+			min-height: 500px;
 
 			// 變數宣告
 			--table-BG: white;
@@ -264,9 +264,9 @@ body {
 			.v-data-table-footer {
 				padding-top: 2rem;
 
-				@include rsp-down-excl(sm) {
-					row-gap: 0.7rem;
-				}
+				// @include rsp-down-excl(sm) {
+				// 	row-gap: 0.7rem;
+				// }
 
 				.v-data-table-footer__pagination {
 					ul {
@@ -3387,6 +3387,13 @@ body {
 						flex-direction: row;
 						justify-content: center;
 						align-items: center;
+
+						.v-btn {
+							&.v-btn--disabled {
+								background: $gtext !important;
+								opacity: 0.5;
+							}
+						}
 					}
 				}
 			}

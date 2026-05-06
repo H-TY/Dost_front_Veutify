@@ -394,11 +394,6 @@ hr {
 		min-width: unset;
 	}
 
-	&.v-btn--disabled {
-		background: $gtext !important;
-		opacity: 0.5;
-	}
-
 	.v-btn__content {
 		display: flex;
 		justify-content: center;

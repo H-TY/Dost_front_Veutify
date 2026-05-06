@@ -6,7 +6,7 @@
     <v-divider></v-divider>
 
     <!-- ● 已預約訂單清單 -->
-    <v-data-table ref="refTableBox" class="table-box" :class="isSlideTable ? 'right-slide' : ''" :headers="headers" :items="items" :search="search" @update:page="resetTableScroll">
+    <v-data-table ref="refTableBox" class="table-box" :class="isSlideTable ? 'right-slide' : ''" :height="tableHeight" :headers="headers" :items="items" :search="search" @update:page="resetTableScroll">
       <!-- 訂單狀態欄位 -->
       <template #['item.orderStatus']='{ value, item }'>
         <div class="status-box">
@@ -65,8 +65,10 @@
 
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import { useDisplay } from 'vuetify'
 import * as yup from 'yup'
+import { useRoute } from 'vue-router'
 import { useForm, useField } from 'vee-validate'
 import { useUserStore } from '@/stores/user'
 import { useBookingOrderStore } from '@/stores/bookingOrder'
@@ -84,7 +86,10 @@ defineProps({
 })
 
 
-
+const { smAndDown, height } = useDisplay()
+// console.log('height', height.value)
+const route = useRoute()
+console.log('route.name', route.name)
 const { apiAuth } = useApi()
 const { refTableBox, isSlideTable, resetTableScroll } = useTableScroll()
 const createSnackbar = useSnackbar()
@@ -99,6 +104,28 @@ const accountName = ref(user.account)
 // ● 表格變數宣告
 const search = ref('')
 const items = ref([])
+
+
+// ● 依據不同裝置，將 "訂單清單表格" 設定不同的高度
+// 想要將 JS 計算出的高度傳遞至 CSS 使用，流程：JS計算 --> DOM 設定全域宣告變數 --> CSS 使用全域宣告變數
+const tableHeight = computed(() => {
+
+  // 因為管理者頁面與使用者頁面有不同的元素高度（ex: 管理者頁面多了 "新增服務" 的按鈕），所以會依據 route.name 的不同來設定不同的表格高度
+  if (route.name === '/admin/manageBooking') {
+
+    // 方法一：設定全域宣告的 CSS 變數 --table-height 的值（在 <html> 元素上）
+    // document.documentElement.style.setProperty('--table-height', `${reHeight}px`)
+
+    // 方法二：直接將計算出的高度傳遞至要使用的元素上（ex: v-data-table）
+    // 350 是預抓的數值，包含：上方搜尋欄位、下方分隔線、表格內部的 padding 等等
+    return `${height.value - 350}px`
+
+  } else {
+    return `${height.value - 300}px`
+  }
+})
+
+
 
 
 // ● 依據登入身分的不同（使用者、管理者），向後端請求資料的路徑、設定也有所不同
@@ -119,7 +146,7 @@ const postPath = computed(() => {
       url: "/order",
       config: {
         params: {
-          // 傳至後端的搜尋關鍵字"帳戶名稱"，用來只找出相對應用戶的訂單
+          // 傳至後端的搜尋關鍵字 "帳戶名稱"（目前帳戶名稱，資料庫有限制不能重複），用來只找出相對應用戶的訂單
           search: accountName.value
         }
       }
@@ -149,7 +176,7 @@ const loadItems = async () => {
     createSnackbar({
       text: error?.response?.data?.message || '發生錯誤',
       snackbarProps: {
-        color: 'red'
+        class: 'snackbar-fail'
       }
     })
   }
@@ -276,7 +303,7 @@ const submit = handleSubmit(async (orderEditData) => {
       createSnackbar({
         text: result.text,
         snackbarProps: {
-          color: 'green'
+          class: 'snackbar-success'
         }
       })
     }
@@ -288,7 +315,7 @@ const submit = handleSubmit(async (orderEditData) => {
     createSnackbar({
       text: result,
       snackbarProps: {
-        color: 'red'
+        class: 'snackbar-fail'
       }
     })
   }
