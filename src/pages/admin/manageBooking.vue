@@ -11,6 +11,7 @@
 
 <script setup>
 import { definePage } from 'vue-router/auto'
+import { useTitleScrollDown, useTableScroll } from '@/composables/scrollAddClass'
 import orderList from '@/components/orderList.vue'
 
 
@@ -22,6 +23,9 @@ definePage({
     admin: false
   }
 })
+
+
+const { RefTitle } = useTitleScrollDown()
 
 
 const headers = [

@@ -6,7 +6,7 @@
     <v-divider></v-divider>
 
     <!-- ● 已預約訂單清單 -->
-    <v-data-table ref="refTableBox" class="table-box" :class="isSlideTable ? 'right-slide' : ''" :height="tableHeight" :headers="headers" :items="items" :search="search" @update:page="resetTableScroll">
+    <v-data-table ref="refTableBox" class="table-box" :class="isSlideTable ? 'right-slide' : ''" :height="tableHeight" :headers="headers" :items="items" :search="search" @update:page="handleEvent">
       <!-- 訂單狀態欄位 -->
       <template #['item.orderStatus']='{ value, item }'>
         <div class="status-box">
@@ -74,6 +74,7 @@ import { useUserStore } from '@/stores/user'
 import { useBookingOrderStore } from '@/stores/bookingOrder'
 import { useApi } from '@/composables/axios'
 import { useTitleScrollDown, useTableScroll } from '@/composables/scrollAddClass'
+import { scrollToTop } from "@/composables/scrollToTop";
 import OrderInfoCard from '@/components/orderInfoCard'
 import { useSnackbar } from 'vuetify-use-dialog'
 
@@ -86,10 +87,10 @@ defineProps({
 })
 
 
-const { smAndDown, height } = useDisplay()
+const { smAndDown, mdAndUp, height } = useDisplay()
 // console.log('height', height.value)
 const route = useRoute()
-console.log('route.name', route.name)
+// console.log('route.name', route.name)
 const { apiAuth } = useApi()
 const { refTableBox, isSlideTable, resetTableScroll } = useTableScroll()
 const createSnackbar = useSnackbar()
@@ -113,6 +114,9 @@ const tableHeight = computed(() => {
   // 因為管理者頁面與使用者頁面有不同的元素高度（ex: 管理者頁面多了 "新增服務" 的按鈕），所以會依據 route.name 的不同來設定不同的表格高度
   if (route.name === '/admin/manageBooking') {
 
+    // 當螢幕寬度小於 md 的裝置，不設定表格高度，讓表格高度自動適應內容高度
+    if (!mdAndUp.value) return
+
     // 方法一：設定全域宣告的 CSS 變數 --table-height 的值（在 <html> 元素上）
     // document.documentElement.style.setProperty('--table-height', `${reHeight}px`)
 
@@ -125,6 +129,17 @@ const tableHeight = computed(() => {
   }
 })
 
+
+// ● 點擊表單上下分頁按鈕時，會觸發指定事件
+const handleEvent = () => {
+  resetTableScroll() // 表格滾動回頂部
+
+  // 在管理者頁面，且螢幕寬度小於 md 的裝置，點擊表單上下分頁按鈕時，會觸發 scrollToTop()
+  if (route.name === '/admin/manageBooking' && !mdAndUp.value) {
+    scrollToTop() // 頁面滾動回頂部
+    // console.log('有觸發 scrollToTop')
+  }
+}
 
 
 
