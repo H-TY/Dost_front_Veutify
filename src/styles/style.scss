@@ -744,10 +744,15 @@ body {
 					position: relative;
 
 					.v-combobox {
-						.v-messages {
-							color: darken($noticeColor, 30%);
-							opacity: 1;
+						.v-field--focused {
+							input {
+								font-size: calc(0.75rem + 0.2vw);
+							}
 						}
+						// .v-messages {
+						// 	color: darken($noticeColor, 30%);
+						// 	opacity: 1;
+						// }
 					}
 
 					.delet-btn {
@@ -2793,7 +2798,6 @@ body {
 
 			.table-box {
 				text-align: center;
-				height: 600px;
 
 				&.right-slide {
 					.v-data-table__td:nth-child(1) {
@@ -2929,6 +2933,32 @@ body {
 				position: relative;
 				isolation: isolate;
 
+				@include rsp-down-excl(sm) {
+					height: 220px;
+					flex-direction: column;
+
+					.text-box {
+						width: 100% !important;
+						pointer-events: none;
+						z-index: 1;
+						padding-bottom: 3.5rem !important;
+					}
+
+					.v-card {
+						width: fit-content !important;
+						height: fit-content !important;
+						position: absolute;
+						bottom: 0;
+						right: 0;
+						transform: translate(-10%, -10%);
+
+						img {
+							width: 100px !important;
+							object-fit: contain !important;
+						}
+					}
+				}
+
 				&::before {
 					content: '';
 					width: 100%;
@@ -2961,9 +2991,14 @@ body {
 				}
 
 				.v-card {
+					display: flex;
 					width: 100%;
 					height: 100%;
 					margin-right: -12%;
+
+					@include rsp-down-excl(sm) {
+						margin-right: unset;
+					}
 
 					img {
 						width: 72%;
@@ -2971,7 +3006,7 @@ body {
 						margin: auto;
 						// transform: rotate(20deg);
 
-						@include rsp-up(xl) {
+						@include rsp-up(lg) {
 							max-width: 250px;
 						}
 					}

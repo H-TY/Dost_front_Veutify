@@ -61,7 +61,7 @@
 
                       <!-- 疫苗名稱 -->
                       <Field :name="`vaccine[${index}].name`" v-slot="{ field, errorMessage }">
-                        <v-combobox hint="也可手動輸入疫苗名稱" persistent-hint v-model="el.value.name" :items="vaccineList" chips label="疫苗名稱" :error-messages="errorMessage" />
+                        <v-combobox placeholder="也可手動輸入疫苗名稱" v-model="el.value.name" :items="vaccineList" chips label="疫苗名稱" :error-messages="errorMessage" />
                       </Field>
 
                       <!-- 日期 -->
@@ -109,7 +109,7 @@
 
       <v-divider></v-divider>
 
-      <v-data-table-server ref="refTableBox" class="table-box" :class="isSlideTable ? 'right-slide' : ''" v-model:items-per-page="tableItemsPerPage" v-model:sort-by="tableSortBy" v-model:page="tablePage" :items="items" :headers="itemsHeaders" :items-length="tableItemsLength" :loading="tableLoading" :search="tableSearch" @update:items-per-page="tableLoadItems(false)" @update:sort-by="tableLoadItems(false)" @update:page="tableLoadItems(false)">
+      <v-data-table-server ref="refTableBox" class="table-box" :class="isSlideTable ? 'right-slide' : ''" :height="tableHeight" v-model:items-per-page="tableItemsPerPage" v-model:sort-by="tableSortBy" v-model:page="tablePage" :items="items" :headers="itemsHeaders" :items-length="tableItemsLength" :loading="tableLoading" :search="tableSearch" :items-per-page-options="itemsPerPageOptions" @update:items-per-page="tableLoadItems(false)" @update:sort-by="tableLoadItems(false)" @update:page="tableLoadItems(false)">
 
         <!-- 大頭照欄位 -->
         <template #['item.image']='{ value }'>
@@ -174,12 +174,15 @@
 </template>
 
 <script setup>
-import { onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
+import { useDisplay } from 'vuetify'
 import * as yup from 'yup'
 import { useForm, useField, useFieldArray, Field } from 'vee-validate'
 import { definePage } from 'vue-router/auto'
 import { useApi } from '@/composables/axios'
 import { useTitleScrollDown, useTableScroll } from '@/composables/scrollAddClass'
+import { scrollToTop } from "@/composables/scrollToTop";
+import { dogFields } from '@/plugins/data_json'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
@@ -194,7 +197,7 @@ definePage({
 })
 
 
-
+const { smAndDown, mdAndUp, height } = useDisplay()
 const { backApi, apiAuth } = useApi()
 const { RefTitle } = useTitleScrollDown()
 const { refTableBox, isSlideTable, resetTableScroll } = useTableScroll()
@@ -282,53 +285,11 @@ const closeDialog = () => {
 
 
 // ● 自定義表單驗證
-const formSchema = yup.object({
-  dogName: yup
-    .string()
-    .required('狗狗名字必填'),
-  age: yup
-    .number()
-    .required('狗狗年齡必填')
-    .typeError('年齡格式錯誤，請輸入數字')
-    .min(0, '年齡不能小於 0'),
-  price: yup
-    .number()
-    .required('預約價格必填')
-    .typeError('商品價格格式錯誤，請輸入數字')
-    .min(0, '商品價格不能小於 0'),
-  booking: yup
-    .string('')
-    .required('預約狀態必填'),
-  bookingTime: yup
-    .array()
-    .of(
-      yup.string().required('請輸入時段')
-    ),
-  feature: yup
-    .string()
-    .required('狗狗性格、特徵必填'),
-  story: yup
-    .string()
-    .required('狗狗背景故事必填'),
-  vaccine: yup
-    .array()
-    .of(
-      yup.object({
-        name: yup.string().required('疫苗名稱必填'),
-        date: yup.string().required('接踵日期必填寫'),
-        hospital: yup.string().required('接踵醫院必填寫'),
-      })
-    )
-    .min(1, '至少需要一筆記錄或選擇"無疫苗紀錄"')
-    .required('疫苗接踵記錄必填'),
-  // 是否上架
-  sell: yup
-    .boolean(),
-})
+const formSchema = yup.object(dogFields)
 
 
 
-// 送出後執行驗證表單
+// ● 送出後執行驗證表單
 // useForm 指的是使用者填寫的 form
 // useField 指的是表單欄位
 // resetForm 是一個函式，作用為重置表單內容
@@ -484,7 +445,7 @@ const submit = handleSubmit(async (values) => {
     createSnackbar({
       text: dialog.value.id === '' ? '新增成功' : '編輯成功',
       snackbarProps: {
-        color: 'green',
+        class: 'snackbar-success',
       }
     })
     closeDialog()
@@ -495,7 +456,7 @@ const submit = handleSubmit(async (values) => {
     createSnackbar({
       text: error?.response?.data?.message || '發生錯誤',
       snackbarProps: {
-        color: 'red'
+        class: 'snackbar-fail'
       }
     })
   }
@@ -504,6 +465,19 @@ const submit = handleSubmit(async (values) => {
 
 // ● 表格一頁要顯示幾個物件
 const tableItemsPerPage = ref(10)
+
+// 在螢幕寬度小於 md 的裝置，預設表格一頁顯示 5 筆資料
+if (smAndDown.value) {
+  tableItemsPerPage.value = 5
+}
+
+// ● 在下方 "每頁項目" 也新增一個選項（系統預設　10、25、50），讓使用者可以選擇每頁顯示 5、10、25、50 筆資料
+const itemsPerPageOptions = computed(() => {
+  // new Set() 刪除陣列中重複的值，但輸出後為 "物件格式"，故再用 Array.from() 轉回陣列格式
+  return [...new Set([tableItemsPerPage.value, 10, 25, 50])]
+
+
+})
 // ● 排序功能
 const tableSortBy = ref([
   // key 以什麼作為排序標準；order 正序(升序)或倒序(降序)排列
@@ -557,14 +531,14 @@ const tableLoadItems = async (reset) => {
     tableItemsLength.value = data.result.total
 
     // 切換頁數，表格會自動滾動回頂部
-    resetTableScroll()
+    handleEvent()
 
   } catch (error) {
     console.log(error)
     createSnackbar({
       text: error?.response?.data?.message || '發生錯誤',
       snackbarProps: {
-        color: 'red'
+        class: 'snackbar-fail'
       }
     })
   }
@@ -572,6 +546,30 @@ const tableLoadItems = async (reset) => {
 }
 // 要呼叫 function
 tableLoadItems()
+
+
+
+// ● 依據不同裝置，將 "表格" 設定不同的高度
+const tableHeight = computed(() => {
+  // 當螢幕寬度小於 md 的裝置，不設定表格高度，讓表格高度自動適應內容高度
+  if (!mdAndUp.value) return
+
+  // 直接將計算出的高度傳遞至要使用的元素上（ex: v-data-table）
+  // 350 是預抓的數值，包含：上方搜尋欄位、下方分隔線、表格內部的 padding 等等
+  return `${height.value - 350}px`
+})
+
+
+// ● 表單換頁時，會觸發指定事件
+const handleEvent = () => {
+  // 表格滾動回頂部
+  resetTableScroll()
+
+  // 螢幕寬度小於 md 的裝置，點擊表單上下分頁按鈕時，會觸發 scrollToTop()
+  if (!mdAndUp.value) {
+    scrollToTop() // 頁面滾動回頂部
+  }
+}
 
 
 // ● 更改上架的勾選狀態
@@ -591,7 +589,7 @@ const checkboxChange = async (id, newValue) => {
     createSnackbar({
       text: newValue === true ? '上架成功' : '下架完成',
       snackbarProps: {
-        color: 'green',
+        class: 'snackbar-success',
       }
     })
   } catch (error) {
@@ -599,8 +597,7 @@ const checkboxChange = async (id, newValue) => {
     createSnackbar({
       text: error.response.data.message,
       snackbarProps: {
-        color: 'red',
-        class: 'custom-snackbar',
+        class: 'snackbar-fail'
       }
     })
   }

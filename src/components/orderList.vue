@@ -130,7 +130,7 @@ const tableHeight = computed(() => {
 })
 
 
-// ● 點擊表單上下分頁按鈕時，會觸發指定事件
+// ● 表單換頁時，會觸發指定事件
 const handleEvent = () => {
   resetTableScroll() // 表格滾動回頂部
 
