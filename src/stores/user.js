@@ -153,9 +153,10 @@ export const useUserStore = defineStore(
         };
       } catch (error) {
         console.log(error);
-        return (
+
+        throw new Error(
           error?.response?.data?.message ||
-          "使用者資料修改發生未知錯誤，請稍後再試"
+            "使用者資料修改發生未知錯誤，請稍後再試",
         );
       }
     };

@@ -160,7 +160,7 @@ const submit = handleSubmit(async (formData) => {
     createSnackbar({
       text: '註冊成功',
       snackbarProps: {
-        color: 'green'
+        class: 'snackbar-success',
       }
     })
     // 送出表單後，設定跳頁至 login 頁面
@@ -170,7 +170,7 @@ const submit = handleSubmit(async (formData) => {
     createSnackbar({
       text: error?.response?.data?.message || '發生錯誤',
       snackbarProps: {
-        color: 'red'
+        class: 'snackbar-fail',
       }
     })
   }

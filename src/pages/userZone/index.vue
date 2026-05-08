@@ -291,9 +291,10 @@ const submit = handleSubmit(async (formData) => {
     console.log('error', error)
 
     createSnackbar({
-      text: error?.response?.data?.message || '發生錯誤',
+      text: error,
       snackbarProps: {
-        class: 'snackbar-fail'
+        class: 'snackbar-fail',
+        // timeout: -1   // ✅ 永不自動關閉
       }
     })
   }

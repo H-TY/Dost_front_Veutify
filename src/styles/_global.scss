@@ -424,15 +424,22 @@ hr {
 
 // ● snackbar 彈窗設定
 .v-snackbar {
+	margin: 0 !important;
+	margin-inline-end: unset !important;
+
+	.v-snackbar__wrapper {
+		border-radius: 0;
+	}
+
 	&.snackbar-success {
 		.v-snackbar__wrapper {
-			background: darken($btnGreen, 15%);
+			background: darken($btnGreen, 0%);
 		}
 	}
 
 	&.snackbar-fail {
 		.v-snackbar__wrapper {
-			background: darken($btnRed, 15%);
+			background: darken($btnRed, 5%);
 		}
 	}
 
@@ -441,7 +448,8 @@ hr {
 		max-width: unset;
 		min-width: unset;
 		// align-self: center;
-		padding: 0.2rem 2rem;
+		// padding: 0.2rem 2rem;
+		padding: 0;
 
 		.v-snackbar__content {
 			color: white;

@@ -22,7 +22,7 @@ const logout = async () => {
   createSnackbar({
     text: '登出成功',
     snackbarProps: {
-      color: 'green'
+      class: 'snackbar-success',
     }
   })
   return router.push('/')

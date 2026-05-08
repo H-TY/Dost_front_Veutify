@@ -125,7 +125,7 @@ const tableHeight = computed(() => {
     return `${height.value - 350}px`
 
   } else {
-    return `${height.value - 300}px`
+    return `${height.value - 340}px`
   }
 })
 

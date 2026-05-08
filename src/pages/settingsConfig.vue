@@ -1,5 +1,5 @@
 <template>
-  <section id="settings-config-area" class="settings-config-area">
+  <div id="settings-config-area" class="settings-config-area">
     <div :class="titleCss">
       <h2>設定</h2>
     </div>
@@ -7,7 +7,7 @@
     <div class="box">
       <p>這裡是設定頁面，尚未完成</p>
     </div>
-  </section>
+  </div>
 </template>
 
 

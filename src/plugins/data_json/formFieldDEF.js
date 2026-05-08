@@ -79,8 +79,10 @@ export const accountFields = {
     }),
   nickname: yup
     .string()
-    // .transform((v) => v?.trim() || null)
-    // .nullable()
+    // 清洗資料：去除字串前後空白，若資料的值為 ""、" "、undefined 則轉換成 null
+    .transform((v) => v?.trim() || null)
+    // 代表這個欄位允許為 null（也就是空值），如果沒有這行，當 nickname 為 null 時，會直接被 yup 判定為不合法，因為預設情況下 yup 不允許 null 值。
+    .nullable()
     .min(4, "暱稱文字最少 4 個字")
     .max(20, "暱稱文字最多 20 個字")
     // .test(自訂驗證名稱, 錯誤訊息, 驗證 function)
@@ -88,11 +90,15 @@ export const accountFields = {
       // ✔ 空值直接放行
       if (!value) return true;
 
-      // ✔ 長度檢查（避免 minLength 提前炸）
-      if (value.length < 4 || value.length > 20) return false;
+      // ✔ 格式檢查：
+      // 自訂可以輸入的格式：允許所有 語言文字、數字、底線(_)、加號(+)、減號(-)，並使用 Unicode 模式解析 \p{} Unicode 屬性，避免壞掉。
+      // \p{L} 代表任何語言的文字（Letter）
+      // \p{N} 代表任何語言的數字（Number）
+      // 此寫法 JavaScript 原生 RegExp
+      return /^[\p{L}\p{N}_+\-]+$/u.test(value);
 
-      // ✔ 格式檢查
-      return validator.isAlphanumeric(value);
+      // 系統預設驗證：只允許英文或數字（不包含中文、底線）
+      // return validator.isAlphanumeric(value);
     }),
   image: yup.string(),
   accountBgImage: yup.string(),

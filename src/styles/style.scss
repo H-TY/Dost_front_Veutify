@@ -3001,13 +3001,13 @@ body {
 					}
 
 					img {
-						width: 72%;
+						width: 65%;
 						height: auto;
 						margin: auto;
 						// transform: rotate(20deg);
 
 						@include rsp-up(lg) {
-							max-width: 250px;
+							max-width: 216px;
 						}
 					}
 				}
@@ -3376,11 +3376,94 @@ body {
 
 		section {
 			padding: 2rem;
+
+			&.userZone-bg {
+				height: 100%;
+				background: $bg;
+				position: relative;
+				isolation: isolate;
+
+				&::before {
+					content: '';
+					width: 100%;
+					height: 100%;
+					background: url(../assets/img/decorate/userZone/img-1.avif) repeat center/22%;
+					filter: grayscale(1);
+					opacity: 0.03;
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					z-index: -2;
+
+					@include rsp-down(xxl) {
+						background-size: 40%;
+					}
+
+					@include rsp-down(md) {
+						background-size: 65%;
+					}
+				}
+
+				&::after {
+					content: '';
+					width: 100%;
+					height: 200px;
+					background: url(../assets/img/decorate/userZone/img-2.avif) repeat-x top/contain;
+					mix-blend-mode: multiply;
+					opacity: 0.7;
+					position: absolute;
+					bottom: 0%;
+					left: 50%;
+					transform: translate(-50%, 0%);
+					z-index: -1;
+
+					@include rsp-down-excl(sm) {
+						background-size: cover;
+					}
+				}
+			}
 		}
 
 		.userZone-page-title {
+			width: fit-content;
 			text-align: center;
+			margin: 1rem auto;
 			margin-bottom: 1.5rem;
+
+			h2 {
+				color: darken($mainColor, 5%);
+				letter-spacing: 2px;
+				position: relative;
+				isolation: isolate;
+
+				&::before,
+				&::after {
+					content: '';
+					width: 40px;
+					height: 40px;
+					background: url(../assets/img/decorate/dog_foot-1.avif) no-repeat center/contain;
+					filter: hue-rotate(180deg);
+					opacity: 0.5;
+					position: absolute;
+					top: -13px;
+					left: -27px;
+					transform: translate(0%, 0%) rotate(-20deg);
+					z-index: -1;
+				}
+
+				&::after {
+					width: 28px;
+					height: 28px;
+					background: url(../assets/img/decorate/dog_foot-2.avif) no-repeat center/contain;
+					opacity: 0.3;
+					top: unset;
+					left: unset;
+					bottom: 0px;
+					right: -32px;
+					transform: translate(0%, 0%) rotate(30deg);
+				}
+			}
 		}
 
 		.subtitle-box {
@@ -3388,6 +3471,7 @@ body {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
+			margin-bottom: 1rem;
 
 			i {
 				margin-right: 4px;
@@ -3462,7 +3546,7 @@ body {
 					}
 
 					&.cancel-status {
-						background: rgba($gtext, 0.4);
+						background: rgba(lighten($gtext, 38%), 0.9);
 
 						.detail-box {
 							.v-btn {

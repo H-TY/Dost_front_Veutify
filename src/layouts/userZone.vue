@@ -53,7 +53,7 @@
 
     <!-- 告知 Router 要渲染頁面的組件和當前路徑。 -->
     <v-main class="userZone-main">
-      <section>
+      <section class="userZone-bg">
         <router-view></router-view>
       </section>
     </v-main>
