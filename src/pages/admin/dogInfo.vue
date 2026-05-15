@@ -143,7 +143,7 @@
 
         <!-- 疫苗接踵紀錄 -->
         <template #['item.vaccine']='{ value }'>
-          <v-list>
+          <v-list class="vaccine-record">
             <v-list-item v-for="(el, index) in value" :key="index">
               <p>● {{ el.name }}</p>
               <small>

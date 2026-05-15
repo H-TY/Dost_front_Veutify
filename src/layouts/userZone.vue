@@ -1,5 +1,5 @@
 <template>
-  <div class="userZone-all">
+  <div class="userZone-all theme-box" :class="themeColorCss">
     <div class="userZone-navbar">
       <!-- 漢堡按鈕 -->
       <template v-if="smAndDown">
@@ -64,7 +64,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useDisplay } from 'vuetify'
+import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user'
+import { useThemeSettingStore } from '@/stores/themeSettings.js'
 import logoOutBtn from '@/components/logoOutBtn.vue'
 import userPhoto from '@/components/userPhoto.vue'
 import userAccountBg from '@/components/userAccountBg.vue'
@@ -75,6 +77,8 @@ import { logo, userZoneNavItems } from '@/plugins/data_json'
 // 解構出 mobile的斷點
 const { mobile, smAndDown, mdAndUp, width } = useDisplay()
 // console.log('width', width.value)
+const themeSettingStore = useThemeSettingStore()
+const { themeColorCss } = storeToRefs(themeSettingStore)
 const User = useUserStore()
 
 

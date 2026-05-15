@@ -69,3 +69,70 @@
 		@warn "(指定區間)`#{$el-min}` 或 `#{$el-max}`在 $grid-breakpoints 沒有匹配的斷點值。";
 	}
 }
+
+// ● 使用者自訂文字大小
+@mixin userSettingFontSize {
+	h2 {
+		font-size: calc(var(--setting-font-size) + 1.3vw);
+	}
+
+	h5 {
+		font-size: calc(var(--setting-font-size) + 0.6vw);
+	}
+
+	h6 {
+		font-size: calc(var(--setting-font-size) + 0.35vw);
+	}
+
+	p {
+		font-size: calc(var(--setting-font-size) + 0.1vw);
+	}
+
+	.v-label {
+		font-size: var(--setting-font-size) !important;
+	}
+
+	.v-input {
+		.v-label {
+			font-size: var(--setting-font-size) !important;
+		}
+
+		input {
+			font-size: var(--setting-font-size);
+		}
+	}
+
+	.v-field {
+		textarea {
+			font-size: var(--setting-font-size);
+		}
+	}
+
+	.v-chip {
+		.v-chip__content {
+			font-size: calc(var(--setting-font-size) - 0.15vw);
+		}
+	}
+
+	.v-list-item {
+		.v-list-item-title {
+			font-size: var(--setting-font-size);
+		}
+	}
+
+	.v-table {
+		.v-data-table__td {
+			font-size: calc(var(--setting-font-size) - 0.15vw);
+		}
+	}
+
+	.vaccine-record {
+		p {
+			font-size: calc(var(--setting-font-size) - 0.15vw) !important;
+		}
+
+		small {
+			font-size: calc(var(--setting-font-size) - 0.15vw);
+		}
+	}
+}

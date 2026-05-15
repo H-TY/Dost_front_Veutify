@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-all">
+  <div class="admin-all theme-box" :class="themeColorCss">
     <!-- Logo & 導覽列 -->
     <v-navigation-drawer class="admin-navigation-drawer" :width="adminNavbarWidth" :location="mobileNarbarPosition" permanent :rail="mdAndUp" :rail-width="adminNavbarRailWidth" :expand-on-hover="lgAndUp" @mouseover="isExpanded = true" @mouseleave="isExpanded = false">
 
@@ -36,7 +36,9 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useDisplay } from 'vuetify'
+import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user'
+import { useThemeSettingStore } from '@/stores/themeSettings.js'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
 // 引進生成的 data_json 檔案
@@ -48,6 +50,8 @@ const { mobile, smAndDown, mdAndUp, lgAndUp } = useDisplay()
 // console.log(mobile, lgAndUp)
 
 const user = useUserStore()
+const themeSettingStore = useThemeSettingStore()
+const { themeColorCss } = storeToRefs(themeSettingStore)
 const router = useRouter()
 const createSnackbar = useSnackbar()
 
@@ -92,7 +96,7 @@ const adminVLayoutLeft = computed(() => {
 const adminVLayoutBottom = computed(() => {
   // 當頁面寬度 <= sm 時，觸發
   if (smAndDown.value === true) {
-    return adminNavbarRailWidth.value + 'px'
+    return adminNavbarRailWidth.value - 30 + 'px'
   } else {
     return '0px'
   }

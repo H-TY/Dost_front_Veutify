@@ -3,6 +3,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import UserRole from "@/enums/UserRole";
+import { useThemeSettingStore } from "@/stores/themeSettings.js";
 // 引進 axios （已將路徑定義至後端 api）
 import { useApi } from "@/composables/axios";
 
@@ -10,6 +11,7 @@ export const useUserStore = defineStore(
   "User",
   () => {
     const { backApi, apiAuth } = useApi();
+    const themeSettingStore = useThemeSettingStore();
 
     // 設定 pinia 的資料欄位
     // 要從後端取得的資料（要與後端回傳的資料一致）
@@ -55,6 +57,9 @@ export const useUserStore = defineStore(
         email.value = data.result.email;
         role.value = data.result.role;
         cart.value = data.result.cart;
+
+        // 向後端取使用者的設定資料
+        await themeSettingStore.settingProfile();
 
         return "登入成功";
       } catch (error) {
@@ -181,6 +186,9 @@ export const useUserStore = defineStore(
       email.value = "";
       role.value = UserRole.USER;
       cart.value = 0;
+
+      // 登出時，使用者設定恢復預設
+      themeSettingStore.resetDefault();
     };
 
     return {

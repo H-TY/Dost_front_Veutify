@@ -11,6 +11,10 @@ $forthColor: #fffcda; // 輔助顏色
 $bg: $thirdColor; // 整個網頁背景顏色
 $areaBg: #fffde7; // 內容區背景顏色
 $LG1: linear-gradient(135deg, $secColor 50%, transparent 50%);
+$LG2: linear-gradient(135deg, lighten($mainColor, 50%) 50%, transparent 50%);
+
+$blueTitleColor: darken($mainColor, 5%);
+$greenTitleColor: darken($secColor, 25%);
 
 $text: #333; // 文字顏色
 $gtext: #707070;
@@ -149,7 +153,7 @@ img {
 	}
 
 	h2 {
-		color: darken($mainColor, 5%);
+		color: $blueTitleColor;
 		letter-spacing: 2px;
 		position: relative;
 		isolation: isolate;
@@ -209,7 +213,7 @@ img {
 	}
 
 	h2 {
-		color: darken($mainColor, 5%);
+		color: $blueTitleColor;
 		letter-spacing: 2px;
 		position: relative;
 		isolation: isolate;
@@ -246,7 +250,7 @@ img {
 		display: inline-block;
 		font-size: calc(4.5rem + 2.5vw);
 		font-weight: 500;
-		color: darken($mainColor, 5%);
+		color: $blueTitleColor;
 		line-height: 0.8;
 		text-transform: capitalize;
 		writing-mode: sideways-rl;
@@ -478,6 +482,7 @@ hr {
 	font-weight: 500;
 }
 
+// ===================
 // ● animation 動畫設定
 @keyframes scale_jump {
 	0% {

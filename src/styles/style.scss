@@ -391,6 +391,9 @@ body {
 	// ===========
 	// ● v-dialog 彈窗樣式設定
 	.v-overlay-container {
+		// 文字大小使用者設定
+		@include userSettingFontSize;
+
 		.v-dialog {
 			.v-overlay__content {
 				width: fit-content;
@@ -1196,7 +1199,7 @@ body {
 					background: $mainColor;
 
 					.v-btn__content {
-						// color: darken($mainColor, 5%);
+						// color:  $blueTitleColor;
 						color: $thirdColor;
 						text-shadow: unset;
 					}
@@ -1391,7 +1394,7 @@ body {
 				}
 
 				h4 {
-					color: darken($mainColor, 5%);
+					color: $blueTitleColor;
 					font-weight: 600;
 					position: relative;
 					// isolation: isolate;
@@ -2566,6 +2569,11 @@ body {
 	// 變數宣告
 	--section-padding-x: 1.5rem;
 	--admin-bg-padding: 2rem;
+	--navbar-bg: #{$mainColor};
+	--navbarItem-hover-text: #{$blueTitleColor};
+
+	// 文字大小使用者設定
+	@include userSettingFontSize;
 
 	// 導覽列
 	.admin-navigation-drawer {
@@ -2592,7 +2600,7 @@ body {
 					.v-list-item {
 						@include rsp-up(lg) {
 							&:hover {
-								color: $mainColor;
+								color: var(--navbarItem-hover-text);
 								background: white;
 								border-radius: 50px !important;
 
@@ -2689,9 +2697,12 @@ body {
 
 	// 內容渲染區
 	.admin-main {
+		// 變數宣告
+		--main-bg: #{$mainColor};
+
 		width: 100%;
 		height: 100%;
-		background: $mainColor;
+		background: var(--main-bg);
 		margin-top: unset;
 
 		// 內容區塊的背景設定
@@ -2731,6 +2742,9 @@ body {
 			background: $bg;
 			margin-bottom: 2rem;
 
+			// 變數宣告
+			--title-color: #{$blueTitleColor};
+
 			&.scroll-down {
 				width: calc(100% + var(--admin-bg-padding) * 2);
 				margin-left: calc(var(--admin-bg-padding) * -1);
@@ -2745,7 +2759,7 @@ body {
 				// 變數宣告
 				--costome-padding-left: 0.8rem;
 
-				color: $mainColor;
+				color: var(--title-color);
 				padding-left: calc(var(--costome-padding-left) + 10px);
 				position: relative;
 
@@ -2918,6 +2932,9 @@ body {
 			width: 100%;
 			height: 100%;
 
+			// 變數宣告
+			--back-homr-bg: #{$LG1};
+
 			.back-home {
 				height: 250px;
 				border: 1px solid rgba($gtext, 0.15);
@@ -2963,7 +2980,7 @@ body {
 					content: '';
 					width: 100%;
 					height: 100%;
-					background: $LG1;
+					background: var(--back-homr-bg);
 					position: absolute;
 					top: 50%;
 					left: 50%;
@@ -3185,7 +3202,7 @@ body {
 		// 導覽列
 		.admin-navigation-drawer {
 			&.v-navigation-drawer {
-				background: $mainColor;
+				background: var(--navbar-bg);
 				padding: 0;
 
 				.v-navigation-drawer__content {
@@ -3216,16 +3233,21 @@ body {
 	}
 }
 
-// userZone 會員專區後台
+// ● userZone 會員專區後台
 .userZone-all {
 	height: 100%;
 	position: relative;
+
+	// 文字大小使用者設定
+	@include userSettingFontSize;
 
 	// 導覽列
 	.userZone-navbar {
 		// 變數宣告
 		--padding-space: 1.2rem;
 		--user-panel-height: 40%;
+		--theme-color: #{$mainColor};
+		--text-darkcolor: #{$blueTitleColor};
 
 		.hamburger-btn {
 			position: fixed;
@@ -3234,7 +3256,7 @@ body {
 			z-index: 1000;
 
 			.navbar-icon-dogFoot {
-				background: $mainColor;
+				background: var(--theme-color);
 				border-radius: 50%;
 				padding: 0.5rem;
 				transform-origin: top right; // 設定縮放錨點為右上角
@@ -3259,8 +3281,9 @@ body {
 				transform: scale(0);
 
 				hr {
-					outline: 1px solid rgba($mainColor, 0.5);
-					border-color: $mainColor;
+					background: var(--theme-color);
+					outline: 1px solid var(--theme-color);
+					border-color: var(--theme-color);
 				}
 
 				&.closeIcon {
@@ -3270,7 +3293,8 @@ body {
 		}
 
 		.v-navigation-drawer {
-			background: $mainColor;
+			background: var(--theme-color);
+			transition: 0.3s ease;
 
 			.user-panel {
 				height: var(--user-panel-height);
@@ -3330,7 +3354,7 @@ body {
 					height: 100%;
 
 					&.v-btn--active {
-						color: darken($secColor, 25%);
+						color: var(--text-darkcolor);
 						background: white;
 						border-radius: 12px;
 					}
@@ -3431,8 +3455,12 @@ body {
 			margin: 1rem auto;
 			margin-bottom: 1.5rem;
 
+			// 變數宣告
+			--page-title: #{$blueTitleColor};
+			--filter: hue-rotate(180deg);
+
 			h2 {
-				color: darken($mainColor, 5%);
+				color: var(--page-title);
 				letter-spacing: 2px;
 				position: relative;
 				isolation: isolate;
@@ -3443,7 +3471,7 @@ body {
 					width: 40px;
 					height: 40px;
 					background: url(../assets/img/decorate/dog_foot-1.avif) no-repeat center/contain;
-					filter: hue-rotate(180deg);
+					filter: var(--filter);
 					opacity: 0.5;
 					position: absolute;
 					top: -13px;
@@ -3590,6 +3618,135 @@ body {
 		}
 
 		// ▲ 會員專區 - 測試結果
+	}
+}
+
+// ● 設定頁面
+.settings-config-area {
+	@include rsp-up(lg) {
+		width: 75%;
+		margin: auto;
+	}
+
+	.box {
+		display: flex;
+		gap: 1.5rem;
+		flex-direction: column;
+		margin-top: 3.5rem;
+
+		.item {
+			display: flex;
+			gap: 1.5rem;
+			flex-direction: row;
+			align-items: center;
+
+			.v-switch {
+				.v-label {
+					font-size: calc(var(--setting-font-size) + 0.25vw) !important;
+					font-weight: 500;
+					opacity: 1;
+				}
+
+				&.blue-theme-btn {
+					color: var(--blue-theme-color);
+
+					.v-switch__track {
+						background: var(--blue-theme-color);
+						opacity: 0.35;
+					}
+
+					.v-switch__thumb {
+						background: var(--blue-theme-color);
+					}
+				}
+
+				&.green-theme-btn {
+					color: var(--green-theme-color);
+
+					.v-switch__track {
+						background: var(--green-theme-color);
+						opacity: 0.5;
+					}
+
+					.v-switch__thumb {
+						background: var(--green-theme-color);
+					}
+				}
+			}
+
+			.font-size-btn {
+				min-width: 120px;
+				max-width: 20%;
+			}
+
+			p {
+				font-weight: 500;
+			}
+		}
+
+		.btn-box {
+			width: fit-content;
+			display: flex;
+			column-gap: 2rem;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			margin: auto;
+			margin-top: 3rem;
+
+			.v-btn {
+				min-width: 100px;
+			}
+		}
+	}
+}
+
+// # 主題切換樣式設定
+.theme-box {
+	// 變數宣告
+	--blue-theme-color: #{$mainColor};
+	--green-theme-color: #{darken($secColor, 15%)};
+
+	&.green-theme {
+		// 管理者後臺
+		&.admin-all {
+			--navbar-bg: var(--green-theme-color);
+			--navbarItem-hover-text: #{$greenTitleColor};
+
+			.admin-main {
+				--main-bg: var(--green-theme-color);
+			}
+
+			.admin-home {
+				// 變數宣告
+				--back-homr-bg: #{$LG2};
+
+				// .text-box {
+				// 	color: $thirdColor;
+
+				// 	h4 {
+				// 		color: white;
+				// 	}
+				// }
+			}
+
+			.admin-page-title {
+				--title-color: #{$greenTitleColor};
+			}
+		}
+
+		// 會員專區
+		&.userZone-all {
+			.userZone-navbar {
+				--theme-color: var(--green-theme-color);
+				--text-darkcolor: #{$greenTitleColor};
+			}
+
+			.userZone-page-title {
+				--page-title: #{$greenTitleColor};
+				--filter: hue-rotate(40deg);
+			}
+		}
 	}
 }
 
