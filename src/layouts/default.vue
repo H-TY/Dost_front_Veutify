@@ -72,9 +72,7 @@
                 </template>
 
                 <!-- 登出按鈕 -->
-                <v-btn v-if="user.isLogin" class="logoOut-btn" @click="logout">
-                  <v-icon icon="mdi-account-arrow-right"></v-icon>{{ mdAndDown ? '' : '登出' }}
-                </v-btn>
+                <logOutBtn :text="mdAndDown ? '' : '登出'"></logOutBtn>
               </div>
             </div>
           </div>
@@ -118,9 +116,7 @@
           </template>
 
           <!-- 登出按鈕 -->
-          <v-btn v-if="user.isLogin" class="logoOut-btn" @click="logout">
-            <v-icon icon="mdi-account-arrow-right"></v-icon>登出
-          </v-btn>
+          <logOutBtn></logOutBtn>
         </div>
       </div>
     </div>
@@ -186,6 +182,8 @@ import { useDisplay } from 'vuetify'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
+import logOutBtn from '@/components/logOutBtn.vue'
+
 
 
 

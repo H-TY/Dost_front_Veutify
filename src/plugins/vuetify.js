@@ -57,6 +57,7 @@ export default createVuetify({
     },
     VList: {
       density: "compact", // 控制元件的「空間尺寸（padding / height / 間距）」，預設 default 為較寬鬆， comfortable 稍微緊湊，compact 較緊湊
+      class: "bg-transparent",
     },
   },
   // 啟用 TimePicker 元件

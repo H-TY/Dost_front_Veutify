@@ -25,6 +25,17 @@ export const useThemeSettingStore = defineStore(
       fontSizeContrl.value = 16;
     };
 
+    // ● 對於唯一資料／狀態來源的變數，統一修改窗口，所有修改值都「必須經過這個函式」，可以集中控制邏輯
+    const changeStoreValue = ({ themeColor, fontSize }) => {
+      if (themeColor !== undefined) {
+        switchContrl.value = themeColor;
+      }
+
+      if (fontSize !== undefined) {
+        fontSizeContrl.value = fontSize;
+      }
+    };
+
     const themeColorCss = computed(() => {
       if (switchContrl.value === "green-theme") {
         return "green-theme";
@@ -112,6 +123,7 @@ export const useThemeSettingStore = defineStore(
       maxText,
       themeColorCss,
       resetDefault,
+      changeStoreValue,
       settingSave,
       settingProfile,
     };

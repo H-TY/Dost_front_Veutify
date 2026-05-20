@@ -45,7 +45,7 @@
           </template>
 
           <!-- 登出按鈕 -->
-          <logoOutBtn class="logoOut-btn"></logoOutBtn>
+          <logOutBtn></logOutBtn>
         </div>
       </v-navigation-drawer>
     </div>
@@ -67,7 +67,7 @@ import { useDisplay } from 'vuetify'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user'
 import { useThemeSettingStore } from '@/stores/themeSettings.js'
-import logoOutBtn from '@/components/logoOutBtn.vue'
+import logOutBtn from '@/components/logOutBtn.vue'
 import userPhoto from '@/components/userPhoto.vue'
 import userAccountBg from '@/components/userAccountBg.vue'
 import { logo, userZoneNavItems } from '@/plugins/data_json'

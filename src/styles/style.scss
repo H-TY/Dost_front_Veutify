@@ -1108,7 +1108,7 @@ body {
 					border-color: $btnRed;
 				}
 
-				&.logoOut-btn {
+				&.logOut-btn {
 					background: $btnRed;
 				}
 			}
@@ -1244,7 +1244,7 @@ body {
 						}
 					}
 
-					&.logoOut-btn {
+					&.logOut-btn {
 						width: 100%;
 					}
 				}
@@ -2308,6 +2308,124 @@ body {
 		}
 	}
 
+	// ▲ dog-profile 頁面的樣式
+	.dog-profile {
+		// 變數宣告
+		--cust-border-radius: 12px;
+
+		.v-container {
+			padding: 0 1rem;
+		}
+
+		.bg {
+			background: $forthColor;
+			border-radius: var(--cust-border-radius);
+			padding: 2rem;
+			// padding-top: 3rem;
+			box-shadow:
+				rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset,
+				rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+				rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+		}
+
+		.section-title-box {
+			padding-top: 1.5rem;
+		}
+
+		.content-box {
+			display: flex;
+			gap: 1.5rem;
+			flex-direction: row;
+			justify-content: center;
+			align-items: start;
+			padding-top: 2rem;
+
+			@include rsp-down(sm) {
+				flex-direction: column;
+			}
+
+			.img-box {
+				// width: 40%;
+				min-width: 120px;
+				max-width: 300px;
+				border-radius: calc(var(--cust-border-radius) - 2px);
+				margin-bottom: 1.5rem;
+				overflow: hidden;
+			}
+
+			.v-col {
+				height: stretch;
+				display: flex;
+				flex-direction: column;
+				justify-content: start;
+				align-items: start;
+
+				&:nth-child(2) {
+					.text-box {
+						gap: 1.7rem;
+					}
+				}
+
+				@include rsp-up(md) {
+					&:nth-child(1) {
+						max-width: 300px;
+					}
+				}
+			}
+
+			.text-box {
+				display: flex;
+				gap: 0.2rem;
+				flex-direction: column;
+
+				.box {
+					h6 {
+						color: $gtext;
+						margin-bottom: 0.5rem;
+					}
+
+					.vax-list {
+						display: flex;
+						gap: 1.5rem;
+						flex-wrap: wrap;
+						justify-content: space-around;
+						align-items: center;
+
+						.v-list-item {
+							text-align: center;
+							padding: 0;
+						}
+					}
+				}
+			}
+
+			.btn-box {
+				margin-top: auto;
+				margin-left: auto;
+
+				@include rsp-down(md) {
+					margin-top: 2.5rem;
+				}
+
+				.v-btn {
+					// color: white;
+					// background: $btnGreen;
+					color: $noticeColor;
+					background: $LG3;
+					padding: 8px 24px;
+
+					span {
+						font-weight: 500;
+						padding-left: 0.4rem;
+
+						// 動畫設定
+						animation: right_left 1s infinite ease-in;
+					}
+				}
+			}
+		}
+	}
+
 	// ▲ booking 頁面的樣式
 	.booking {
 		.v-container {
@@ -2663,10 +2781,9 @@ body {
 		.logout-box {
 			margin-top: auto;
 
-			.v-btn {
+			.logOut-btn {
 				width: 44px;
 				height: 44px;
-				background: $btnRed;
 				border-radius: 50%;
 				padding: 0;
 				transition: all 0.3s ease;
@@ -3372,7 +3489,8 @@ body {
 					}
 				}
 
-				.logoOut-btn {
+				.logOut-btn {
+					background: transparent;
 					display: flex;
 					gap: var(--gap-space);
 					flex-direction: var(--layout-direction);
@@ -3534,13 +3652,6 @@ body {
 						flex-direction: row;
 						justify-content: center;
 						align-items: center;
-
-						.v-btn {
-							&.v-btn--disabled {
-								background: $gtext !important;
-								opacity: 0.5;
-							}
-						}
 					}
 				}
 			}

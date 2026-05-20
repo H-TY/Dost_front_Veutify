@@ -13,6 +13,7 @@ import {
 import { setupLayouts } from "virtual:generated-layouts";
 import { routes } from "vue-router/auto-routes";
 import { useUserStore } from "@/stores/user";
+import { useThemeSettingStore } from "@/stores/themeSettings.js";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -41,11 +42,14 @@ router.isReady().then(() => {
 // ▲ router.beforeEach ( async (要去哪裡, 從哪裡來, 重新導向) => {} ) 每次進入頁面"前"，執行函式
 router.beforeEach(async (to, from, next) => {
   const user = useUserStore();
+  const themeSettingStore = useThemeSettingStore();
 
   // ● 進入頁面後的第一次/初始導航
   if (from === START_LOCATION) {
     // 向後端取使用者的資料
     await user.profile();
+    // 向後端取使用者的設定資料
+    await themeSettingStore.settingProfile();
   }
 
   // ● .includes(to.path) 表示要前往的頁面路徑

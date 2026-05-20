@@ -17,8 +17,10 @@
 
       <!-- ● 登出按鈕 -->
       <div class="logout-box">
-        <v-btn v-if="user.isLogin" prepend-icon="mdi-account-arrow-right" @click="logout" :text="logOutBtnChange.text" :class="logOutBtnChange.class"></v-btn>
+        <logOutBtn :class="logOutBtnChange.class" :text="logOutBtnChange.text"></logOutBtn>
       </div>
+
+
     </v-navigation-drawer>
 
     <!-- 告知 Router 要渲染頁面的組件和當前路徑。 -->
@@ -41,6 +43,7 @@ import { useUserStore } from '@/stores/user'
 import { useThemeSettingStore } from '@/stores/themeSettings.js'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
+import logOutBtn from '@/components/logOutBtn.vue'
 // 引進生成的 data_json 檔案
 import { logo, adminNavItems } from '@/plugins/data_json'
 

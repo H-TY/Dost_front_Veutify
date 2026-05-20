@@ -11,7 +11,8 @@ $forthColor: #fffcda; // 輔助顏色
 $bg: $thirdColor; // 整個網頁背景顏色
 $areaBg: #fffde7; // 內容區背景顏色
 $LG1: linear-gradient(135deg, $secColor 50%, transparent 50%);
-$LG2: linear-gradient(135deg, lighten($mainColor, 50%) 50%, transparent 50%);
+$LG2: linear-gradient(135deg, lighten($mainColor, 50%) 50%, transparent 0%);
+$LG3: linear-gradient(135deg, transparent 25%, $mainColor 0%);
 
 $blueTitleColor: darken($mainColor, 5%);
 $greenTitleColor: darken($secColor, 25%);
@@ -167,8 +168,10 @@ img {
 			filter: hue-rotate(180deg);
 			opacity: 0.4;
 			position: absolute;
-			top: -5%;
-			right: -35%;
+			// top: -5%;
+			// right: -35%;
+			top: -2px;
+			right: -44px;
 			transform: translate(0%, 0%) rotate(10deg);
 			z-index: -1;
 		}
@@ -178,8 +181,10 @@ img {
 			height: 24px;
 			// background: url(../assets/img/decorate/dog_foot-2.avif) no-repeat center/contain;
 			top: unset;
-			bottom: -37%;
-			right: -42%;
+			// bottom: -37%;
+			// right: -42%;
+			bottom: -16px;
+			right: -52px;
 			transform: translate(0%, 0%) rotate(40deg);
 		}
 	}
@@ -227,8 +232,10 @@ img {
 			filter: hue-rotate(180deg);
 			opacity: 0.4;
 			position: absolute;
-			top: -50%;
-			left: -25%;
+			// top: -50%;
+			// left: -25%;
+			top: -22px;
+			left: -32px;
 			transform: translate(0%, 0%) rotate(-20deg);
 			z-index: -1;
 		}
@@ -241,7 +248,8 @@ img {
 			top: unset;
 			left: unset;
 			bottom: 0%;
-			right: -35%;
+			// right: -35%;
+			right: -45px;
 			transform: translate(0%, 0%) rotate(30deg);
 		}
 	}
@@ -384,8 +392,14 @@ hr {
 
 // ● btn 設定
 .v-btn {
+	transition: filter 0.3s ease-in;
+
 	// 變數宣告：按鈕留白距離
 	--btn-padding: 0.4rem 0.8rem;
+
+	&:hover {
+		filter: brightness(1.25);
+	}
 
 	&.v-btn--variant-plain {
 		opacity: 1;
@@ -398,10 +412,22 @@ hr {
 		min-width: unset;
 	}
 
+	&.v-btn--disabled {
+		background: $gtext !important;
+		opacity: 0.5 !important;
+	}
+
 	.v-btn__content {
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
+}
+
+// ● 登出按鈕
+.logOut-btn {
+	&.v-btn {
+		background: $btnRed;
 	}
 }
 
@@ -423,6 +449,26 @@ hr {
 		background: $btnRed;
 		padding: var(--btn-padding);
 		margin: auto;
+	}
+}
+
+// 恢復預設按鈕
+.default-btn {
+	&.v-btn {
+		color: white;
+		background: $gtext;
+		opacity: 0.6;
+		padding: var(--btn-padding);
+		margin: auto;
+	}
+}
+
+// ● 分頁導航按鈕設定
+.v-pagination {
+	.v-btn {
+		&.v-btn--disabled {
+			background: unset !important;
+		}
 	}
 }
 

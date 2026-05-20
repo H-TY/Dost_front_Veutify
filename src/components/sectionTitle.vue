@@ -3,13 +3,17 @@
     <!-- mobile 標題 -->
     <div class="section-title-m">
       <h2>{{ title }}</h2>
-      <span>{{ enTitle }}</span>
+      <template v-if="enTitle">
+        <span>{{ enTitle }}</span>
+      </template>
     </div>
 
     <!-- PC 標題 -->
     <div class="section-title-l">
       <h2>{{ title }}</h2>
-      <span>{{ enTitle }}</span>
+      <template v-if="enTitle">
+        <span>{{ enTitle }}</span>
+      </template>
     </div>
   </div>
 </template>
@@ -30,7 +34,7 @@ defineProps({
   },
   enTitle: {
     type: String,
-    required: true,
+    // required: true,
   },
 })
 
