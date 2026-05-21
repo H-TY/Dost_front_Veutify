@@ -75,7 +75,7 @@ const { goToPageById } = useNavigationById()
 
 
 // ● 用來儲存後端回傳的狗狗資料
-const items = ref({})
+const items = ref("")
 
 // ● 向後端發請求索取狗狗資料
 const getDogData = async () => {
