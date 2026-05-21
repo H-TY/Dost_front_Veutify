@@ -17,8 +17,8 @@ import { generateBreakpointsScss } from './src/styles/setBreakpoints';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	base: './',
-	// base: '/Dost_front_Veutify/',
+	// base: './',
+	base: '/Dost_front_Veutify/',
 	plugins: [
 		VueRouter(),
 		Layouts(),

@@ -1,6 +1,6 @@
 <template>
   <div class="dogs-card">
-    <router-link :to="{ path: `/dogsResume/${_id}` }" class="card-img">
+    <router-link :to="`/dogsResume/${_id}`" class="card-img">
       <img :src="image"></img>
     </router-link>
     <div class="card-txt-box">
@@ -44,6 +44,8 @@ const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 const { goToPageById } = useNavigationById() // 引入自定義的導航函式，詳細說明看 src/composables/navigationById.js
 
+
+
 // ● 定義父組件傳遞給當前組件的數據，類似於組件的「輸入參數」。
 // 指定了當前組件可以接收哪些 props。這些 props 是來自父組件的屬性，並且在當前組件中可以使用它們。
 const props = defineProps(['_id', 'image', 'dogName', 'age', 'price', 'booking', 'bookingTime', 'feature', 'sell', 'counter'])
@@ -54,6 +56,7 @@ const props = defineProps(['_id', 'image', 'dogName', 'age', 'price', 'booking',
 const bookingAddId = () => {
   goToPageById('booking', props._id)
 }
+
 
 
 // ● 藉由傳入的 props 推算預約按鈕狀態，後續根據狀態設定樣式

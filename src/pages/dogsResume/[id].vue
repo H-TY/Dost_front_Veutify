@@ -47,12 +47,22 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import { useRoute } from "vue-router";
 import { useApi } from "@/composables/axios";
 import sectionTitle from '@/components/sectionTitle.vue'
 import { useNavigationById } from '@/composables/navigationById'
+import { definePage } from 'vue-router/auto'
 
+
+
+definePage({
+  meta: {
+    title: 'Dost | 狗狗小檔案',
+    login: false,
+    admin: false
+  }
+})
 
 
 
@@ -78,7 +88,7 @@ const getDogData = async () => {
     // console.log('getDogData-data', data)
 
     items.value = data.result
-    console.log('items.value', items.value)
+    // console.log('items.value', items.value)
 
 
   } catch (error) {
