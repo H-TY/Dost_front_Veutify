@@ -5,7 +5,7 @@ import Fonts from 'unplugin-fonts/vite';
 import Layouts from 'vite-plugin-vue-layouts';
 import Vue from '@vitejs/plugin-vue';
 import VueRouter from 'unplugin-vue-router/vite';
-import { VueRouterAutoImports } from 'unplugin-vue-router';
+// import { VueRouterAutoImports } from 'unplugin-vue-router';
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 // Utilities
@@ -50,8 +50,8 @@ export default defineConfig({
 		AutoImport({
 			imports: [
 				'vue',
-				// 'vue-router'
-				VueRouterAutoImports
+				'vue-router'
+				// VueRouterAutoImports
 			],
 			eslintrc: {
 				enabled: true

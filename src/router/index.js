@@ -16,8 +16,8 @@ import { useUserStore } from "@/stores/user";
 import { useThemeSettingStore } from "@/stores/themeSettings.js";
 
 const router = createRouter({
-  // history: createWebHashHistory(import.meta.env.BASE_URL),
-  history: createWebHashHistory(),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
+  // history: createWebHashHistory(),
   routes: setupLayouts(routes),
 });
 
