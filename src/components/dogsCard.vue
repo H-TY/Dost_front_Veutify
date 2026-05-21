@@ -1,6 +1,6 @@
 <template>
   <div class="dogs-card">
-    <router-link :to="{ name: '/dogsResume/[id]', params: { id: _id } }" class="card-img">
+    <router-link :to="`/dogsResume/${_id}`" class="card-img">
       <img :src="image"></img>
     </router-link>
     <div class="card-txt-box">
