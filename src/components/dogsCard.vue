@@ -1,7 +1,7 @@
 <template>
   <div class="dogs-card">
     <!-- <router-link :to="`dogsResume/${_id}`" class="card-img"> -->
-    <router-link :to="{ name: '/dogsResume/[id]', params: { id: _id } }" class="card-img">
+    <router-link :to="{ name: '/dogsResume/[id]', params: { id: _id } }" class="card-img" @click="debugClick">
       <img :src="image"></img>
     </router-link>
     <div class="card-txt-box">
@@ -62,6 +62,13 @@ const bookingAddId = () => {
 
 // ● 藉由傳入的 props 推算預約按鈕狀態，後續根據狀態設定樣式
 const bookingState = computed(() => props.booking === '預約已滿');
+
+
+const debugClick = () => {
+  console.log('_id：', props._id)
+  console.log('route.fullPath：', route.fullPath)
+  console.log('router.resolve 結果：', router.resolve({ name: '/dogsResume/[id]', params: { id: props._id } }))
+}
 
 
 
