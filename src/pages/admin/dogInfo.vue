@@ -611,4 +611,4 @@ const checkboxChange = async (id, newValue) => {
 <route lang="yaml">
   meta:
     layout: admin
-  </route>
+</route>
