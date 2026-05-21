@@ -19,9 +19,9 @@ import { generateBreakpointsScss } from './src/styles/setBreakpoints';
 export default defineConfig({
 	// base: './',
 	base: '/Dost_front_Veutify/',
-	build: {
-		emptyOutDir: true // 確保每次 build dist 是乾淨的
-	},
+	// build: {
+	// 	emptyOutDir: true // 確保每次 build dist 是乾淨的
+	// },
 	plugins: [
 		VueRouter(),
 		Layouts(),
