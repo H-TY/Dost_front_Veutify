@@ -39,6 +39,7 @@ import { useNavigationById } from '@/composables/navigationById.js'
 
 const user = useUserStore()
 const route = useRoute() // 目前路由狀態（「現在在哪」），詳細說明看最底下
+console.log('route', route)
 const router = useRouter() // 負責「跳轉、返回、取路由設定」（「要去哪、怎麼去」），詳細說明看最底下
 const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()

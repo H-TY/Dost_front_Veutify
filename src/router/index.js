@@ -20,6 +20,8 @@ const router = createRouter({
   routes: setupLayouts(routes),
 });
 
+console.log("router\index.js_router", router.getRoutes());
+
 // Workaround for https://github.com/vitejs/vite/issues/11804
 router.onError((err, to) => {
   if (err?.message?.includes?.("Failed to fetch dynamically imported module")) {
