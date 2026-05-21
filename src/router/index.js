@@ -15,13 +15,9 @@ import { routes } from "vue-router/auto-routes";
 import { useUserStore } from "@/stores/user";
 import { useThemeSettingStore } from "@/stores/themeSettings.js";
 
-// const router = createRouter({
-//   history: createWebHashHistory(import.meta.env.BASE_URL),
-//   routes: setupLayouts(routes),
-// });
-
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
+  // history: createWebHashHistory(),
   routes: setupLayouts(routes),
 });
 
