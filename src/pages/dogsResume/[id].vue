@@ -67,7 +67,7 @@ definePage({
 
 
 const route = useRoute()
-console.log('route', route)
+// console.log('route', route)
 const { backApi } = useApi()
 const dogId = route.params.id
 // console.log('dogId', dogId)

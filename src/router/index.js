@@ -21,7 +21,7 @@ const router = createRouter({
   routes: setupLayouts(routes),
 });
 
-console.log("router\index.js_router", router.getRoutes());
+// console.log("router\index.js_router", router.getRoutes());
 
 // Workaround for https://github.com/vitejs/vite/issues/11804
 router.onError((err, to) => {
@@ -30,9 +30,6 @@ router.onError((err, to) => {
       console.log("Reloading page to fix dynamic import error");
       localStorage.setItem("vuetify:dynamic-reload", "true");
       location.assign(to.fullPath);
-
-      // 修正這裡：Hash 模式下直接重整目前頁面即可，或是用 window.location.reload()
-      window.location.reload();
     } else {
       console.error("Dynamic import error, reloading page did not fix it", err);
     }
