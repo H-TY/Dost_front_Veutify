@@ -3,7 +3,7 @@ name: Deploy
 # 觸發時機，當推送到分支 main 時
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 # 執行的工作
 jobs:
   # 工作名稱
@@ -29,3 +29,5 @@ jobs:
         with:
           branch: gh-pages
           folder: dist
+          # clean 在每次部署前，先把 gh-pages 分支「舊的檔案全部刪掉」，再上傳新的 dist，防止「舊 build 檔案殘留」導致 JS chunk 404 / dynamic import error
+          clean: true
