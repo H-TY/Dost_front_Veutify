@@ -47,8 +47,8 @@ export default defineConfig({
 		AutoImport({
 			imports: [
 				'vue',
-				// 'vue-router',
-				VueRouterAutoImports
+				'vue-router'
+				// VueRouterAutoImports
 			],
 			eslintrc: {
 				enabled: true
