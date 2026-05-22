@@ -17,11 +17,8 @@ import { useThemeSettingStore } from "@/stores/themeSettings.js";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
-  // history: createWebHashHistory(),
   routes: setupLayouts(routes),
 });
-
-console.log("router\index.js_router", router.getRoutes());
 
 // Workaround for https://github.com/vitejs/vite/issues/11804
 router.onError((err, to) => {

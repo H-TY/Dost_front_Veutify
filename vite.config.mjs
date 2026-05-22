@@ -5,7 +5,6 @@ import Fonts from 'unplugin-fonts/vite';
 import Layouts from 'vite-plugin-vue-layouts';
 import Vue from '@vitejs/plugin-vue';
 import VueRouter from 'unplugin-vue-router/vite';
-// import { VueRouterAutoImports } from 'unplugin-vue-router';
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 // Utilities
@@ -17,11 +16,8 @@ import { generateBreakpointsScss } from './src/styles/setBreakpoints';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	// base: './',
-	base: '/Dost_front_Veutify/',
-	// build: {
-	// 	emptyOutDir: true // 確保每次 build dist 是乾淨的
-	// },
+	base: './',
+	// base: '/Dost_front_Veutify/',
 	plugins: [
 		VueRouter(),
 		Layouts(),
@@ -48,11 +44,7 @@ export default defineConfig({
 			}
 		}),
 		AutoImport({
-			imports: [
-				'vue',
-				'vue-router'
-				// VueRouterAutoImports
-			],
+			imports: ['vue', 'vue-router'],
 			eslintrc: {
 				enabled: true
 			},

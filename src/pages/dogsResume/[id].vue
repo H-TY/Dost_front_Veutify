@@ -67,7 +67,7 @@ definePage({
 
 
 const route = useRoute()
-console.log('route', route)
+// console.log('route', route)
 const { backApi } = useApi()
 const dogId = route.params.id
 // console.log('dogId', dogId)
@@ -98,9 +98,3 @@ const getDogData = async () => {
 getDogData() // 這邊要自己呼叫一次，才能在載入頁面時觸發向後端請求資料
 
 </script>
-
-<!-- 
-<route lang="yaml">
-  meta:
-    layout: default
-</route> -->

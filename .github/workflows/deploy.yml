@@ -24,7 +24,9 @@ jobs:
         env:
           VITE_API: ${{ secrets.VITE_API }}
 
-      # ✅ 新增：建立 .nojekyll，避免 Jekyll 忽略 _ 開頭的檔案
+      # ✅ 新增：建立 .nojekyll
+      # 避免 GitHub Pages 使用 Jekyll 處理檔案時，忽略 _ 開頭的檔案，而導致轉跳至網頁 4040
+      # 例如：[id].vue 的檔案，[id] 是動態路由的命名方式，Vite 編譯時把 [ ] 轉成 _，所以一定會產生 _ 開頭的檔案。
       - name: Add .nojekyll
         run: touch dist/.nojekyll
 
