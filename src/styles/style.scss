@@ -17,17 +17,68 @@ body {
 		height: 60vh;
 		border-radius: 10px;
 		padding: 0;
-		position: relative;
 		overflow: hidden;
 		box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+		position: relative;
+		isolation: isolate;
+
+		&::before {
+			content: '';
+			width: 100%;
+			height: 0%;
+			background: rgba($gtext, 0.8);
+			mix-blend-mode: multiply;
+			position: absolute;
+			top: 0%;
+			left: 50%;
+			transform: translate(-50%, 0%);
+			z-index: 1;
+			transition: height 0.2s ease-in;
+		}
 
 		@include rsp-down(sm) {
 			width: calc(100% - 7vw);
 		}
 
+		&:hover {
+			&::before {
+				height: 100%;
+			}
+
+			.search-icon-show {
+				display: flex;
+			}
+		}
+
+		.search-icon-show {
+			display: none;
+			width: 100%;
+			height: 100%;
+			color: white;
+			gap: 0.3rem;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			position: absolute;
+			top: -15%;
+			left: 50%;
+			transform: translate(-50%, 0%);
+			text-shadow: 6px 6px 1.5px rgba(0, 0, 0, 0.5);
+			z-index: 2;
+
+			i {
+				font-size: 2.5rem;
+			}
+
+			p {
+				font-size: 1.2rem;
+			}
+		}
+
 		.card-img {
 			display: block;
 			height: 100%;
+			position: relative;
 		}
 
 		.card-txt-box {
@@ -41,6 +92,7 @@ body {
 			justify-content: center;
 			position: absolute;
 			bottom: 0;
+			z-index: 2;
 
 			p {
 				color: $gtext;
@@ -2310,31 +2362,119 @@ body {
 
 	// ▲ dog-profile 頁面的樣式
 	.dog-profile {
+		padding: 80px 0;
+
+		@include rsp-down-excl(sm) {
+			padding: 50px 0;
+			padding-bottom: 70px;
+		}
+
 		// 變數宣告
 		--cust-border-radius: 12px;
+		--cust-gap: 3rem;
 
 		.v-container {
 			padding: 0 1rem;
 		}
 
 		.bg {
+			width: fit-content;
+			max-width: 1000px;
 			background: $forthColor;
 			border-radius: var(--cust-border-radius);
 			padding: 2rem;
-			// padding-top: 3rem;
+			margin: auto;
 			box-shadow:
 				rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset,
 				rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
 				rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+			position: relative;
+			isolation: isolate;
+
+			&::before {
+				content: '';
+				width: 100%;
+				height: 100%;
+				background: url(../assets/img/decorate/dogsResume/img-1.avif) repeat center / 50%;
+				mask-image: linear-gradient(to top, black 10%, transparent 15% 88%, black 95%);
+				opacity: 0.12;
+				filter: grayscale(1);
+				mix-blend-mode: multiply;
+				// clip-path: polygon(100% 0, 0 0, 100% 100%);
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				// transform: rotate(-30deg);
+				z-index: -2;
+
+				@media (min-width: 768px) and (max-width: 991px) {
+					mask-image: linear-gradient(to top, black 25%, transparent 30% 88%, black 95%);
+				}
+
+				@include rsp-down(sm) {
+					height: 50%;
+					background-size: 100%;
+					mask-image: linear-gradient(to right, black 0%, transparent 0% 65%, black 70%);
+				}
+
+				@include rsp-down-excl(sm) {
+					height: 100%;
+					mask-image: linear-gradient(to top, black 25%, transparent 45% 100%, black 100%);
+				}
+			}
+
+			.btn-box {
+				width: 260px;
+				height: 120px;
+				position: absolute;
+				bottom: 0px;
+				right: 0px;
+
+				&::before {
+					content: '';
+					width: 100%;
+					height: 100%;
+					background: $LG3;
+					border-bottom-right-radius: calc(var(--cust-border-radius) - 2px);
+					position: absolute;
+					top: 0px;
+					left: 0px;
+					z-index: -2;
+				}
+
+				.v-btn {
+					color: $thirdColor;
+					padding: 8px 24px;
+					position: absolute;
+					bottom: 12px;
+					right: 12px;
+
+					span {
+						font-weight: 500;
+						padding-left: 0.4rem;
+
+						// 動畫設定
+						animation: right_left 1s infinite ease-in;
+					}
+				}
+			}
 		}
 
 		.section-title-box {
-			padding-top: 1.5rem;
+			@include rsp-up(md) {
+				padding-top: 1.5rem;
+			}
+
+			.section-title-l {
+				span {
+					left: -4rem;
+				}
+			}
 		}
 
 		.content-box {
 			display: flex;
-			gap: 1.5rem;
+			gap: calc(var(--cust-gap) - 24px);
 			flex-direction: row;
 			justify-content: center;
 			align-items: start;
@@ -2342,15 +2482,6 @@ body {
 
 			@include rsp-down(sm) {
 				flex-direction: column;
-			}
-
-			.img-box {
-				// width: 40%;
-				min-width: 120px;
-				max-width: 300px;
-				border-radius: calc(var(--cust-border-radius) - 2px);
-				margin-bottom: 1.5rem;
-				overflow: hidden;
 			}
 
 			.v-col {
@@ -2362,64 +2493,158 @@ body {
 
 				&:nth-child(2) {
 					.text-box {
-						gap: 1.7rem;
+						gap: var(--cust-gap);
 					}
 				}
 
 				@include rsp-up(md) {
+					&:nth-child(1) {
+						max-width: 240px;
+					}
+				}
+				@include rsp-up(lg) {
 					&:nth-child(1) {
 						max-width: 300px;
 					}
 				}
 			}
 
-			.text-box {
-				display: flex;
-				gap: 0.2rem;
-				flex-direction: column;
+			.img-box {
+				// width: 40%;
+				min-width: 120px;
+				max-width: 300px;
+				margin-bottom: 3rem;
+				position: relative;
+				isolation: isolate;
 
-				.box {
-					h6 {
-						color: $gtext;
-						margin-bottom: 0.5rem;
-					}
+				&::before {
+					content: '';
+					width: 65%;
+					height: 65%;
+					background: $LG5;
+					opacity: 0.6;
+					border-bottom-right-radius: calc(var(--cust-border-radius) - 2px);
+					position: absolute;
+					bottom: -16px;
+					right: -16px;
+					z-index: -1;
+				}
 
-					.vax-list {
-						display: flex;
-						gap: 1.5rem;
-						flex-wrap: wrap;
-						justify-content: space-around;
-						align-items: center;
-
-						.v-list-item {
-							text-align: center;
-							padding: 0;
-						}
-					}
+				img {
+					border-radius: calc(var(--cust-border-radius) - 2px);
+					clip-path: polygon(100% 0, 100% 75%, 75% 100%, 0 100%, 0 0);
 				}
 			}
 
-			.btn-box {
-				margin-top: auto;
-				margin-left: auto;
+			.text-box {
+				display: flex;
+				flex-direction: column;
 
-				@include rsp-down(md) {
-					margin-top: 2.5rem;
+				h6 {
+					color: $gtext;
+					display: flex;
+					gap: 0.5rem;
+					flex-direction: row;
+					justify-content: start;
+					align-items: center;
+					margin-bottom: 0.5rem;
+					position: relative;
+					isolation: isolate;
+
+					&::before {
+						content: '';
+						width: 100%;
+						height: 4px;
+						background: linear-gradient(135deg, transparent 40%, $gtext 0%);
+						opacity: 0.3;
+						// border-bottom-right-radius: calc(var(--cust-border-radius) - 2px);
+						position: absolute;
+						bottom: 5px;
+						left: 50%;
+						transform: translate(-50%, 0);
+						z-index: -1;
+
+						@include rsp-down-excl(sm) {
+							background: linear-gradient(135deg, transparent 45%, $gtext 0%);
+						}
+
+						@include rsp-up(lg) {
+							background: linear-gradient(135deg, transparent 30%, $gtext 0%);
+						}
+					}
+
+					i {
+						font-size: calc(1.5rem + 0.2vw);
+						opacity: 0.6;
+					}
+
+					&.name-and-age {
+						color: darken($noticeColor, 30%);
+
+						&::before {
+							width: 0%;
+						}
+					}
 				}
 
-				.v-btn {
-					// color: white;
-					// background: $btnGreen;
-					color: $noticeColor;
-					background: $LG3;
-					padding: 8px 24px;
+				.box {
+					.vax-list {
+						display: flex;
+						row-gap: 1.5rem;
+						flex-wrap: wrap;
+						justify-content: space-around;
+						align-items: center;
+						padding-top: 1.5rem;
+						padding-bottom: 3.5rem;
+						overflow: unset;
 
-					span {
-						font-weight: 500;
-						padding-left: 0.4rem;
+						.vax-item {
+							text-align: center;
+							padding: 1.5rem;
+							position: relative;
+							isolation: isolate;
 
-						// 動畫設定
-						animation: right_left 1s infinite ease-in;
+							&::before {
+								content: '';
+								width: 120px;
+								height: 120px;
+								background: radial-gradient($noticeColor 35%, transparent 70%);
+								// opacity: 0.5;
+								border-radius: 50%;
+								position: absolute;
+								top: 50%;
+								left: 50%;
+								transform: translate(-50%, -50%);
+								z-index: -2;
+							}
+
+							// &::after {
+							// 	content: '';
+							// 	width: 60px;
+							// 	height: 60px;
+							// 	background: unset;
+							// 	border: 1px solid $secColor;
+							// 	top: 0px;
+							// 	left: 0px;
+							// 	transform: translate(0%, 0%);
+							// }
+
+							// p {
+							// 	color: white;
+							// 	text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
+							// }
+
+							i {
+								font-size: calc(5rem + 0.2vw);
+								color: $forthColor;
+								opacity: 0.6;
+								position: absolute;
+								top: 50%;
+								left: 50%;
+								transform: translate(-50%, -50%) scalex(-1);
+								z-index: -1;
+							}
+						}
 					}
 				}
 			}

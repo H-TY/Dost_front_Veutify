@@ -12,21 +12,30 @@
             </div>
 
             <div class="text-box">
-              <p>{{ items.dogName }}</p>
-              <p>{{ items.age }} 歲</p>
+              <h6 class="name-and-age">
+                <v-icon class="mdi mdi-card-bulleted"></v-icon>
+                {{ items.dogName }}｜{{ items.age }} 歲
+              </h6>
               <p>{{ items.feature }}</p>
             </div>
           </v-col>
           <v-col>
             <div class="text-box">
               <div class="box">
-                <h6>我的故事</h6>
+                <h6>
+                  <v-icon class="mdi mdi-book-open-page-variant"></v-icon>
+                  我的故事
+                </h6>
                 <p>{{ items.story }}</p>
               </div>
               <div class="box">
-                <h6>疫苗接踵紀錄</h6>
+                <h6>
+                  <v-icon class="mdi  mdi-virus"></v-icon>
+                  疫苗接踵
+                </h6>
                 <v-list class="vax-list">
-                  <v-list-item v-for="(el, index) in items.vaccine" :key="index">
+                  <v-list-item v-for="(el, index) in items.vaccine" :key="index" class="vax-item">
+                    <v-icon class="mdi mdi-needle"></v-icon>
                     <p>{{ el.date }}</p>
                     <p>{{ el.name }}</p>
                     <p>{{ el.hospital }}</p>
@@ -34,12 +43,12 @@
                 </v-list>
               </div>
             </div>
-            <div class="btn-box">
-              <v-btn @click="goToPageById('booking', items._id)">
-                <p>預約相遇</p> <span>→</span>
-              </v-btn>
-            </div>
           </v-col>
+        </div>
+        <div class="btn-box">
+          <v-btn @click="goToPageById('booking', items._id)">
+            <p>開始相遇</p> <span>→</span>
+          </v-btn>
         </div>
       </div>
     </v-container>

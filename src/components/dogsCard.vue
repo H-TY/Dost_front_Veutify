@@ -1,7 +1,11 @@
 <template>
   <div class="dogs-card">
     <router-link :to="`dogsResume/${_id}`" class="card-img">
-      <!-- <router-link :to="{ name: '/dogsResume/[id]', params: { id: _id } }" class="card-img" @click="debugClick"> -->
+      <div class="search-icon-show">
+        <v-icon class="mdi mdi-magnify"></v-icon>
+        <p>汪汪秘辛公開中</p>
+      </div>
+
       <img :src="image"></img>
     </router-link>
     <div class="card-txt-box">

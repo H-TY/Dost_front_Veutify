@@ -10,9 +10,6 @@ $forthColor: #fffcda; // 輔助顏色
 
 $bg: $thirdColor; // 整個網頁背景顏色
 $areaBg: #fffde7; // 內容區背景顏色
-$LG1: linear-gradient(135deg, $secColor 50%, transparent 50%);
-$LG2: linear-gradient(135deg, lighten($mainColor, 50%) 50%, transparent 0%);
-$LG3: linear-gradient(135deg, transparent 25%, $mainColor 0%);
 
 $blueTitleColor: darken($mainColor, 5%);
 $greenTitleColor: darken($secColor, 25%);
@@ -28,6 +25,12 @@ $btnLBlue: #1998d3;
 $LINE: #06c655;
 $FB: #1877f7;
 $IG: linear-gradient(to left bottom, #9d37ba, #fed677);
+
+$LG1: linear-gradient(135deg, $secColor 50%, transparent 50%);
+$LG2: linear-gradient(135deg, lighten($mainColor, 50%) 50%, transparent 0%);
+$LG3: linear-gradient(155deg, transparent 50%, $mainColor 0%);
+$LG4: linear-gradient(135deg, transparent 50%, $secColor 0%);
+$LG5: linear-gradient(135deg, transparent 50%, darken($noticeColor, 15%) 0%);
 
 // color bakeup #4caf50
 
