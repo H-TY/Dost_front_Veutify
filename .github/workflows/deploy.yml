@@ -23,6 +23,11 @@ jobs:
           npm run build
         env:
           VITE_API: ${{ secrets.VITE_API }}
+
+      # ✅ 新增：建立 .nojekyll，避免 Jekyll 忽略 _ 開頭的檔案
+      - name: Add .nojekyll
+        run: touch dist/.nojekyll
+
       # 步驟三：部署
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.6.5
