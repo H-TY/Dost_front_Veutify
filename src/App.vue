@@ -55,7 +55,7 @@ const anmiSet = () => {
       showAnmi.value = false
     }, 500);
 
-  }, 210000);
+  }, 2100);
 }
 
 onMounted(() => {
