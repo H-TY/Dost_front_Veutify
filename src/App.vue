@@ -46,7 +46,7 @@ const showAnmi = ref(true)
 const fadeAnmi = ref(false)
 
 const anmiSet = () => {
-  // 設定進場動畫透明度設為 0
+  // 設定進場動畫透明度變成 0
   setTimeout(() => {
     fadeAnmi.value = true
 
