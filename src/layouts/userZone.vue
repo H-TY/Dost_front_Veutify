@@ -26,9 +26,9 @@
             <!-- 大頭照 & 帳戶名稱 -->
             <div class="user-info">
               <userPhoto></userPhoto>
-              <h6 class="user-name">
+              <h5 class="user-name">
                 {{ User.account }}
-              </h6>
+              </h5>
             </div>
           </div>
         </div>

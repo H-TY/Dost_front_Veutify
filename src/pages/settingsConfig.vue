@@ -59,6 +59,7 @@ definePage({
 
 
 // const route = useRoute()
+// console.log('route', route)
 const userStore = useUserStore()
 const themeSettingStore = useThemeSettingStore()
 // 若要保持響應式且能連動 store 內的值，直接使用 themeSettingStore.switchContrl
