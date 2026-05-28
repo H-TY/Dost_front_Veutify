@@ -1,1 +1,0 @@
-import{b as e}from"./route-block-B_A1xBdJ.js";import{P as s,Q as o,T as t}from"./index-BmSmZ10N.js";const a={class:"test-result"},c=t("div",{class:"userZone-page-title"},[t("h2",null,"適性測驗結果")],-1),n=[c],r={__name:"adaptiveTestResult",setup(_){return(i,l)=>(s(),o("div",a,n))}};typeof e=="function"&&e(r);export{r as default};
