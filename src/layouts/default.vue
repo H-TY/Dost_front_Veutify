@@ -122,6 +122,11 @@
     </div>
   </v-navigation-drawer>
 
+
+  <!-- 右下角固定按鈕 -->
+  <floatingBtn></floatingBtn>
+
+
   <!-- 
     ● pages 的頁面都在這邊由 <router-view> 做渲染。
     ● 告知 Router 要渲染頁面的組件和當前路徑。
@@ -182,6 +187,7 @@ import { useDisplay } from 'vuetify'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
+import floatingBtn from '@/components/floatingBtn.vue'
 import logOutBtn from '@/components/logOutBtn.vue'
 
 

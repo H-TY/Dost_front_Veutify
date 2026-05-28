@@ -475,6 +475,31 @@ hr {
 	}
 }
 
+// ● 右下角固定按鈕
+.floating-btn-box {
+	position: fixed;
+	bottom: 50px;
+	right: 12px;
+	z-index: 100;
+
+	.back-top-btn {
+		pointer-events: none;
+		opacity: 0;
+
+		&.fade {
+			pointer-events: auto;
+			opacity: 1;
+		}
+	}
+
+	i {
+		font-size: calc(2.5rem + 0.2vw);
+		background: white;
+		border-radius: 50%;
+		opacity: 0.5;
+	}
+}
+
 // ● snackbar 彈窗設定
 .v-snackbar {
 	margin: 0 !important;

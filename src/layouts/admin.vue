@@ -19,9 +19,14 @@
       <div class="logout-box">
         <logOutBtn :class="logOutBtnChange.class" :text="logOutBtnChange.text"></logOutBtn>
       </div>
-
-
     </v-navigation-drawer>
+
+
+    <!-- 右下角固定按鈕，只在斷點 sm 以下顯示 -->
+    <template v-if="smAndDown">
+      <floatingBtn></floatingBtn>
+    </template>
+
 
     <!-- 告知 Router 要渲染頁面的組件和當前路徑。 -->
     <v-main class="admin-main" :style="{ '--v-layout-left': adminVLayoutLeft, '--v-layout-bottom': adminVLayoutBottom }">
@@ -44,6 +49,7 @@ import { useThemeSettingStore } from '@/stores/themeSettings.js'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
 import logOutBtn from '@/components/logOutBtn.vue'
+import floatingBtn from '@/components/floatingBtn.vue'
 // 引進生成的 data_json 檔案
 import { logo, adminNavItems } from '@/plugins/data_json'
 
