@@ -469,6 +469,13 @@ body {
 						}
 
 						.v-date-picker-month__day {
+							// .v-btn {
+							// 	&.half-selected {
+							// 		color: rgba($thirdColor, 1);
+							// 		background: rgba($secColor, 0.5);
+							// 	}
+							// }
+
 							// 當天日期圈選樣式
 							.v-btn--variant-outlined {
 								border: 2px dotted rgba($gtext, 0.6);

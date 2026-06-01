@@ -22,7 +22,6 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
 import { definePage } from 'vue-router/auto'
 import { logo, adminNavItems } from '@/plugins/data_json'
 import customCard from '@/components/Card'

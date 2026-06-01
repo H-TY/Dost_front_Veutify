@@ -22,7 +22,7 @@
 
           <template v-if="mobile">
             <v-dialog class="data-dialog" v-model="dataDialog">
-              <v-date-picker v-model="date" :allowed-dates="allowedSelectDate">
+              <v-date-picker v-model="date" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event">
               </v-date-picker>
 
               <dialogCloseBtn @click="dataDialog = false"></dialogCloseBtn>
@@ -30,8 +30,7 @@
           </template>
 
           <template v-else>
-            <v-date-picker v-model="date" @click="dialogOpen" :allowed-dates="allowedSelectDate">
-            </v-date-picker>
+            <v-date-picker v-model="date" @click="dialogOpen" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event"></v-date-picker>
           </template>
 
           <div class="notice">
@@ -143,6 +142,8 @@ import dialogCloseBtn from '@/components/dialogCloseBtn.vue'
 import { Pagination, Navigation, HashNavigation } from 'swiper/modules'
 // 引用計算產生結果的檔案
 import { useBookingSummary } from "@/composables/calculate_area";
+import { bookingDateCollection } from "@/composables/bookingDateCollection";
+
 
 
 
@@ -153,6 +154,7 @@ const { backApi, apiAuth } = useApi()
 const User = useUserStore()
 const bookingOrderStores = useBookingOrderStore()
 // console.log('bookingOrderStores', bookingOrderStores)
+const { createBookingData, getBookingData } = bookingDateCollection()
 const createSnackbar = useSnackbar()
 // ● 將 swiper 需要啟用的 modules 放入陣列，與上方 <swiper> 標籤內的 :modules 綁定，意思是啟用這些模組功能
 const modules = [Pagination, Navigation, HashNavigation]
@@ -179,6 +181,21 @@ const userName = computed(() => {
 })
 
 
+// ● 指定 id 的狗狗訊息
+const Dinfo = ref({
+  _id: '',
+  image: '',
+  dogName: '',
+  age: 0,
+  price: 0,
+  booking: true,
+  bookingTime: [],
+  feature: '',
+  sell: true,
+  counter: 0,
+})
+
+
 
 
 // ● 綁定時間，讓日期和表格時間一致，並預設空字串
@@ -187,6 +204,75 @@ const date = ref(null)
 
 //當前日期
 const nowDate = ref(new Date())
+
+const nowDateYear = ref(nowDate.value.getFullYear())
+const nowDateMonth = ref(nowDate.value.getMonth())
+const changYear = ref(null)
+const changMonth = ref(null)
+
+// ● 取當前日期的年、月份並轉成 "字串" 的資料型態
+// 用作後續查詢後端資料用
+const dateYM = computed(() => {
+  const y = changYear.value ?? nowDateYear.value
+  const m = changMonth.value ?? nowDateMonth.value
+
+  return y + "/" + (m + 1)
+})
+
+// ● 依據狗狗 id 所有的當月份的已預約日期資料
+const alreadybookingColl = ref([])
+
+// 統一日期格式的函式
+const dateFormat = (val) => {
+  if (val === null || isNaN(val.getTime())) return ''
+
+  const y = val.getFullYear()
+  const m = val.getMonth() + 1
+  const d = val.getDate()
+  return y + "/" + m + "/" + d
+}
+
+// const BdateFormat = (val) => {
+//   const [y, m, d] = val.split('/')
+//   return y + "-" + m.padStart(2, '0') + "-" + d.padStart(2, '0')
+// }
+
+// ● 抓出已經完全預約的日期，做成陣列
+const NOTDate = computed(() => {
+  if (alreadybookingColl.value.length === 0) return []
+
+  // 判斷狗狗可預約的時段陣列 .length，來判斷是否期日期的時段全部被預約，讓後續推算哪些日期顯示呈無法預約的狀態
+  const bookingTimeLength = Dinfo.value.bookingTime.length
+
+  // ● 計算日期重複出現的次數
+  // countMap 輸出後的格式：
+  // {
+  //    "2026/6/15": 2,
+  //    "2026/6/16": 1
+  // }
+  const countMap = {}
+  alreadybookingColl.value.forEach((el) => {
+    countMap[el.bookingDate] = (countMap[el.bookingDate] || 0) + 1
+  })
+
+  // ### 補充知識：也可以用 .reduce 累加的方式來計算日期重複出現的次數。
+  // const countMap = alreadybookingColl.value.reduce((map, el) => {
+  //   map[el.bookingDate] = (map[el.bookingDate] || 0) + 1
+  //   return map
+  // }, {}) // 結尾的 {} 是 reduce() 的初始值，代表 map 的初始值是一個空物件
+
+  // 篩選出現次數等於 bookingTimeLength 的日期，表示該日期的時段已全部被預約，需顯示為無法預約的狀態
+  const dates = Object.keys(countMap).filter((key) => countMap[key] === bookingTimeLength)
+
+  return dates
+})
+
+// watch([alreadybookingColl, NOTDate], ([AVal, BVal]) => {
+//   console.log('alreadybookingColl, NOTDate', { AVal, BVal })
+// })
+
+
+
 
 // 預約時間欄位的名稱
 const chooseDateTitle = ref('預約日期')
@@ -216,9 +302,20 @@ watch(date, (newDate, oldDate) => {
   }
 })
 
-// 限制允許選取的時間為當天以後的日期（不含當天）
+// ● 限制允許選取的時間為當天以後的日期（不含當天）和已預約日期
+// 傳入的 date，是 Vuetify 提供的參數，指的是當前月份所有可以被選取的日期
 const allowedSelectDate = (date) => {
-  return date > nowDate.value
+
+  // 將其日期格式統一
+  const DFDate = dateFormat(date)
+
+  const allow = DFDate > dateFormat(nowDate.value) && !NOTDate.value.includes(DFDate)
+
+  // console.log('DFDate', DFDate)
+  // console.log('NOTDate', NOTDate.value)
+  // console.log('includes(DFDate)', NOTDate.value.includes(DFDate))
+
+  return allow
 }
 
 
@@ -334,18 +431,11 @@ const onDogIDChange = (swiper) => {
 }
 
 
-// ● 指定 id 的狗狗訊息
-const Dinfo = ref({
-  _id: '',
-  image: '',
-  dogName: '',
-  age: 0,
-  price: 0,
-  booking: true,
-  bookingTime: [],
-  feature: '',
-  sell: true,
-  counter: 0,
+
+// ● 監聽當前日期的年、月份，若有變動，才能觸發重新向後端發送請求資料
+watch(dateYM, async (newVal) => {
+  // console.log('dateYM', newVal)
+  alreadybookingColl.value = await getBookingData(Dinfo.value._id, dateYM.value)
 })
 
 // ● 圖片變更，自動計算
@@ -364,8 +454,24 @@ const sortBookingTimeData = computed(() => {
   // ]
   // [...Dinfo.bookingTime] 執行複製陣列的動作
   // a.localeCompare(b) 比較 "字串" 順序；a-b 比較 "數字"
-  return [...Dinfo.value.bookingTime].sort((a, b) => a.localeCompare(b))
+  const BT = [...Dinfo.value.bookingTime].sort((a, b) => a.localeCompare(b))
+
+  // 將使用者選擇的日期統一日期格式
+  const chooseDate = dateFormat(date.value)
+  // console.log('chooseDate：', chooseDate)
+
+  // 從已預約的資料中，篩選出當前選擇日期的資料，再從這些資料中，取出已預約的時段，做成一個陣列
+  const alreadyBT = alreadybookingColl.value
+    .filter((el) => el.bookingDate === chooseDate)
+    .map((el) => el.bookingTime)
+  // console.log('alreadyBT：', alreadyBT)
+
+  // 將已預約的時段從 BT 中過濾掉，只剩當前日期可以預約的時段
+  const noneBT = BT.filter((el) => !alreadyBT.includes(el))
+
+  return noneBT
 })
+
 
 // ● 回傳指定 id 的狗狗訊息
 const loadDinfo = async (passInData) => {
@@ -394,6 +500,9 @@ const loadDinfo = async (passInData) => {
     Dinfo.value.feature = data.result.feature
     Dinfo.value.sell = data.result.sell
     Dinfo.value.counter = data.result.counter
+
+    // ● 進入預約頁面時，依據狗狗 id 向後端請求查詢其狗狗已預約的日期，作為後續要顯示哪些日期可以預約
+    alreadybookingColl.value = await getBookingData(Dinfo.value._id, dateYM.value)
 
   } catch (error) {
     console.log(error)
@@ -587,6 +696,7 @@ const submit = handleSubmit(async (values) => {
     fd.append('name', values.name)
     fd.append('phone', values.phone)
     fd.append('image', values.image)
+    fd.append('dogId', Dinfo.value._id,)
     fd.append('dogName', values.dogName)
     fd.append('bookingDate', values.bookingDate)
     fd.append('bookingTime', JSON.stringify(values.bookingTime)) // 因為 bookingTime 是陣列格式，需轉成字串格式才能放進 FormData 裡面
@@ -640,10 +750,23 @@ const submit = handleSubmit(async (values) => {
     // 成功預約後，跳出已預約訂單資訊
     openDialogOrderInfo()
 
+    // ★★★ 同時也在後端資料庫建立預約時間列表的資料，方便日後查詢哪一些日期已預約
+    // 先整理要傳至後端的資料
+    const handleData = values.bookingTime.map((el) => ({
+      dogId: Dinfo.value._id,
+      dogName: values.dogName,
+      bookingDate: values.bookingDate,
+      bookingTime: el
+    }))
+
+    // 將整理完的資料傳送至要發送後端的 api
+    createBookingData(handleData)
+
+
     createSnackbar({
       text: data.message,
       snackbarProps: {
-        color: 'green'
+        class: 'snackbar-success',
       }
     })
 
@@ -664,7 +787,7 @@ const submit = handleSubmit(async (values) => {
     createSnackbar({
       text: error?.response?.data?.message || '發生錯誤',
       snackbarProps: {
-        color: 'red'
+        class: 'snackbar-fail',
       }
     })
   }
