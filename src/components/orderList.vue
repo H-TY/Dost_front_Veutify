@@ -74,6 +74,7 @@ import { useUserStore } from '@/stores/user'
 import { useBookingOrderStore } from '@/stores/bookingOrder'
 import { useApi } from '@/composables/axios'
 import { useTitleScrollDown, useTableScroll } from '@/composables/scrollAddClass'
+import { bookingDateCollection } from "@/composables/bookingDateCollection";
 import { scrollToTop } from "@/composables/scrollToTop";
 import OrderInfoCard from '@/components/orderInfoCard'
 import { useSnackbar } from 'vuetify-use-dialog'
@@ -93,6 +94,7 @@ const route = useRoute()
 // console.log('route.name', route.name)
 const { apiAuth } = useApi()
 const { refTableBox, isSlideTable, resetTableScroll } = useTableScroll()
+const { deleteBookingData } = bookingDateCollection()
 const createSnackbar = useSnackbar()
 const user = useUserStore()
 const BookingOrderStore = useBookingOrderStore()
@@ -308,12 +310,27 @@ const submit = handleSubmit(async (orderEditData) => {
 
     const result = await BookingOrderStore.edit(orderEditData)
     // console.log('result', result)
+    // console.log('updateData', updateData)
+    const updateData = result.updateData
+
+
+    // ★★★ 因為取消訂單，故一併後端資料庫的預約日期列表
+    // 先整理要傳至後端的資料
+    const handleData = updateData.bookingTime.map((el) => {
+      return {
+        dogId: updateData.dogId,
+        bookingDate: updateData.bookingDate,
+        bookingTime: el,
+      }
+    })
+
+    await deleteBookingData(handleData)
 
 
     if (result.text === '修改訂單成功') {
 
       // 更新目前的訂單狀態
-      newOS(orderEditData.id, result.reOrderStatus)
+      newOS(orderEditData.id, updateData.orderStatus)
 
       createSnackbar({
         text: result.text,
@@ -322,8 +339,12 @@ const submit = handleSubmit(async (orderEditData) => {
         }
       })
     }
+
     // 關閉彈窗
     dialogClose()
+
+
+
 
   } catch (error) {
     console.log(error)

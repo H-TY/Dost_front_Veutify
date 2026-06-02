@@ -16,7 +16,7 @@ export const bookingDateCollection = () => {
     }
   };
 
-  // ● 向後端取的資料
+  // ● 向後端取的資料庫的預約日期列表
   const getBookingData = async (id, dateYM) => {
     try {
       const { data } = await backApi.get("/bookingDateCollection", {
@@ -35,8 +35,26 @@ export const bookingDateCollection = () => {
     }
   };
 
+  // ● 修改後端資料庫的預約日期列表
+  const deleteBookingData = async (value) => {
+    try {
+      // console.log("deleteBookingData_value", value);
+
+      const { data } = await apiAuth.patch(
+        "/bookingDateCollection/deleteData",
+        value,
+      );
+
+      // console.log("deleteBookingData_data_result", data.result);
+      console.log("deleteBookingData_data_message", data.message);
+    } catch (error) {
+      console.log("deleteBookingData_error", error);
+    }
+  };
+
   return {
     createBookingData,
     getBookingData,
+    deleteBookingData,
   };
 };

@@ -22,8 +22,7 @@
 
           <template v-if="mobile">
             <v-dialog class="data-dialog" v-model="dataDialog">
-              <v-date-picker v-model="date" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event">
-              </v-date-picker>
+              <v-date-picker v-model="date" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event"></v-date-picker>
 
               <dialogCloseBtn @click="dataDialog = false"></dialogCloseBtn>
             </v-dialog>
@@ -198,15 +197,17 @@ const Dinfo = ref({
 
 
 
-// ● 綁定時間，讓日期和表格時間一致，並預設空字串
+// ● 綁定時間／使用者選擇的時間，並預設 null
 const date = ref(null)
 // console.log(date.value)
 
-//當前日期
+//　● 當前日期
 const nowDate = ref(new Date())
 
 const nowDateYear = ref(nowDate.value.getFullYear())
 const nowDateMonth = ref(nowDate.value.getMonth())
+
+// 綁定日期選擇器上的更新年、月份的事件
 const changYear = ref(null)
 const changMonth = ref(null)
 
@@ -224,7 +225,7 @@ const alreadybookingColl = ref([])
 
 // 統一日期格式的函式
 const dateFormat = (val) => {
-  if (val === null || isNaN(val.getTime())) return ''
+  if (val === null || isNaN(val.getTime())) return
 
   const y = val.getFullYear()
   const m = val.getMonth() + 1
@@ -262,7 +263,12 @@ const NOTDate = computed(() => {
   // }, {}) // 結尾的 {} 是 reduce() 的初始值，代表 map 的初始值是一個空物件
 
   // 篩選出現次數等於 bookingTimeLength 的日期，表示該日期的時段已全部被預約，需顯示為無法預約的狀態
-  const dates = Object.keys(countMap).filter((key) => countMap[key] === bookingTimeLength)
+  const dates = Object.keys(countMap)
+    .filter((key) => countMap[key] === bookingTimeLength)
+    .map((key) => {
+      // 將其格式轉日期再轉成總時間(數值格式)，讓後續的比較方式是「數值比較」，而不是「記憶體位置比較」
+      return new Date(key).getTime()
+    })
 
   return dates
 })
@@ -291,29 +297,23 @@ function updateChooseDateTitle() {
 }
 
 
-// 監視彈窗的日期選擇器，確定有選擇日期後，直接關閉彈窗
-// * 比較日期物件要注意：
-//  - date 通常是 Date 物件
-//  - newVal != oldVal 比較的是 "物件引用"，即使日期相同，如果是不同的 Date 物件，也會判定為不同
-watch(date, (newDate, oldDate) => {
-  if (!(newDate instanceof Date) || !(oldDate instanceof Date)) { dataDialog.value = false }
-  else if (newDate.toLocaleDateString() != oldDate.toLocaleDateString()) {
-    dataDialog.value = false
-  }
-})
-
 // ● 限制允許選取的時間為當天以後的日期（不含當天）和已預約日期
 // 傳入的 date，是 Vuetify 提供的參數，指的是當前月份所有可以被選取的日期
 const allowedSelectDate = (date) => {
 
-  // 將其日期格式統一
-  const DFDate = dateFormat(date)
+  // 將其日期格式統一，.getTime() 轉換成總時間(數值格式)，讓後續的比較方式是「數值比較」，而不是「記憶體位置比較」
+  const dateGetTime = date.getTime()
 
-  const allow = DFDate > dateFormat(nowDate.value) && !NOTDate.value.includes(DFDate)
+  // .includes() 的判斷方式依據資料型態而有所不同：
+  //  - 字串 => "逐字比較"
+  //  - 數字 => "數值比較"
+  //  - 物件陣列(如：new Date) => "記憶體位置比較"
+  // <EX>：假設想要比較 "字串資料"，讓大於 "2026/6/2" 的日期表示顯示；那當在判斷 "2026/6/2" 和 "2026/6/10" 時，邏輯會是前面 2026/6 都一樣，但比較到 2 和 10 時，比較順序就會是 "2" 與 10 的 "1" 來比較 => 結果 2 > 1 => 2026/6/10 就會被判定為不顯示日期。
+  const allow = dateGetTime > nowDate.value.getTime() && !NOTDate.value.includes(dateGetTime)
 
-  // console.log('DFDate', DFDate)
+  // console.log('dateGetTime', dateGetTime)
   // console.log('NOTDate', NOTDate.value)
-  // console.log('includes(DFDate)', NOTDate.value.includes(DFDate))
+  // console.log('includes(dateGetTime)', NOTDate.value.includes(dateGetTime))
 
   return allow
 }
@@ -435,6 +435,7 @@ const onDogIDChange = (swiper) => {
 // ● 監聽當前日期的年、月份，若有變動，才能觸發重新向後端發送請求資料
 watch(dateYM, async (newVal) => {
   // console.log('dateYM', newVal)
+  // console.log('觸發重新向後端發送請求 "預約日期" 資料')
   alreadybookingColl.value = await getBookingData(Dinfo.value._id, dateYM.value)
 })
 
@@ -471,6 +472,9 @@ const sortBookingTimeData = computed(() => {
 
   return noneBT
 })
+// watch(sortBookingTimeData, (val) => {
+//   console.log('sortBookingTimeData', val)
+// })
 
 
 // ● 回傳指定 id 的狗狗訊息
@@ -560,6 +564,24 @@ const dialogOpen = (e, passInData) => {
     chooseTimeDialog.value = true
   }
 }
+
+// 監視 "日期選擇器彈窗"，確定有選擇日期後，直接關閉彈窗
+watch(date, (newDate, oldDate) => {
+  // 當 newDate 不是 Date 物件（例如：null），直接 return，不執行後續的程式碼
+  if (!(newDate instanceof Date)) return
+
+  if (!(oldDate instanceof Date)) {
+    dataDialog.value = false
+    return
+  }
+
+  // 當 newDate 和 oldDate 的日期不同時
+  if (newDate.toDateString() !== oldDate.toDateString()) {
+    dataDialog.value = false
+    // 重製預約時段的值
+    selectedTime.value = []
+  }
+})
 
 // ● 已預約的訂單資料陣列
 const orderInfoData = reactive({})
@@ -674,7 +696,8 @@ const submit = handleSubmit(async (values) => {
   // ★ 按下送出表單按鈕時，先判斷是否為登入狀態
   // 非登入狀態，跳出需登入的提示，關閉提示後，自動轉跳至登入頁面
   if (!User.isLogin) {
-    console.log('User.isLogin', User.isLogin)
+    // console.log('User.isLogin', User.isLogin)
+
     createSnackbar({
       text: '請先登入會員',
       snackbarProps: {

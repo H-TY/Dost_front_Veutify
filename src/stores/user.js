@@ -37,6 +37,20 @@ export const useUserStore = defineStore(
       return role.value === UserRole.ADMIN;
     });
 
+    // ### 補充知識：呼叫後端 API，參數說明
+    // - POST 新增
+    // 寫法 .post(url, data, { params: {} })
+    // - GET  查詢
+    // 寫法 .get(url, { params: {} }) 沒有 body，所以通常只用 params。
+    // - PATCH  修改（只修改我提供的欄位）
+    // 寫法 .patch(url, data, { params: {} })
+    // - PUT  修改（送來的資料，取代整筆資源）
+    // 寫法 .put(url, data, { params: {} })
+    // - DELETE 刪除
+    // 寫法 .delete(url, { params: {} })／.delete(url, { data: {} })／.delete(url, { data: {}, params: {} })
+    // 第一個參數是 url；第二個參數是 body；第三個參數是 config（裡面可放 params、headers...）
+    // post、patch 以及 Put 可接受 3 個參數；get 和 delete 只接受 2 個參數
+
     // ● 登入動作
     const login = async (values) => {
       try {

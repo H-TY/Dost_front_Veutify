@@ -619,6 +619,8 @@ body {
 						}
 
 						p {
+							font-size: calc(1rem + 0.1vw);
+
 							// 宣告顏色
 							--a-color: #{$mainColor};
 							--a-hover-color: #{$btnLBlue};

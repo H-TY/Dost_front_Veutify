@@ -88,15 +88,15 @@ export const useBookingOrderStore = defineStore("BookingOrderData", () => {
 
     try {
       const { data } = await apiAuth.patch("/order/" + values.id, values);
-      // console.log('data.result', data.result)
-      // console.log('data.result.orderStatus', data.result.orderStatus)
+      // console.log('data.userUpdate', data.userUpdate)
+      // console.log('data.userUpdate.orderStatus', data.userUpdate.orderStatus)
       // 將後端回傳的資料，替換掉原本 pinia 的欄位的資料
-      orderStatus.value = data.result.orderStatus;
+      orderStatus.value = data.userUpdate.orderStatus;
 
       return {
         text: "修改訂單成功",
         // 回傳前端更新的訂單狀態，供前端即時更新狀態
-        reOrderStatus: orderStatus.value,
+        updateData: data.userUpdate,
       };
     } catch (error) {
       console.log(error);
