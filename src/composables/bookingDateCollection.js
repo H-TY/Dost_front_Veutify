@@ -31,7 +31,11 @@ export const bookingDateCollection = () => {
 
       return data.result;
     } catch (error) {
-      console.log("getBookingData_error", error);
+      // console.log("getBookingData_error", error);
+
+      const errorMsg = error.response.data.message;
+
+      console.log("errorMsg：", errorMsg);
     }
   };
 

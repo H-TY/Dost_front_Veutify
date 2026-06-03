@@ -191,7 +191,6 @@ const Dinfo = ref({
   bookingTime: [],
   feature: '',
   sell: true,
-  counter: 0,
 })
 
 
@@ -211,6 +210,8 @@ const nowDateMonth = ref(nowDate.value.getMonth())
 const changYear = ref(null)
 const changMonth = ref(null)
 
+
+
 // ● 取當前日期的年、月份並轉成 "字串" 的資料型態
 // 用作後續查詢後端資料用
 const dateYM = computed(() => {
@@ -219,6 +220,16 @@ const dateYM = computed(() => {
 
   return y + "/" + (m + 1)
 })
+
+
+
+// 函式：初始化日期選擇器上的更新年、月份
+const initYM = () => {
+  changYear.value = null
+  changMonth.value = null
+}
+
+
 
 // ● 依據狗狗 id 所有的當月份的已預約日期資料
 const alreadybookingColl = ref([])
@@ -379,11 +390,10 @@ function onSwiper(swiper) {
 const currentID = route.query.id
 // console.log('currentID:', currentID)
 
-// ● 讓 swiper 移動至指定圖片或預設圖片位置
+// ● 從其他頁面進入，並讓 swiper 移動至指定圖片或預設圖片位置
 function reSwiper() {
-
   if (currentID) {
-    // 判斷 route.query.id 是否存在，用來判斷是否是從 "帥氣狗狗" 頁面點擊過來的
+    // 判斷 route.query.id 是否存在
     if (!currentID) return
 
     // findIndex 從 items 陣列中，找到與 currentID 相符的 id，最終回傳 index 索引值
@@ -406,12 +416,14 @@ function reSwiper() {
     loadDinfo(currentID)
 
   } else {
-    // 不是"帥氣狗狗" 頁面點擊過來的，執行預設
+    // 沒有 route.query.id 傳入，使用預設值
     initSwiperHash()
   }
 }
 
-// ● 當前頁面刷新或是從非 "帥氣狗狗" 頁面進入此頁面時，載入當前預設的資料
+
+
+// ● swiper 載入當前預設的資料
 function initSwiperHash() {
   const initHash = items.value[0]?._id
   // console.log('initHash:', initHash)
@@ -427,17 +439,21 @@ const onDogIDChange = (swiper) => {
   const dogID = items.value[swiper.activeIndex]?._id
   // console.log('dogID:', dogID)
 
-  loadDinfo(dogID) // 根據當前圖片的 id，去取該 id 的狗狗資料，並更新預約表格的資料
+  // 根據當前圖片的 id，去取該 id 的狗狗資料，並更新預約表格的資料
+  loadDinfo(dogID)
 }
 
 
 
-// ● 監聽當前日期的年、月份，若有變動，才能觸發重新向後端發送請求資料
-watch(dateYM, async (newVal) => {
-  // console.log('dateYM', newVal)
-  // console.log('觸發重新向後端發送請求 "預約日期" 資料')
-  alreadybookingColl.value = await getBookingData(Dinfo.value._id, dateYM.value)
+// ● 監聽 Dinfo.value, dateYM（年月份切換會影響） 是否有變動，觸發重新向後端請求查詢其狗狗已預約的日期，作為後續要顯示哪些日期可以預約
+watch([Dinfo.value, dateYM], async ([DVal, YMval]) => {
+  console.log('Dinfo.value, DVal', [DVal, YMval])
+  console.log('觸發重新向後端發送請求 "預約日期" 資料')
+
+  alreadybookingColl.value = await getBookingData(DVal._id, YMval)
 })
+
+
 
 // ● 圖片變更，自動計算
 const dogImg = computed(() => {
@@ -487,7 +503,7 @@ const loadDinfo = async (passInData) => {
 
   try {
 
-    await nextTick()
+    // await nextTick()
     // console.log('有觸發')
 
     // 利用 id 只回傳某一隻狗狗的資料
@@ -503,10 +519,9 @@ const loadDinfo = async (passInData) => {
     Dinfo.value.bookingTime = data.result.bookingTime
     Dinfo.value.feature = data.result.feature
     Dinfo.value.sell = data.result.sell
-    Dinfo.value.counter = data.result.counter
 
-    // ● 進入預約頁面時，依據狗狗 id 向後端請求查詢其狗狗已預約的日期，作為後續要顯示哪些日期可以預約
-    alreadybookingColl.value = await getBookingData(Dinfo.value._id, dateYM.value)
+    // 日期選擇器初始化更新的年、月份
+    initYM()
 
   } catch (error) {
     console.log(error)
@@ -566,9 +581,15 @@ const dialogOpen = (e, passInData) => {
 }
 
 // 監視 "日期選擇器彈窗"，確定有選擇日期後，直接關閉彈窗
-watch(date, (newDate, oldDate) => {
+watch([date, dataDialog], ([newDate, newDataDialog], [oldDate]) => {
+  // console.log('date', [newDate, oldDate])
+  // console.log('dataDialog', newDataDialog)
+
   // 當 newDate 不是 Date 物件（例如：null），直接 return，不執行後續的程式碼
-  if (!(newDate instanceof Date)) return
+  if (!(newDate instanceof Date)) {
+    if (newDataDialog === false) initYM() // 在沒選擇日期的情況下，關閉彈窗，初始化日期選擇器更新的年、月份
+    return
+  }
 
   if (!(oldDate instanceof Date)) {
     dataDialog.value = false
@@ -582,6 +603,7 @@ watch(date, (newDate, oldDate) => {
     selectedTime.value = []
   }
 })
+
 
 // ● 已預約的訂單資料陣列
 const orderInfoData = reactive({})
@@ -826,11 +848,11 @@ const submit = handleSubmit(async (values) => {
 onMounted(async () => {
   await nextTick();
 
-  requestAnimationFrame(() => {
+  requestAnimationFrame(async () => {
     updateChooseDateTitle()
   })
 
-  loadItems()
+  await loadItems()
 })
 
 </script>
