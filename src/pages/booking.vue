@@ -447,8 +447,8 @@ const onDogIDChange = (swiper) => {
 
 // ● 監聽 Dinfo.value, dateYM（年月份切換會影響） 是否有變動，觸發重新向後端請求查詢其狗狗已預約的日期，作為後續要顯示哪些日期可以預約
 watch([Dinfo.value, dateYM], async ([DVal, YMval]) => {
-  console.log('Dinfo.value, DVal', [DVal, YMval])
-  console.log('觸發重新向後端發送請求 "預約日期" 資料')
+  // console.log('Dinfo.value, DVal', [DVal, YMval])
+  // console.log('觸發重新向後端發送請求 "預約日期" 資料')
 
   alreadybookingColl.value = await getBookingData(DVal._id, YMval)
 })
