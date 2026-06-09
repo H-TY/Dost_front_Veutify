@@ -27,7 +27,7 @@
             <div class="user-info">
               <userPhoto></userPhoto>
               <h5 class="user-name">
-                {{ User.account }}
+                {{ User.nickname || User.account }}
               </h5>
             </div>
           </div>

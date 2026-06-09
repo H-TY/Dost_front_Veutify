@@ -176,7 +176,7 @@ const userName = computed(() => {
     // return
     return "Guest"
   }
-  return User.account
+  return User.nickname || User.account
 })
 
 
@@ -523,16 +523,18 @@ const loadDinfo = async (passInData) => {
     // 日期選擇器初始化更新的年、月份
     initYM()
 
+
   } catch (error) {
     console.log(error)
     createSnackbar({
       text: error?.response?.data?.message || '發生錯誤',
       snackbarProps: {
-        color: 'red'
+        class: 'snackbar-fail',
       }
     })
   }
 }
+
 
 
 // ● 取出各種計算結果
@@ -547,6 +549,36 @@ const {
   totalBTimeTxt,
   totalBPriceTxt,
 } = useBookingSummary(date, selectedTime, Dinfo)
+
+
+
+// ● 函式：確認是否重複預約
+const duplicateBD = (passInBD, passInBT) => {
+
+  const isDuplicate = alreadybookingColl.value.some((el) =>
+    el.bookingDate === passInBD &&
+    passInBT.includes(el.bookingTime)
+  )
+  // console.log("isDuplicate", isDuplicate)
+
+  return isDuplicate
+}
+
+
+
+// ● 監視 chooseBDate、selectedTime 欄位，再次確認使用者選擇的預約日期和時段，是否有重複
+watch([chooseBDate, selectedTime], ([newBD, newST]) => {
+  // console.log("觸發監視 BD ST 欄位")
+  // console.log("BD 欄位", newBD)
+  // console.log("ST 欄位", newST)
+  // console.log("alreadybookingColl", alreadybookingColl.value)
+
+  if (newBD == "" || newST.length == 0) return
+
+  if (duplicateBD(newBD, newST)) {
+    alert("選擇的日期和時段已被預約，請刷新頁面後重新選擇")
+  }
+})
 
 
 
@@ -575,6 +607,7 @@ const dialogOpen = (e, passInData) => {
 
   if (passInData == '預約日期') {
     dataDialog.value = true
+    initYM()
   } else if (passInData == '預約時段' || clickDay === day) {
     chooseTimeDialog.value = true
   }
@@ -587,7 +620,6 @@ watch([date, dataDialog], ([newDate, newDataDialog], [oldDate]) => {
 
   // 當 newDate 不是 Date 物件（例如：null），直接 return，不執行後續的程式碼
   if (!(newDate instanceof Date)) {
-    if (newDataDialog === false) initYM() // 在沒選擇日期的情況下，關閉彈窗，初始化日期選擇器更新的年、月份
     return
   }
 
@@ -681,7 +713,7 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
     bookingTime: [],
     // totalBookingTime: 0,
     // totalPrice: 0,
-    accountName: userName.value,
+    accountName: User.account,
     orderStatus: true,
   }
 })
@@ -696,6 +728,7 @@ const bookingTime = useField('bookingTime')
 // const totalPrice = useField('totalPrice')
 const accountName = useField('accountName')
 const orderStatus = useField('orderStatus')
+
 
 
 // ● 點擊發送按鈕，觸發將輸入表單的資料更新至要發送表單資料內
@@ -723,7 +756,7 @@ const submit = handleSubmit(async (values) => {
     createSnackbar({
       text: '請先登入會員',
       snackbarProps: {
-        color: 'red'
+        class: 'snackbar-fail',
       }
     })
     router.push('/login')
@@ -733,6 +766,19 @@ const submit = handleSubmit(async (values) => {
 
   try {
     // console.log('有觸發')
+
+    // ● 確認訂單是否有重複預約日期和時段
+    if (duplicateBD(values.bookingDate, values.bookingTime)) {
+      createSnackbar({
+        text: "選擇的日期和時段已被預約，請刷新頁面後重新選擇",
+        snackbarProps: {
+          class: 'snackbar-fail',
+          timeout: 5000
+        }
+      })
+
+      return
+    }
 
     // ● 建立符合後端可接收格式的表格
     const fd = new FormData()
@@ -830,9 +876,9 @@ const submit = handleSubmit(async (values) => {
 
 
     createSnackbar({
-      text: error?.response?.data?.message || '發生錯誤',
+      text: error?.response?.data?.message || error || '發生錯誤',
       snackbarProps: {
-        class: 'snackbar-fail',
+        class: 'snackbar-fail'
       }
     })
   }
