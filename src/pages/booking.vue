@@ -148,12 +148,12 @@ import { bookingDateCollection } from "@/composables/bookingDateCollection";
 
 const route = useRoute()
 const router = useRouter()
-const { mobile, sm } = useDisplay()
+const { mobile } = useDisplay()
 const { backApi, apiAuth } = useApi()
 const User = useUserStore()
 const bookingOrderStores = useBookingOrderStore()
 // console.log('bookingOrderStores', bookingOrderStores)
-const { createBookingData, getBookingData } = bookingDateCollection()
+const { getBookingData } = bookingDateCollection()
 const createSnackbar = useSnackbar()
 // ● 將 swiper 需要啟用的 modules 放入陣列，與上方 <swiper> 標籤內的 :modules 綁定，意思是啟用這些模組功能
 const modules = [Pagination, Navigation, HashNavigation]
@@ -215,6 +215,8 @@ const changMonth = ref(null)
 // ● 取當前日期的年、月份並轉成 "字串" 的資料型態
 // 用作後續查詢後端資料用
 const dateYM = computed(() => {
+  // console.log("changYear, changMonth", changYear.value, changMonth.value)
+  // console.log("nowDateYear, nowDateMonth", nowDateYear.value, nowDateMonth.value)
   const y = changYear.value ?? nowDateYear.value
   const m = changMonth.value ?? nowDateMonth.value
 
@@ -446,11 +448,12 @@ const onDogIDChange = (swiper) => {
 
 
 // ● 監聽 Dinfo.value, dateYM（年月份切換會影響） 是否有變動，觸發重新向後端請求查詢其狗狗已預約的日期，作為後續要顯示哪些日期可以預約
-watch([Dinfo.value, dateYM], async ([DVal, YMval]) => {
-  // console.log('Dinfo.value, DVal', [DVal, YMval])
+watch([() => Dinfo.value._id, dateYM], async ([DVal, YMval]) => {
+  // console.log('Dinfo.value.id, DVal', [DVal, YMval])
   // console.log('觸發重新向後端發送請求 "預約日期" 資料')
 
-  alreadybookingColl.value = await getBookingData(DVal._id, YMval)
+  alreadybookingColl.value = await getBookingData(DVal, YMval)
+  // console.log('alreadybookingColl.value', alreadybookingColl.value)
 })
 
 
@@ -520,8 +523,12 @@ const loadDinfo = async (passInData) => {
     Dinfo.value.feature = data.result.feature
     Dinfo.value.sell = data.result.sell
 
-    // 日期選擇器初始化更新的年、月份
-    initYM()
+
+    // 只在 mobile 才觸發
+    if (mobile.value) {
+      // 日期選擇器初始化更新的年、月份
+      initYM()
+    }
 
 
   } catch (error) {
@@ -553,9 +560,9 @@ const {
 
 
 // ● 函式：確認是否重複預約
-const duplicateBD = (passInBD, passInBT) => {
+const duplicateBD = (passInBD, passInBT, ABC = alreadybookingColl.value) => {
 
-  const isDuplicate = alreadybookingColl.value.some((el) =>
+  const isDuplicate = ABC.some((el) =>
     el.bookingDate === passInBD &&
     passInBT.includes(el.bookingTime)
   )
@@ -768,7 +775,11 @@ const submit = handleSubmit(async (values) => {
     // console.log('有觸發')
 
     // ● 確認訂單是否有重複預約日期和時段
-    if (duplicateBD(values.bookingDate, values.bookingTime)) {
+    // 再次呼叫後端的 "預約日期列表" API，取得最新資料
+    const lastABC = await getBookingData(Dinfo.value._id, dateYM.value)
+    // console.log('lastABC', lastABC)
+
+    if (duplicateBD(values.bookingDate, values.bookingTime, lastABC)) {
       createSnackbar({
         text: "選擇的日期和時段已被預約，請刷新頁面後重新選擇",
         snackbarProps: {
@@ -841,19 +852,6 @@ const submit = handleSubmit(async (values) => {
     // 成功預約後，跳出已預約訂單資訊
     openDialogOrderInfo()
 
-    // ★★★ 同時也在後端資料庫建立預約時間列表的資料，方便日後查詢哪一些日期已預約
-    // 先整理要傳至後端的資料
-    const handleData = values.bookingTime.map((el) => ({
-      dogId: Dinfo.value._id,
-      dogName: values.dogName,
-      bookingDate: values.bookingDate,
-      bookingTime: el
-    }))
-
-    // 將整理完的資料傳送至要發送後端的 api
-    createBookingData(handleData)
-
-
     createSnackbar({
       text: data.message,
       snackbarProps: {
@@ -867,6 +865,10 @@ const submit = handleSubmit(async (values) => {
     // 清空選擇的日期、時段（因總時數、總金額欄位會根據日期、時段自動做計算，故會自動更新歸 0)
     manualResetForm()
 
+    // 更新當前最新的預約日期列表資料，觸發更新日期選擇器的顯示
+    alreadybookingColl.value = data.resultBCD
+
+
     // 更新 pinia 的 bookingOrderStores 的 topThreeDogsData 資料狀態
     bookingOrderStores.topThreeOrder()
 
@@ -878,7 +880,8 @@ const submit = handleSubmit(async (values) => {
     createSnackbar({
       text: error?.response?.data?.message || error || '發生錯誤',
       snackbarProps: {
-        class: 'snackbar-fail'
+        class: 'snackbar-fail',
+        timeout: 5000
       }
     })
   }

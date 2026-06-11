@@ -129,7 +129,7 @@ const submit = handleSubmit(async (userEditData) => {
       // console.log('fileRecords.value[0].file', fileRecords.value[0].file)
       // console.log('觸發 上傳圖片')
       userEditData.accountBgImage = fileRecords.value[0].file
-      console.log('userEditData.accountBgImage1', userEditData.accountBgImage)
+      // console.log('userEditData.accountBgImage1', userEditData.accountBgImage)
 
       // 判斷是否按下 "恢復預設按鈕"
     } else if (defaultPhotoBtn.value === true) {
