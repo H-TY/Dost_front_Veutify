@@ -95,8 +95,8 @@ export const useBookingOrderStore = defineStore("BookingOrderData", () => {
 
       return {
         text: "修改訂單成功",
-        // 回傳前端更新的訂單狀態，供前端即時更新狀態
-        updateData: data.userUpdate,
+        BDtext: data.BDtext, // 後端資料庫刪除預約日期列表資料狀態回報
+        updateData: data.userUpdate, // 回傳前端更新的訂單狀態，供前端即時更新狀態
       };
     } catch (error) {
       console.log(error);

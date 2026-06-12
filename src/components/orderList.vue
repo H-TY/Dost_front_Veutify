@@ -74,7 +74,6 @@ import { useUserStore } from '@/stores/user'
 import { useBookingOrderStore } from '@/stores/bookingOrder'
 import { useApi } from '@/composables/axios'
 import { useTitleScrollDown, useTableScroll } from '@/composables/scrollAddClass'
-import { bookingDateCollection } from "@/composables/bookingDateCollection";
 import { scrollToTop } from "@/composables/scrollToTop";
 import OrderInfoCard from '@/components/orderInfoCard'
 import { useSnackbar } from 'vuetify-use-dialog'
@@ -94,7 +93,6 @@ const route = useRoute()
 // console.log('route.name', route.name)
 const { apiAuth } = useApi()
 const { refTableBox, isSlideTable, resetTableScroll } = useTableScroll()
-const { deleteBookingData } = bookingDateCollection()
 const createSnackbar = useSnackbar()
 const user = useUserStore()
 const BookingOrderStore = useBookingOrderStore()
@@ -236,7 +234,7 @@ const confirmCancelData = ref([
   { title: '電話', value: 0, },
   { title: '預約狗狗', value: '', },
   { title: '預約日期', value: '', },
-  // { title: '預約時段', value: [], },
+  { title: '預約時段', value: [], },
   { title: '預約總金額', value: 0 + ' 元', },
 ])
 
@@ -245,7 +243,7 @@ const confirmCancelDataImg = ref({
 })
 
 const confirmCancelDataId = ref({
-  title: 'Id', id: '',
+  title: 'orderId', id: '',
 })
 // watch(confirmCancelDataId.value, (A, B) => {
 //   console.log(A, B)
@@ -264,9 +262,10 @@ const openDialog = (item) => {
     confirmCancelData.value[2].value = item.phone
     confirmCancelData.value[3].value = item.dogName
     confirmCancelData.value[4].value = item.bookingDate
-    // confirmCancelData.value[5].value = item.bookingTime
-    confirmCancelData.value[5].value = item.totalPrice
+    confirmCancelData.value[5].value = item.bookingTime
+    confirmCancelData.value[6].value = item.totalPrice
     confirmCancelDataImg.value.image = item.image
+    // 取消訂單需傳送至後端的參數
     confirmCancelDataId.value.id = item._id
     nowOrderStatus.value = item.orderStatus
   }
@@ -289,19 +288,9 @@ const newOS = (id, newValue) => {
   }
 }
 
+// 因取消訂單的動作，不需使用者輸入資料或是傳送檔案、圖片，故也不需要表單欄位驗證
+const { handleSubmit, isSubmitting } = useForm()
 
-
-const { handleSubmit, isSubmitting, resetForm } = useForm({
-  // 初始化表單資料
-  initialValues: {
-    id: '',
-    orderStatus: '',
-  }
-})
-
-// ● 建立欄位 useField 的欄位
-const id = useField('id')
-const orderStatus = useField('orderStatus')
 
 const submit = handleSubmit(async (orderEditData) => {
   try {
@@ -310,22 +299,9 @@ const submit = handleSubmit(async (orderEditData) => {
 
     const result = await BookingOrderStore.edit(orderEditData)
     // console.log('result', result)
-    // console.log('updateData', updateData)
+    console.log('result.BDtext', result.BDtext)
     const updateData = result.updateData
-
-
-    // ★★★ 因為取消訂單，故一併後端資料庫的預約日期列表
-    // 先整理要傳至後端的資料
-    const handleData = updateData.bookingTime.map((el) => {
-      return {
-        dogId: updateData.dogId,
-        bookingDate: updateData.bookingDate,
-        bookingTime: el,
-      }
-    })
-
-    await deleteBookingData(handleData)
-
+    // console.log('updateData', updateData)
 
     if (result.text === '修改訂單成功') {
 
@@ -342,9 +318,6 @@ const submit = handleSubmit(async (orderEditData) => {
 
     // 關閉彈窗
     dialogClose()
-
-
-
 
   } catch (error) {
     console.log(error)
