@@ -169,6 +169,8 @@ definePage({
 })
 
 
+
+
 // 取帳戶名稱
 const userName = computed(() => {
   if (!User.isLogin) {
@@ -902,6 +904,7 @@ onMounted(async () => {
   })
 
   await loadItems()
+
 })
 
 </script>

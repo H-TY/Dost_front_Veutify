@@ -1,6 +1,11 @@
 <template>
   <div class="dogs-card">
-    <router-link :to="`dogsResume/${_id}`" class="card-img">
+    <!-- 加入我的最愛 icon -->
+    <div class="like-box" @click="clickLikeIcon('dog', _id)">
+      <v-icon :class="['like-icon', { active: isLike, anime }]" icon="mdi-heart" @animationend="anime = false"></v-icon>
+    </div>
+
+    <router-link :to="`/dogsResume/${_id}`" class="card-img">
       <div class="search-icon-show">
         <v-icon class="mdi mdi-magnify"></v-icon>
         <p>汪汪秘辛公開中</p>
@@ -8,6 +13,7 @@
 
       <img :src="image"></img>
     </router-link>
+
     <div class="card-txt-box">
       <div class="name-age-box">
         <p>名字｜
@@ -34,20 +40,26 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user'
+import { useFavoriteStore } from '@/stores/favorite'
 import { useRouter, useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { useSnackbar } from 'vuetify-use-dialog'
 import { useNavigationById } from '@/composables/navigationById.js'
 
 
-const user = useUserStore()
+
+const userStore = useUserStore()
+const favoriteStore = useFavoriteStore()
+const { clickedId, favoriteData } = storeToRefs(favoriteStore)
 const route = useRoute() // 目前路由狀態（「現在在哪」），詳細說明看最底下
 const router = useRouter() // 負責「跳轉、返回、取路由設定」（「要去哪、怎麼去」），詳細說明看最底下
 const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
 const { goToPageById } = useNavigationById() // 引入自定義的導航函式，詳細說明看 src/composables/navigationById.js
+
 
 
 
@@ -68,8 +80,54 @@ const bookingAddId = () => {
 const bookingState = computed(() => props.booking === '預約已滿');
 
 
+// ● 渲染收藏/追蹤狀態
+const isLike = computed(() => {
+  const isHave = favoriteData.value.dogLike.includes(props._id);
 
-// ===============================
+  return isHave;
+});
+
+// ● 當點擊 收藏/追蹤 icon
+const clickLikeIcon = async (passInCat, passInId) => {
+
+  const res = await favoriteStore.toggleLike(passInCat, passInId)
+
+  if (!res.success) {
+    createSnackbar({
+      text: res.msg || "發生錯誤",
+      snackbarProps: {
+        class: "snackbar-fail",
+        timer: "5000",
+      },
+    });
+  }
+}
+
+
+// ● 定義是否添加動畫樣式名稱 .anime
+const anime = ref(false)
+
+// ● 監聽 favoriteData.value.dogLike 的變動，觸發指定 dogsCard 的動畫
+watch(favoriteData, async (newVal) => {
+  // console.log('newVal', newVal)
+  // 依據點擊的 dogId 判斷是否與傳入的 dogsCard 的 props._id 是否相等
+  // => 等於動畫只作用於有觸發點擊的 dogsCard
+  if (clickedId.value === props._id) {
+    anime.value = true
+  }
+
+}, {
+  deep: true // 因為 favoriteData 是槽狀物件，需要加上 deep: true，才能追蹤到更深層的值
+})
+
+
+
+
+
+
+
+
+// 補充說明 ===============================
 // ◆ useRoute 跟 useRouter 差異
 // * route 是「現在在哪」
 // * router 是「要去哪、怎麼去」

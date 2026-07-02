@@ -66,13 +66,9 @@ export const userZoneNavItems = [
   { to: "/", title: "回首頁", icon: "mdi-home" },
   { to: "/userZone", title: "帳戶總覽", icon: "mdi-list-box" },
   { to: "/userZone/dogBookingSearch", title: "預約查詢", icon: "mdi-dog" },
-  // {
-  //   to: "/userZone/adaptiveTestResult",
-  //   title: "測驗結果",
-  //   icon: "mdi-tooltip-edit",
-  // },
+  { to: "/userZone/favorite", title: "收藏夾", icon: "mdi-heart" },
+  // { to: "/userZone/adaptiveTestResult", title: "測驗結果", icon: "mdi-tooltip-edit", },
   { to: "/settingsConfig", title: "設定", icon: "mdi-cog-outline" },
-  // { to: '/', text: '預約住宿查詢', icon: 'mdi-bed' },
-  // { to: '/', text: '喜愛商品追蹤', icon: 'mdi-heart' },
-  // { to: '/', text: '訂單查詢', icon: 'mdi-text-box-search' },
+  // { to: '/', title: '預約住宿查詢', icon: 'mdi-bed' },
+  // { to: '/', title: '訂單查詢', icon: 'mdi-text-box-search' },
 ];

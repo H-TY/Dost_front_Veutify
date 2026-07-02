@@ -3,6 +3,12 @@
   <section class="dog-profile">
     <v-container>
       <div class="bg">
+
+        <!-- 加入我的最愛 icon -->
+        <div class="like-box" @click="clickLikeIcon('dog', dogId)">
+          <v-icon :class="['like-icon', { active: isLike, anime }]" icon="mdi-heart" @animationend="anime = false"></v-icon>
+        </div>
+
         <sectionTitle title="汪星人小檔案" enTitle="profile"></sectionTitle>
 
         <div class="content-box">
@@ -45,6 +51,7 @@
             </div>
           </v-col>
         </div>
+
         <div class="btn-box">
           <v-btn @click="goToPageById('booking', items._id)">
             <p>開始相遇</p> <span>→</span>
@@ -56,12 +63,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
+import { definePage } from 'vue-router/auto'
+import { storeToRefs } from "pinia";
+import { useFavoriteStore } from "@/stores/favorite";
 import { useRoute } from "vue-router";
 import { useApi } from "@/composables/axios";
-import sectionTitle from '@/components/sectionTitle.vue'
 import { useNavigationById } from '@/composables/navigationById'
-import { definePage } from 'vue-router/auto'
+import sectionTitle from '@/components/sectionTitle.vue'
+import { useSnackbar } from 'vuetify-use-dialog'
 
 
 
@@ -74,13 +84,15 @@ definePage({
 })
 
 
-
+const favoriteStore = useFavoriteStore()
+const { clickedId, favoriteData } = storeToRefs(favoriteStore)
 const route = useRoute()
 // console.log('route', route)
 const { backApi } = useApi()
 const dogId = route.params.id
 // console.log('dogId', dogId)
 const { goToPageById } = useNavigationById()
+const createSnackbar = useSnackbar()
 
 
 // ● 用來儲存後端回傳的狗狗資料
@@ -105,5 +117,40 @@ const getDogData = async () => {
   }
 }
 getDogData() // 這邊要自己呼叫一次，才能在載入頁面時觸發向後端請求資料
+
+
+// ● 計算是否已加入收藏/追蹤
+const isLike = computed(() => {
+  const isHave = favoriteData.value.dogLike.includes(dogId)
+
+  return isHave
+})
+
+
+// ● 點擊 icon，觸發加入 收藏/追蹤 
+const clickLikeIcon = async (passInCat, passInId) => {
+  const res = await favoriteStore.toggleLike(passInCat, passInId)
+
+  if (!res.success) {
+    createSnackbar({
+      text: res.msg || "發生錯誤",
+      snackbarProps: {
+        class: "snackbar-fail",
+        timer: "5000",
+      },
+    })
+  }
+}
+
+
+// ● 點擊後，添加動畫
+const anime = ref(false)
+
+watch(() => favoriteData.value.dogLike, (newVal) => {
+  if (clickedId.value === dogId) {
+    anime.value = true
+  }
+})
+
 
 </script>

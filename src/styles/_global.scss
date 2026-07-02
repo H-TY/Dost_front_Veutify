@@ -445,7 +445,7 @@ hr {
 	}
 }
 
-// 取消按鈕
+// ● 取消按鈕
 .cancle-btn {
 	&.v-btn {
 		color: white;
@@ -455,7 +455,7 @@ hr {
 	}
 }
 
-// 恢復預設按鈕
+// ● 恢復預設按鈕
 .default-btn {
 	&.v-btn {
 		color: white;
@@ -463,6 +463,55 @@ hr {
 		opacity: 0.6;
 		padding: var(--btn-padding);
 		margin: auto;
+	}
+}
+
+// ● 加入收藏/追蹤按鈕
+.like-box {
+	padding: 20px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	z-index: 99;
+
+	&::before {
+		content: '';
+		width: 100%;
+		height: 100%;
+		background: rgba($text, 0.7);
+		border-radius: 50px 0 50px 50px;
+		mix-blend-mode: plus-lighter;
+		position: absolute;
+		top: 0;
+		right: 0;
+		transform-origin: right top;
+		transform: scale(0);
+		transition: 0.2s ease-in;
+	}
+
+	&:hover {
+		cursor: pointer;
+
+		&::before {
+			transform: scaleY(1);
+		}
+	}
+
+	.like-icon {
+		font-size: calc(2rem + 0.5vw);
+		color: white;
+		filter: drop-shadow(2px 2px 2px rgba($text, 0.2));
+		transition: 0.1s ease-in;
+
+		&.active {
+			font-size: calc(2.3rem + 0.5vw);
+			color: $btnRed;
+		}
+
+		&.anime {
+			// 動畫設定
+			animation: scale_jump 0.3s ease-in 1;
+		}
 	}
 }
 

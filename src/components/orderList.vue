@@ -10,8 +10,8 @@
       <!-- 訂單狀態欄位 -->
       <template #['item.orderStatus']='{ value, item }'>
         <div class="status-box">
-          <v-chip @update:modelValue="newOS" :text="value ? '已預約' : '已取消'" :class="value ? 'no-fill' : 'fill'"></v-chip>
-          <template v-if="value">
+          <v-chip @update:modelValue="newOS" :text="orderStatusTextStyle(item.bookingDate, value).text" :class="orderStatusTextStyle(item.bookingDate, value).class"></v-chip>
+          <template v-if="orderStatusTextStyle(item.bookingDate, value).haveCancelBtn">
             <v-btn class="cancel-btn" @click="openDialog(item)">取消訂單</v-btn>
           </template>
         </div>
@@ -221,6 +221,44 @@ const nowOrderStatus = ref(null)
 // watch(nowOrderStatus, (A, B) => {
 //   console.log(A, B)
 // })
+
+
+
+// ● 訂單狀態的文字顯示 & 樣式設定
+const orderStatusTextStyle = (bookingDate, statusBoolean) => {
+  // console.log('bookingDate', bookingDate, 'statusBoolean', statusBoolean)
+
+  // * 時間不能用字串比較（字串 2 會大於 11，因為比較方向是從左到右，逐字比較）
+  // 故需轉換數字來比較，可以使用：
+  // .getTime() 計算總毫秒數
+  // .setHours(時, 分, 秒, 毫秒) 把日期的「時間部分全部清掉歸　０」，只保留日期
+  const today = new Date().setHours(0, 0, 0, 0)
+  const bookingD = new Date(bookingDate).setHours(0, 0, 0, 0)
+
+
+  if (bookingD < today && statusBoolean === true) {
+    return {
+      text: '已完成',
+      class: 'complete',
+      haveCancelBtn: false
+    }
+  } else if (bookingD >= today && statusBoolean === true) {
+    return {
+      text: '已預約',
+      class: 'fill',
+      haveCancelBtn: true
+    }
+  } else if (statusBoolean === false) {
+    return {
+      text: '已取消',
+      class: 'no-fill',
+      haveCancelBtn: false
+    }
+  }
+
+
+}
+
 
 // ● 取消訂單按鈕更改訂單狀態
 const changeOrderStatus = () => {

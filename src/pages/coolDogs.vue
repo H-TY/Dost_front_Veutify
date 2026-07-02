@@ -35,6 +35,8 @@ const { backApi, apiAuth } = useApi()
 const createSnackbar = useSnackbar()
 const { mobile } = useDisplay()
 
+
+
 const page = ref(1)
 const pages = ref(1)
 const ITEMS_PER_PAGE = 6
@@ -61,12 +63,14 @@ const loadProducts = async () => {
     createSnackbar({
       text: error?.response?.data?.message || '發生錯誤',
       snackbarProps: {
-        color: 'red'
+        class: 'snackbar-fail'
       }
     })
   }
 }
 loadProducts()
+
+
 
 
 

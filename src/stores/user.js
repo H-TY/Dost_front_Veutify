@@ -4,6 +4,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import UserRole from "@/enums/UserRole";
 import { useThemeSettingStore } from "@/stores/themeSettings.js";
+import { useFavoriteStore } from "@/stores/favorite";
 // 引進 axios （已將路徑定義至後端 api）
 import { useApi } from "@/composables/axios";
 
@@ -12,6 +13,7 @@ export const useUserStore = defineStore(
   () => {
     const { backApi, apiAuth } = useApi();
     const themeSettingStore = useThemeSettingStore();
+    const favoriteStore = useFavoriteStore();
 
     // 設定 pinia 的資料欄位
     // 要從後端取得的資料（要與後端回傳的資料一致）
@@ -74,6 +76,10 @@ export const useUserStore = defineStore(
 
         // 向後端取使用者的設定資料
         await themeSettingStore.settingProfile();
+        // 向後端取使用者的 <<狗狗收藏/商品追蹤>> 資料
+        if (!isAdmin.value) {
+          await favoriteStore.getFavorite();
+        }
 
         return "登入成功";
       } catch (error) {
@@ -109,6 +115,13 @@ export const useUserStore = defineStore(
         email.value = data.result.email;
         role.value = data.result.role;
         cart.value = data.result.cart;
+
+        // 向後端取使用者的設定資料
+        await themeSettingStore.settingProfile();
+        // 向後端取使用者的 <<狗狗收藏/商品追蹤>> 資料
+        if (!isAdmin.value) {
+          await favoriteStore.getFavorite();
+        }
       } catch (error) {
         // 如果發生錯誤，將資料清空
         token.value = "";
@@ -122,6 +135,11 @@ export const useUserStore = defineStore(
         email.value = data.result.email;
         role.value = UserRole.USER;
         cart.value = 0;
+
+        // 使用者設定恢復預設
+        themeSettingStore.resetDefault();
+        // 使用者收藏/追蹤恢復預設
+        favoriteStore.resetDefault();
       }
     };
 
@@ -203,6 +221,8 @@ export const useUserStore = defineStore(
 
       // 登出時，使用者設定恢復預設
       themeSettingStore.resetDefault();
+      // 登出時，使用者收藏/追蹤恢復預設
+      favoriteStore.resetDefault();
     };
 
     return {
