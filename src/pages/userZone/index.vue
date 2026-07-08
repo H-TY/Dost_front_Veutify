@@ -28,7 +28,8 @@
 
     <div class="other-info">
       <template v-for="(el, index) in otherInfos" :key="index">
-        <customCard :class="el.text.狀態 ? '' : 'cancel-status'" :to="el.to" :title="el.title" :icon="el.icon" :ishave="el.ishave" :text="el.text"></customCard>
+        <!-- <customCard :class="el.text.狀態 ? '' : 'cancel-status'" :to="el.to" :title="el.title" :icon="el.icon" :ishave="el.ishave" :text="el.text"></customCard> -->
+        <customCard :to="el.to" :title="el.title" :icon="el.icon" :ishave="el.ishave" :content="el.content"></customCard>
       </template>
     </div>
   </div>
@@ -69,8 +70,8 @@ const createSnackbar = useSnackbar()
 // ● 要迴圈生成的物件
 const otherInfos = computed(() => {
   return [
-    { to: '/userZone/dogBookingSearch', title: '最新訂單', ishave: haveOrderData.value.ishave, text: haveOrderData.value.data, icon: 'mdi mdi-shopping' },
-    { to: '/userZone/adaptiveTestResult', title: '適性測驗結果', ishave: haveTestData.value.ishave, text: haveTestData.value.data, icon: 'mdi mdi-atom-variant' }
+    { to: '/userZone/dogBookingSearch', title: '最新訂單', ishave: haveOrderData.value.ishave, content: haveOrderData.value.data, icon: 'mdi mdi-shopping' },
+    { to: '/userZone/adaptiveTestResult', title: '適性測驗結果', ishave: haveTestData.value.ishave, content: haveTestData.value.data, icon: 'mdi mdi-atom-variant' }
   ]
 })
 
@@ -159,9 +160,21 @@ const postData = async () => {
     })
     // console.log('order', order)
 
+    // 判斷最新訂單的狀態，若為 true，則再判斷 "預約日期" 使否小於今天日期，若小於今天日期，則將狀態改為 completed
+    const today = new Date().setHours(0, 0, 0, 0)
+    const bookingD = new Date(order.bookingDate).setHours(0, 0, 0, 0)
+    const isCompleted = computed(() => {
+      if (order.orderStatus && bookingD < today) {
+        return 'completed'
+      } else {
+        return order.orderStatus
+      }
+    })
+
+
     // 將資料放到 lastOrder
     lastOrder.value.訂單編號 = order.bookingOrderNumber
-    lastOrder.value.狀態 = order.orderStatus
+    lastOrder.value.狀態 = isCompleted.value
     lastOrder.value.預約狗狗 = order.dogName
     lastOrder.value.狗狗圖片 = order.image
     lastOrder.value.預約日期 = order.bookingDate

@@ -172,6 +172,7 @@ definePage({
 
 
 
+
 // 取帳戶名稱
 const userName = computed(() => {
   if (!User.isLogin) {
@@ -317,10 +318,7 @@ const halfBookingDate = () => {
   // console.log('NOTDate.value.HBD', NOTDate.value.HBD)
 
   // ▲ 抓取 v-date-picker 的日期 DOM
-  const daysDOM = refDatePicker.value.$el.querySelectorAll(
-    '.v-date-picker-month__day:not(.v-date-picker-month__day--adjacent)'
-  )
-  // console.log('daysDOM', daysDOM)
+  const daysDOM = refDatePicker.value.$el.querySelectorAll("[data-v-date]")
 
   // 先清空 .half-booking 的 class 樣式，以防殘留上一個月份的
   daysDOM.forEach((el) => {
@@ -511,13 +509,7 @@ watch([() => Dinfo.value._id, dateYM], async ([DVal, YMval]) => {
   alreadybookingColl.value = await getBookingData(DVal, YMval)
   // console.log('alreadybookingColl.value', alreadybookingColl.value)
 
-
-
-  await nextTick()
-
-  requestAnimationFrame(() => {
-    halfBookingDate()
-  })
+  halfBookingDate()
 })
 
 

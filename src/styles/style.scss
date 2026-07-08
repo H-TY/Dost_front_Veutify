@@ -2839,13 +2839,45 @@ body {
 						.v-btn--variant-outlined {
 							border: 2px dotted rgba($gtext, 0.6);
 						}
-					}
 
-					// 選中日期樣式
-					.v-date-picker-month__day--selected {
+						// 還有時段可以預約
 						.v-btn {
-							color: rgba($thirdColor, 1);
-							background: rgba($secColor, 1);
+							background: unset;
+							position: relative;
+							isolation: isolate;
+
+							&::before {
+								content: '';
+								width: 100%;
+								height: 100%;
+								border-radius: 50%;
+								position: absolute;
+								top: 0;
+								left: 0;
+								z-index: -1;
+							}
+
+							&.half-booking {
+								&::before {
+									background: $gtext;
+									opacity: 0.5;
+									clip-path: inset(0 50% 0 0);
+								}
+							}
+						}
+
+						// 選中日期樣式
+						&.v-date-picker-month__day--selected {
+							.v-btn {
+								color: rgba($thirdColor, 1);
+								background: $secColor;
+
+								// &::before {
+								// 	background: $secColor;
+								// 	opacity: 1;
+								// 	clip-path: inset(0 0 0 0);
+								// }
+							}
 						}
 					}
 				}
@@ -4021,7 +4053,20 @@ body {
 						}
 					}
 
-					&.cancel-status {
+					&.completed {
+						background: rgba(lighten($thirdColor, 0%), 0.9);
+						border: 1px dotted rgba(darken($noticeColor, 32%), 0.4);
+
+						.detail-box {
+							.v-btn {
+								color: darken($noticeColor, 32%);
+								background: $forthColor;
+								border: 1px solid rgba(darken($noticeColor, 32%), 0.4);
+							}
+						}
+					}
+
+					&.cancelled {
 						background: rgba(lighten($gtext, 38%), 0.9);
 
 						.detail-box {
