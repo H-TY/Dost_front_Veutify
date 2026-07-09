@@ -29,8 +29,7 @@
           </template>
 
           <template v-else>
-            <v-date-picker ref="refDatePicker" v-model="date" @click="dialogOpen" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event">
-            </v-date-picker>
+            <v-date-picker ref="refDatePicker" v-model="date" @click="dialogOpen" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event"></v-date-picker>
           </template>
 
           <div class="notice">

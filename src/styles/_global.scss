@@ -415,6 +415,7 @@ hr {
 		min-width: unset;
 	}
 
+	// disabled 設定
 	&.v-btn--disabled {
 		background: $gtext !important;
 		opacity: 0.5 !important;

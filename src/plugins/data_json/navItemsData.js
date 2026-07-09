@@ -33,6 +33,70 @@ export const logo = {
   desc: "logo_img",
 };
 
+// ● 輸出 登入/註冊 導覽列項目
+export const regLogin = (userIsLogin, isAdmin) => {
+  return [
+    {
+      to: "/register",
+      text: "註冊",
+      icon: "mdi-account-plus",
+      show: !userIsLogin && !isAdmin,
+    },
+    {
+      to: "/login",
+      text: "登入",
+      icon: "mdi-account-circle",
+      show: !userIsLogin && !isAdmin,
+    },
+    {
+      to: "/userZone",
+      text: "會員專區",
+      icon: "mdi-account-box",
+      show: userIsLogin && !isAdmin,
+    },
+    {
+      to: "/admin",
+      text: "管理區",
+      icon: "mdi-account-tie",
+      show: userIsLogin && isAdmin,
+    },
+  ];
+};
+
+// ● 輸出 home 導覽列項目
+// 因為需要用到 store/user.js 的資料，改成使用函式，在使用頁面導入 store 的資料
+// 避免在此檔案直接 useUserStore()，因為此檔案可能在 Pinia 初始化前就被載入，
+export const homeNavItems = (userIsLogin) => {
+  return [
+    {
+      to: "/",
+      text: "Home",
+      icon: "mdi-home",
+      show: true,
+    },
+    {
+      to: "/coolDogs",
+      text: "帥氣狗狗",
+      icon: "mdi-dog",
+      show: true,
+    },
+    {
+      to: "/booking",
+      text: "預約時間",
+      icon: "mdi-calendar-clock",
+      show: true,
+    },
+    // {
+    //   to: "/test",
+    //   text: "狗狗適性測驗",
+    //   icon: "mdi-dog-side",
+    //   show: true,
+    // },
+    // { to: '/shop', text: '寵物用品', icon: 'mdi-store', show: true },
+    // { to: '/cart', text:'購物車', icon:'mdi-cart-variant', show: user.isLogin},
+  ];
+};
+
 // ● 輸出 admin 導覽列項目
 export const adminNavItems = [
   {

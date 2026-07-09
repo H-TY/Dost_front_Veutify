@@ -55,7 +55,7 @@
           <!-- 導覽項目 -->
           <div class="navbar-box">
             <div class="navbar-items">
-              <template v-for="item in navItems" :key="item.to">
+              <template v-for="item in homeNavItems(user.isLogin)" :key="item.to">
                 <v-btn v-if="item.show" :to="item.to">
                   <v-icon :icon="item.icon"></v-icon>
                   {{ mdAndDown ? '' : item.text }}
@@ -64,7 +64,7 @@
               ｜
               <!-- 導覽列_右側_註冊 & 登入 按鈕 -->
               <div class="RL-box">
-                <template v-for="RLitem in RegLogin" :key="RLitem.to">
+                <template v-for="RLitem in regLogin(user.isLogin, user.isAdmin)" :key="RLitem.to">
                   <v-btn v-if="RLitem.show" :to="RLitem.to" :class="{ loginState: user.isLogin, adminState: user.isAdmin }">
                     <v-icon :icon="RLitem.icon"></v-icon>
                     {{ mdAndDown ? '' : RLitem.text }}
@@ -97,7 +97,7 @@
   <v-navigation-drawer class="home-navigation-drawer" v-if="mobile" v-model="drawer" location="right">
     <div class="navbar-box">
       <div class="navbar-items">
-        <template v-for="item in navItems" :key="item.to">
+        <template v-for="item in homeNavItems(user.isLogin)" :key="item.to">
           <v-btn v-if="item.show" :to="item.to">
             <v-icon :icon="item.icon"></v-icon>
             {{ item.text }}
@@ -108,7 +108,7 @@
 
         <!-- 導覽列_右側_註冊 & 登入 按鈕 -->
         <div class="RL-box">
-          <template v-for="RLitem in RegLogin" :key="RLitem.to">
+          <template v-for="RLitem in regLogin(user.isLogin, user.isAdmin)" :key="RLitem.to">
             <v-btn v-if="RLitem.show" :to="RLitem.to" :class="{ loginState: user.isLogin, adminState: user.isAdmin }">
               <v-icon :icon="RLitem.icon"></v-icon>
               {{ RLitem.text }}
@@ -187,6 +187,7 @@ import { useDisplay } from 'vuetify'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
+import { logo, homeNavItems, regLogin } from "@/plugins/data_json"
 import floatingBtn from '@/components/floatingBtn.vue'
 import logOutBtn from '@/components/logOutBtn.vue'
 
@@ -206,12 +207,6 @@ const createSnackbar = useSnackbar()
 const drawer = ref(false)
 
 
-// ● Logo
-const logo = computed(() => {
-  return { to: '/', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
-})
-
-
 // ● 購物車
 const cart = computed(() => {
   return { to: '/cart', text: '購物車', icon: 'mdi-cart-variant' }
@@ -219,27 +214,27 @@ const cart = computed(() => {
 
 
 // ● 導覽列項目
-const navItems = computed(() => {
-  return [
-    { to: '/', text: 'Home', icon: 'mdi-home', show: user.isLogin || !user.isLogin },
-    { to: '/coolDogs', text: '帥氣狗狗', icon: 'mdi-dog', show: user.isLogin || !user.isLogin },
-    { to: '/booking', text: '預約時間', icon: 'mdi-calendar-clock', show: user.isLogin || !user.isLogin },
-    // { to: '/test', text: '狗狗適性測驗', icon: 'mdi-dog-side', show: user.isLogin || !user.isLogin },
-    // { to: '/shop', text: '寵物用品', icon: 'mdi-store', show: user.isLogin || !user.isLogin },
-    // { to: '/cart', text:'購物車', icon:'mdi-cart-variant', show: user.isLogin},
-  ]
-})
+// const navItems = computed(() => {
+//   return [
+//     { to: '/', text: 'Home', icon: 'mdi-home', show: user.isLogin || !user.isLogin },
+//     { to: '/coolDogs', text: '帥氣狗狗', icon: 'mdi-dog', show: user.isLogin || !user.isLogin },
+//     { to: '/booking', text: '預約時間', icon: 'mdi-calendar-clock', show: user.isLogin || !user.isLogin },
+//     { to: '/test', text: '狗狗適性測驗', icon: 'mdi-dog-side', show: user.isLogin || !user.isLogin },
+//     // { to: '/shop', text: '寵物用品', icon: 'mdi-store', show: user.isLogin || !user.isLogin },
+//     // { to: '/cart', text:'購物車', icon:'mdi-cart-variant', show: user.isLogin},
+//   ]
+// })
 
 
 // ● 導覽列_註冊 & 登入
-const RegLogin = computed(() => {
-  return [
-    { to: '/register', text: '註冊', icon: 'mdi-account-plus', show: !user.isLogin && !user.isAdmin },
-    { to: '/login', text: '登入', icon: 'mdi-account-circle', show: !user.isLogin && !user.isAdmin },
-    { to: '/userZone', text: '會員專區', icon: 'mdi-account-box', show: user.isLogin && !user.isAdmin },
-    { to: '/admin', text: '管理區', icon: 'mdi-account-tie', show: user.isLogin && user.isAdmin },
-  ]
-})
+// const RegLogin = computed(() => {
+//   return [
+//     { to: '/register', text: '註冊', icon: 'mdi-account-plus', show: !user.isLogin && !user.isAdmin },
+//     { to: '/login', text: '登入', icon: 'mdi-account-circle', show: !user.isLogin && !user.isAdmin },
+//     { to: '/userZone', text: '會員專區', icon: 'mdi-account-box', show: user.isLogin && !user.isAdmin },
+//     { to: '/admin', text: '管理區', icon: 'mdi-account-tie', show: user.isLogin && user.isAdmin },
+//   ]
+// })
 
 // ● 登出函式
 const logout = async () => {

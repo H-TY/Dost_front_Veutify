@@ -16,7 +16,7 @@
     </div>
 
     <div class="card-box">
-      <customCard class="admin-home-card" v-for="item in adminNavItems.slice(1)" :key="item.text" :to="item.to" :title="item.title" :text="item.desc" :icon="item.icon"></customCard>
+      <customCard class="admin-home-card" v-for="item in adminNavItems.slice(1)" :key="item.text" :to="item.to" :title="item.title" :content="item.desc" :icon="item.icon"></customCard>
     </div>
   </div>
 </template>
