@@ -22,7 +22,7 @@
 
           <template v-if="mobile">
             <v-dialog class="data-dialog" v-model="dataDialog">
-              <v-date-picker v-model="date" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event"></v-date-picker>
+              <v-date-picker ref="refDatePicker" v-model="date" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event"></v-date-picker>
 
               <dialogCloseBtn @click="dataDialog = false"></dialogCloseBtn>
             </v-dialog>
@@ -312,15 +312,20 @@ const NOTDate = computed(() => {
 
 
 // ● 函式：將 "尚未" 完整預約時段的日期，另外添加 class 樣式 .half-booking
-const halfBookingDate = () => {
+const halfBookingDate = async () => {
   // console.log('觸發 halfBookingDate() 函式')
   // console.log('NOTDate.value.HBD', NOTDate.value.HBD)
+
+  await nextTick()
+
+  if (!refDatePicker.value) return
 
   // ▲ 抓取 v-date-picker 的日期 DOM
   const daysDOM = refDatePicker.value.$el.querySelectorAll(
     '.v-date-picker-month__day:not(.v-date-picker-month__day--adjacent)'
   )
   // console.log('daysDOM', daysDOM)
+
 
   // 先清空 .half-booking 的 class 樣式，以防殘留上一個月份的
   daysDOM.forEach((el) => {
@@ -505,19 +510,16 @@ const onDogIDChange = (swiper) => {
 
 // ● 監聽 Dinfo.value, dateYM（年月份切換會影響） 是否有變動，觸發重新向後端請求查詢其狗狗已預約的日期，作為後續要顯示哪些日期可以預約
 watch([() => Dinfo.value._id, dateYM], async ([DVal, YMval]) => {
-  // console.log('Dinfo.value.id, DVal', [DVal, YMval])
+  // console.log("changYear", changYear.value)
+  // console.log("changMonth", changMonth.value + 1)
+  // console.log('Dinfo.value.id', DVal)
+  // console.log('dateYM', YMval)
   // console.log('觸發重新向後端發送請求 "預約日期" 資料')
 
   alreadybookingColl.value = await getBookingData(DVal, YMval)
   // console.log('alreadybookingColl.value', alreadybookingColl.value)
 
-
-
-  await nextTick()
-
-  requestAnimationFrame(() => {
-    halfBookingDate()
-  })
+  halfBookingDate()
 })
 
 
@@ -586,14 +588,6 @@ const loadDinfo = async (passInData) => {
     Dinfo.value.bookingTime = data.result.bookingTime
     Dinfo.value.feature = data.result.feature
     Dinfo.value.sell = data.result.sell
-
-
-    // 只在 mobile 才觸發
-    if (mobile.value) {
-      // 日期選擇器初始化更新的年、月份
-      initYM()
-    }
-
 
   } catch (error) {
     console.log(error)
@@ -679,7 +673,7 @@ const dialogOpen = (e, passInData) => {
 
   if (passInData == '預約日期') {
     dataDialog.value = true
-    initYM()
+    halfBookingDate()
   } else if (passInData == '預約時段' || clickDay === day) {
     chooseTimeDialog.value = true
   }

@@ -479,24 +479,49 @@ body {
 						}
 
 						.v-date-picker-month__day {
-							// .v-btn {
-							// 	&.half-selected {
-							// 		color: rgba($thirdColor, 1);
-							// 		background: rgba($secColor, 0.5);
-							// 	}
-							// }
-
 							// 當天日期圈選樣式
 							.v-btn--variant-outlined {
 								border: 2px dotted rgba($gtext, 0.6);
 							}
-						}
 
-						// 選中日期樣式
-						.v-date-picker-month__day--selected {
+							// 還有時段可以預約
 							.v-btn {
-								color: rgba($thirdColor, 1);
-								background: rgba($secColor, 1);
+								background: unset;
+								position: relative;
+								isolation: isolate;
+
+								&::before {
+									content: '';
+									width: 100%;
+									height: 100%;
+									border-radius: 50%;
+									position: absolute;
+									top: 0;
+									left: 0;
+									z-index: -1;
+								}
+
+								&.half-booking {
+									&::before {
+										background: $gtext;
+										opacity: 0.5;
+										clip-path: inset(0 50% 0 0);
+									}
+								}
+							}
+
+							// 選中日期樣式
+							&.v-date-picker-month__day--selected {
+								.v-btn {
+									color: rgba($thirdColor, 1);
+									background: $secColor;
+
+									// &::before {
+									// 	background: $secColor;
+									// 	opacity: 1;
+									// 	clip-path: inset(0 0 0 0);
+									// }
+								}
 							}
 						}
 					}
