@@ -10,7 +10,7 @@
 
 ### 首頁
 
-![首頁](./README_screenshot/img-1.avif)
+<!-- ![首頁](./README_screenshot/img-1.avif)
 
 ### 登入
 
@@ -26,8 +26,43 @@
 
 ### 管理員後台
 
-![Admin](./README_screenshot/img-5.avif)
+![Admin](./README_screenshot/img-5.avif) -->
 
+<table>
+  <tr>
+    <td rowspan="4" width="35%">
+      <img src="./README_screenshot/img-1.avif" width="300">
+      <p align="center">首頁</p>
+    </td>
+
+    <td width="65%">
+      <img src="./README_screenshot/img-2.avif" width="500">
+      <p align="center">登入</p>
+    </td>
+
+  </tr>
+
+  <tr>
+    <td>
+      <img src="./README_screenshot/img-3.avif" width="500">
+      <p align="center">線上預約</p>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <img src="./README_screenshot/img-4.avif" width="500">
+      <p align="center">會員中心</p>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <img src="./README_screenshot/img-5.avif" width="500">
+      <p align="center">管理員後台</p>
+    </td>
+  </tr>
+</table>
 ---
 
 ## 📁 專案介紹
