@@ -30,36 +30,35 @@
 
 <table>
   <tr>
-    <td rowspan="4" width="35%">
-      <img src="./README_screenshot/img-1.avif" width="300">
+    <td rowspan="4" width="50%">
       <p align="center">首頁</p>
+      <img src="./README_screenshot/img-1.avif" width="500">
     </td>
-
-    <td width="65%">
-      <img src="./README_screenshot/img-2.avif" width="500">
+    <td width="50%">
       <p align="center">登入</p>
+      <img src="./README_screenshot/img-2.avif" width="500">
     </td>
 
   </tr>
 
   <tr>
     <td>
-      <img src="./README_screenshot/img-3.avif" width="500">
       <p align="center">線上預約</p>
+      <img src="./README_screenshot/img-3.avif" width="500">
     </td>
   </tr>
 
   <tr>
     <td>
-      <img src="./README_screenshot/img-4.avif" width="500">
       <p align="center">會員中心</p>
+      <img src="./README_screenshot/img-4.avif" width="500">
     </td>
   </tr>
 
   <tr>
     <td>
-      <img src="./README_screenshot/img-5.avif" width="500">
       <p align="center">管理員後台</p>
+      <img src="./README_screenshot/img-5.avif" width="500">
     </td>
   </tr>
 </table>
