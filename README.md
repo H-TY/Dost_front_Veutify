@@ -8,9 +8,9 @@
 
 ## 📷 Screenshots
 
-### 首頁
+<!-- ### 首頁
 
-<!-- ![首頁](./README_screenshot/img-1.avif)
+![首頁](./README_screenshot/img-1.avif)
 
 ### 登入
 
@@ -32,33 +32,32 @@
   <tr>
     <td rowspan="4" width="50%">
       <p align="center">首頁</p>
-      <img src="./README_screenshot/img-1.avif" width="500">
+      <img src="./README_screenshot/img-1.avif">
     </td>
     <td width="50%">
       <p align="center">登入</p>
-      <img src="./README_screenshot/img-2.avif" width="500">
+      <img src="./README_screenshot/img-2.avif">
     </td>
-
   </tr>
 
   <tr>
     <td>
       <p align="center">線上預約</p>
-      <img src="./README_screenshot/img-3.avif" width="500">
+      <img src="./README_screenshot/img-3.avif">
     </td>
   </tr>
 
   <tr>
     <td>
       <p align="center">會員中心</p>
-      <img src="./README_screenshot/img-4.avif" width="500">
+      <img src="./README_screenshot/img-4.avif">
     </td>
   </tr>
 
   <tr>
     <td>
       <p align="center">管理員後台</p>
-      <img src="./README_screenshot/img-5.avif" width="500">
+      <img src="./README_screenshot/img-5.avif">
     </td>
   </tr>
 </table>
