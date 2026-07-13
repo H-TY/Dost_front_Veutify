@@ -1,0 +1,1 @@
+import{K as e,O as s,P as a,c as t,Q as o}from"./index-Bzu26L7C.js";import{_ as r}from"./sectionTitle-BFGY_qXm.js";import{V as c}from"./VContainer-DszMY--A.js";const n={id:"test",class:"test"},u={__name:"test",setup(_){return e(),(i,l)=>(s(),a("section",n,[t(c,null,{default:o(()=>[t(r,{title:"狗狗適性測驗",enTitle:"TEST"})]),_:1})]))}};export{u as default};
