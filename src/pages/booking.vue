@@ -496,30 +496,37 @@ function initSwiperHash() {
 
 
 // ● Swiper 事件 @slideChangeTransitionEnd 當滑動動畫結束時觸發函式 onDogIDChange
-const onDogIDChange = (swiper) => {
+const onDogIDChange = async (swiper) => {
   // 邏輯說明：「現在滑到第幾張 → 去資料陣列找那一筆 → 拿它的 id」
   const dogID = items.value[swiper.activeIndex]?._id
   // console.log('dogID:', dogID)
 
   // 根據當前圖片的 id，去取該 id 的狗狗資料，並更新預約表格的資料
   loadDinfo(dogID)
+
+  // 只在 mobile 版，觸發切換狗狗時，初始化日期選擇器
+  if (mobile.value) {
+    initYM()
+  }
 }
 
 
 
-// ● 監聽 Dinfo.value, dateYM（年月份切換會影響） 是否有變動，觸發重新向後端請求查詢其狗狗已預約的日期，作為後續要顯示哪些日期可以預約
-watch([() => Dinfo.value._id, dateYM], async ([DVal, YMval]) => {
+
+// ● 監聽 dateYM（當日期選擇器切換年月份時，會觸發） 是否有變動，觸發重新向後端請求查詢其狗狗已預約的日期，作為後續要顯示哪些日期可以預約
+watch(dateYM, async (YMval) => {
   // console.log("changYear", changYear.value)
   // console.log("changMonth", changMonth.value + 1)
-  // console.log('Dinfo.value.id', DVal)
   // console.log('dateYM', YMval)
-  // console.log('觸發重新向後端發送請求 "預約日期" 資料')
+  // console.log('Dinfo.value._id', Dinfo.value._id)
+  // console.log('月份切換，觸發向後端發送請求 "預約日期" 資料')
 
-  alreadybookingColl.value = await getBookingData(DVal, YMval)
+  alreadybookingColl.value = await getBookingData(Dinfo.value._id, YMval)
   // console.log('alreadybookingColl.value', alreadybookingColl.value)
 
   halfBookingDate()
 })
+
 
 
 
@@ -587,6 +594,12 @@ const loadDinfo = async (passInData) => {
     Dinfo.value.bookingTime = data.result.bookingTime
     Dinfo.value.feature = data.result.feature
     Dinfo.value.sell = data.result.sell
+
+
+    // 抓取當前狗狗已經預約的時間
+    alreadybookingColl.value = await getBookingData(Dinfo.value._id, dateYM.value)
+    halfBookingDate()
+    // console.log('當前載入，觸發向後端發送請求 "預約日期" 資料，並渲染預約一半的日期')
 
   } catch (error) {
     console.log(error)
