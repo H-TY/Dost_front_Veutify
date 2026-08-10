@@ -86,12 +86,12 @@ export const homeNavItems = (userIsLogin) => {
       icon: "mdi-calendar-clock",
       show: true,
     },
-    // {
-    //   to: "/test",
-    //   text: "狗狗適性測驗",
-    //   icon: "mdi-dog-side",
-    //   show: true,
-    // },
+    {
+      to: "/test",
+      text: "狗狗適性測驗",
+      icon: "mdi-dog-side",
+      show: true,
+    },
     // { to: '/shop', text: '寵物用品', icon: 'mdi-store', show: true },
     // { to: '/cart', text:'購物車', icon:'mdi-cart-variant', show: user.isLogin},
   ];
