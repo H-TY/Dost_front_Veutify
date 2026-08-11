@@ -37,8 +37,6 @@
             </template>
 
             <v-stepper-window-item :value="items.length + 1">
-              <h6>測驗結果：</h6>
-
               <div class="result-box">
                 <template v-if="countScore.num.length">
                   <p>{{ countScore.text }}</p>
@@ -54,6 +52,8 @@
                 </template>
 
                 <template v-else>
+                  <p>測驗結果－－－－</p>
+                  <h6>最適合您的狗狗：</h6>
                   <h5>{{ countScore.text }}</h5>
                   <p>{{ countScore.details }}</p>
                 </template>
@@ -92,7 +92,7 @@ definePage({
 })
 
 
-const { mobile } = useDisplay();
+// const { mobile } = useDisplay();
 
 // ● 測驗問題&選項
 const items = [
@@ -111,14 +111,14 @@ const items = [
       }
       ,
       {
-        subtitle: "中型犬（26 公斤以上）",
+        subtitle: "大型犬（26 公斤以上）",
         score: 3
       }
     ]
   },
   {
-    title: "狗狗性情",
-    text: "喜換什麼樣性情的狗狗？",
+    title: "狗狗個性",
+    text: "喜歡什麼樣個性的狗狗？",
     option: [
       {
         subtitle: "溫和穩定",
@@ -138,7 +138,7 @@ const items = [
   },
   {
     title: "活動量",
-    text: "希望與狗狗一起活動多久時間",
+    text: "希望與狗狗一起活動多久時間？",
     option: [
       {
         subtitle: "小於 40 分鐘",
@@ -270,7 +270,7 @@ const countScore = computed(() => {
 
   // 題目未填寫完整
   if (quziNum.length) {
-    result.text = '以下題目尚未填寫答案，請再確認'
+    result.text = '以下題目尚未填寫答案，請再確認！'
     result.num = quziNum
 
   } else {

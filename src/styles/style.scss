@@ -3054,12 +3054,12 @@ body {
 				// 	}
 				// }
 
-				.result-icon {
-					color: $mainColor;
+				.v-stepper-item {
+					flex-basis: unset;
+				}
 
-					.v-avatar {
-						background: $mainColor;
-					}
+				hr {
+					margin: 35px -28px 0;
 				}
 
 				// .v-stepper-item--selected {
@@ -3071,20 +3071,40 @@ body {
 				// 		}
 				// 	}
 				// }
+
+				.result-icon {
+					color: $mainColor;
+
+					.v-avatar {
+						background: $mainColor;
+					}
+				}
+
+				// # RSP 設定
+				@include rsp-down-excl(sm) {
+					hr {
+						margin: 35px -16px 0;
+					}
+
+					.v-stepper-item__content {
+						display: none;
+					}
+				}
 			}
 
 			.v-stepper-window {
-				p {
-					padding: 0;
-					padding: 0.8rem 0;
-				}
-
 				.result-box {
 					padding: 1rem 0;
 
+					p {
+						color: darken($gtext, 12%);
+						padding-bottom: 0.5rem;
+					}
+
 					h5 {
 						width: fit-content;
-						padding: 0 0.5rem;
+						padding: 1rem 0.5rem;
+						padding-top: 0.4rem;
 						position: relative;
 						isolation: isolate;
 
@@ -3094,7 +3114,7 @@ body {
 							height: 18px;
 							background: $noticeColor;
 							position: absolute;
-							bottom: -2px;
+							bottom: 14px;
 							left: 0;
 							z-index: -1;
 						}
@@ -3109,6 +3129,11 @@ body {
 							margin-right: 8px;
 						}
 					}
+				}
+
+				@include rsp-down-excl(sm) {
+					margin: 0 1rem;
+					margin-bottom: 1.5rem;
 				}
 			}
 
