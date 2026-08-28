@@ -182,7 +182,7 @@ import { definePage } from 'vue-router/auto'
 import { useApi } from "@/api";
 import { useTitleScrollDown, useTableScroll } from '@/composables/scrollAddClass'
 import { scrollToTop } from "@/composables/scrollToTop";
-import { dogFields } from '@/data'
+import { dogFields } from '@/validation'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
