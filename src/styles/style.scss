@@ -4612,6 +4612,10 @@ footer {
 		}
 	}
 
+	.git-ver {
+		text-align: center;
+	}
+
 	@include rsp-down(md) {
 		.social-box {
 			justify-content: start;

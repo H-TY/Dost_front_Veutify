@@ -167,10 +167,15 @@
       <v-divider></v-divider>
 
       <v-row class="indicate-box">
-        <v-col cols="12" sm="6">
+        <v-col cols="12" sm="4">
           前端網頁設計課程 — <strong>期末專題作業</strong>
         </v-col>
-        <v-col cols="12" sm="6">
+
+        <v-col class="git-ver" cols="12" sm="4">
+          Git：{{ gitCommit }}．{{ buildDate }}
+        </v-col>
+
+        <v-col cols="12" sm="4">
           資料、圖片、影片來源：
           <a href="https://unsplash.com/" target="_blank">unsplash</a>
           ｜
@@ -213,28 +218,13 @@ const cart = computed(() => {
 })
 
 
-// ● 導覽列項目
-// const navItems = computed(() => {
-//   return [
-//     { to: '/', text: 'Home', icon: 'mdi-home', show: user.isLogin || !user.isLogin },
-//     { to: '/coolDogs', text: '帥氣狗狗', icon: 'mdi-dog', show: user.isLogin || !user.isLogin },
-//     { to: '/booking', text: '預約時間', icon: 'mdi-calendar-clock', show: user.isLogin || !user.isLogin },
-//     { to: '/test', text: '狗狗適性測驗', icon: 'mdi-dog-side', show: user.isLogin || !user.isLogin },
-//     // { to: '/shop', text: '寵物用品', icon: 'mdi-store', show: user.isLogin || !user.isLogin },
-//     // { to: '/cart', text:'購物車', icon:'mdi-cart-variant', show: user.isLogin},
-//   ]
-// })
+// 自動輸出網站 Git 更新版本與日期
+const gitCommit = import.meta.env.VITE_GIT_COMMIT?.slice(0, 7) ?? "部署後生成版號";
+const buildDate = import.meta.env.VITE_BUILD_DATE
+  ? new Date(
+    import.meta.env.VITE_BUILD_DATE
+  ).toLocaleDateString('zh-TW') : "日期";
 
-
-// ● 導覽列_註冊 & 登入
-// const RegLogin = computed(() => {
-//   return [
-//     { to: '/register', text: '註冊', icon: 'mdi-account-plus', show: !user.isLogin && !user.isAdmin },
-//     { to: '/login', text: '登入', icon: 'mdi-account-circle', show: !user.isLogin && !user.isAdmin },
-//     { to: '/userZone', text: '會員專區', icon: 'mdi-account-box', show: user.isLogin && !user.isAdmin },
-//     { to: '/admin', text: '管理區', icon: 'mdi-account-tie', show: user.isLogin && user.isAdmin },
-//   ]
-// })
 
 // ● 登出函式
 const logout = async () => {

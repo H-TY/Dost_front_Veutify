@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     # 工作步驟
     steps:
-      # 步驟 1：複製程式碼
+      # 步驟 1：複製程式碼，讓 Runner（虛擬機作業系統）取得本次 Workflow 對應的程式碼以及 Git 資訊。
       - name: checkout
         # 使用的 actions/checkout 複製程式碼
         uses: actions/checkout@v4
@@ -67,6 +67,9 @@ jobs:
         run: npm run build
         env:
           VITE_API: ${{ secrets.VITE_API }}
+          # 以下用來在網頁 <footer> 顯示更新得版本號和日期
+          VITE_GIT_COMMIT: ${{ github.sha }}
+          VITE_BUILD_DATE: ${{ github.event.head_commit.timestamp }}
 
       # 步驟 5：建立 .nojekyll（GitHub Pages 部署環境的特殊處理）
       # 避免 GitHub Pages 使用 Jekyll 處理檔案時，忽略 _ 開頭的檔案，而導致轉跳至網頁 4040
@@ -88,7 +91,12 @@ jobs:
     needs: compile
     runs-on: ubuntu-latest
     steps:
-      # 步驟 1：下載 Compile Job 上傳的 Artifact
+      # 步驟 1：因使用新的 Runner，因此需要重新 checkout。
+      # 主要讓 Runner 取得 Git repository 及 .git 資訊，供後續部署 Action 執行 Git 操作。
+      - name: checkout
+        uses: actions/checkout@v4
+
+      # 步驟 2：下載 Compile Job 上傳的 Artifact
       # Artifact 名稱為 dost-dist，下載後放入 dist 資料夾，後續要部屬到分支用
       - name: Download dist
         uses: actions/download-artifact@v4
@@ -97,7 +105,7 @@ jobs:
           # 指定要 "下載" 的檔案或資料夾路徑。
           path: dist
 
-      # 步驟 2：將已經 Build 完成的檔案部屬到分支
+      # 步驟 3：將已經 Build 完成的檔案部屬到分支
       - name: Deploy to Other Branch
         uses: JamesIves/github-pages-deploy-action@v4.6.5
         with:
