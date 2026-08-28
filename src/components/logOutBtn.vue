@@ -35,10 +35,10 @@ const logout = async () => {
   if (!onBeforeLogOut()) return
   // console.log("繼續 logOut 動作");
 
-  await User.logout()
+  const resMsg = await User.logout()
 
   createSnackbar({
-    text: '登出成功',
+    text: resMsg,
     snackbarProps: {
       class: 'snackbar-success',
     }

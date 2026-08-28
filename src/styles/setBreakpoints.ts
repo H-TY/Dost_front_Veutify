@@ -19,7 +19,6 @@ export function generateBreakpointsScss() {
     name: "generate-breakpoints-scss",
     buildStart() {
       const sassGridBPContent = `$grid-breakpoints: (
-        // xs: ${setBreakpoints.xs}px,
         mobile: ${setBreakpoints.sm}px,
         sm: ${setBreakpoints.sm}px,
         md: ${setBreakpoints.md}px,

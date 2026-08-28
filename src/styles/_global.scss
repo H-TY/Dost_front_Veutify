@@ -556,7 +556,21 @@ hr {
 	margin-inline-end: unset !important;
 
 	.v-snackbar__wrapper {
+		width: 100%;
+		max-width: unset;
+		min-width: unset;
 		border-radius: 0;
+		// align-self: center;
+		// padding: 0.2rem 2rem;
+		padding: 0;
+
+		.v-snackbar__content {
+			color: white;
+			font-size: calc(1.05rem + 0.2vw);
+			font-weight: 500;
+			letter-spacing: 1.5px;
+			text-align: center;
+		}
 	}
 
 	&.snackbar-success {
@@ -568,23 +582,6 @@ hr {
 	&.snackbar-fail {
 		.v-snackbar__wrapper {
 			background: darken($btnRed, 5%);
-		}
-	}
-
-	.v-snackbar__wrapper {
-		width: 100%;
-		max-width: unset;
-		min-width: unset;
-		// align-self: center;
-		// padding: 0.2rem 2rem;
-		padding: 0;
-
-		.v-snackbar__content {
-			color: white;
-			font-size: calc(1.05rem + 0.2vw);
-			font-weight: 500;
-			letter-spacing: 1.5px;
-			text-align: center;
 		}
 	}
 }

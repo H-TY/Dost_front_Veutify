@@ -187,7 +187,7 @@ import { useDisplay } from 'vuetify'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
-import { logo, homeNavItems, regLogin } from "@/plugins/data_json"
+import { logo, homeNavItems, regLogin } from '@/data'
 import floatingBtn from '@/components/floatingBtn.vue'
 import logOutBtn from '@/components/logOutBtn.vue'
 

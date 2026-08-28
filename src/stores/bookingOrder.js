@@ -3,9 +3,9 @@
 import { defineStore } from "pinia";
 import { ref, computed, reactive, onMounted } from "vue";
 import { useUserStore } from "@/stores/user";
-import UserRole from "@/enums/UserRole";
+import { UserRole } from "@/enums/UserRole";
 // 引進 axios （已將路徑定義至後端 api）
-import { useApi } from "@/composables/axios";
+import { useApi } from "@/api";
 
 export const useBookingOrderStore = defineStore("BookingOrderData", () => {
   const { backApi, apiAuth } = useApi();

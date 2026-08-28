@@ -5,11 +5,7 @@
  */
 
 // Composables
-import {
-  createRouter,
-  createWebHashHistory,
-  START_LOCATION,
-} from "vue-router/auto";
+import { createRouter, createWebHashHistory, START_LOCATION } from "vue-router";
 import { setupLayouts } from "virtual:generated-layouts";
 import { routes } from "vue-router/auto-routes";
 import { useUserStore } from "@/stores/user";
@@ -73,7 +69,7 @@ router.beforeEach(async (to, from, next) => {
 // ▲ router.afterEach ( (要去哪裡, 從哪裡來) => {} ) 每次進入頁面"後"，執行指定動作
 router.afterEach((to, from) => {
   // ● 當進入頁面後，自動滾動至頁面頂部
-  document.title = to.meta.title;
+  document.title = to.meta.title as string;
   window.scrollTo(0, 0);
 });
 

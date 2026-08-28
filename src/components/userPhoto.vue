@@ -33,7 +33,6 @@ import { useDisplay } from 'vuetify'
 import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
 import { useUserStore } from '@/stores/user'
-import { useApi } from '@/composables/axios'
 import { useSnackbar } from 'vuetify-use-dialog'
 import dialogCloseBtn from './dialogCloseBtn.vue'
 import multiavatar from '@multiavatar/multiavatar/esm'
@@ -41,7 +40,6 @@ import multiavatar from '@multiavatar/multiavatar/esm'
 
 
 const User = useUserStore()
-const { apiAuth } = useApi()
 // 解構出 mobile的斷點
 const { mobile } = useDisplay()
 const createSnackbar = useSnackbar()
@@ -137,8 +135,9 @@ const submit = handleSubmit(async (userEditData) => {
       createSnackbar({
         text: '未選擇圖片上傳',
         snackbarProps: {
-          color: 'red',
+          class: "snackbar-fail",
           location: 'center center',
+          timeout: 1000,
         }
       })
       return
@@ -159,7 +158,7 @@ const submit = handleSubmit(async (userEditData) => {
       createSnackbar({
         text: result.text,
         snackbarProps: {
-          color: 'green'
+          class: 'snackbar-success',
         }
       })
     }
@@ -168,8 +167,9 @@ const submit = handleSubmit(async (userEditData) => {
 
   } catch (error) {
     console.log(error)
+
     createSnackbar({
-      text: result,
+      text: error.message,
       snackbarProps: {
         color: 'red'
       }

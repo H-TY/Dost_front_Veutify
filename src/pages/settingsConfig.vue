@@ -36,10 +36,10 @@
 <script setup>
 import { ref, computed, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/stores/user.js'
-import { useThemeSettingStore } from '@/stores/themeSettings.js'
+import { useUserStore } from '@/stores/user'
+import { useThemeSettingStore } from '@/stores/themeSettings'
 import { useFormDirtyStore } from "@/stores/formDirty";
-import { settingFields } from '@/plugins/data_json'
+import { settingFields } from '@/validation'
 import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
 // import { useRoute } from 'vue-router'
@@ -263,12 +263,12 @@ const submit = handleSubmit(async (formData) => {
 
   } catch (error) {
     console.log("pages_settingsConfig_submit_error", error)
-    console.log({
-      message: error.message,
-      code: error.code,
-      response: error.response,
-      request: error.request,
-    })
+    // console.log({
+    //   message: error.message,
+    //   code: error.code,
+    //   response: error.response,
+    //   request: error.request,
+    // })
 
     createSnackbar({
       text: error.message,

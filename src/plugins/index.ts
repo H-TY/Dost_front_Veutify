@@ -9,6 +9,9 @@ import vuetify from "./vuetify";
 import pinia from "@/stores";
 import router from "@/router";
 
+// Vue 套件本身提供 App 的 TypeScript 型別
+import type { App } from "vue";
+
 // ● UI方塊跳出提示
 import VuetifyUseDialog from "vuetify-use-dialog";
 
@@ -39,7 +42,7 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 export default gsap;
 
 // 讓 Vue 應用程式的全域皆可以使用。
-export function registerPlugins(app) {
+export function registerPlugins(app: App) {
   app
     .use(vuetify)
     .use(router)

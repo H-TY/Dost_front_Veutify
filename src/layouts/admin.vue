@@ -45,13 +45,13 @@ import { ref, computed, onMounted, nextTick } from 'vue'
 import { useDisplay } from 'vuetify'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user'
-import { useThemeSettingStore } from '@/stores/themeSettings.js'
+import { useThemeSettingStore } from '@/stores/themeSettings'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from 'vuetify-use-dialog'
 import logOutBtn from '@/components/logOutBtn.vue'
 import floatingBtn from '@/components/floatingBtn.vue'
-// 引進生成的 data_json 檔案
-import { logo, adminNavItems } from '@/plugins/data_json'
+// 引進生成的 data 資料夾內的檔案
+import { logo, adminNavItems } from '@/data'
 
 
 // 解構出 mobile的斷點

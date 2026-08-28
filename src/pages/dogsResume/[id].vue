@@ -68,7 +68,7 @@ import { definePage } from 'vue-router/auto'
 import { storeToRefs } from "pinia";
 import { useFavoriteStore } from "@/stores/favorite";
 import { useRoute } from "vue-router";
-import { useApi } from "@/composables/axios";
+import { useApi } from "@/api";
 import { useNavigationById } from '@/composables/navigationById'
 import sectionTitle from '@/components/sectionTitle.vue'
 import { useSnackbar } from 'vuetify-use-dialog'

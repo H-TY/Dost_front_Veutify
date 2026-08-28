@@ -23,7 +23,7 @@
 
 <script setup>
 import { definePage } from 'vue-router/auto'
-import { logo, adminNavItems } from '@/plugins/data_json'
+import { logo, adminNavItems } from '@/data'
 import customCard from '@/components/Card'
 
 

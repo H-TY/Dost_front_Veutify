@@ -1,4 +1,4 @@
-import { useApi } from "./axios";
+import { useApi } from "@/api";
 
 const { backApi, apiAuth } = useApi();
 

@@ -179,10 +179,10 @@ import { useDisplay } from 'vuetify'
 import * as yup from 'yup'
 import { useForm, useField, useFieldArray, Field } from 'vee-validate'
 import { definePage } from 'vue-router/auto'
-import { useApi } from '@/composables/axios'
+import { useApi } from "@/api";
 import { useTitleScrollDown, useTableScroll } from '@/composables/scrollAddClass'
 import { scrollToTop } from "@/composables/scrollToTop";
-import { dogFields } from '@/plugins/data_json'
+import { dogFields } from '@/data'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 

@@ -38,17 +38,18 @@
 </template>
 
 <script setup>
+import { ref, computed, watch } from 'vue'
 // 引用 vee-validate 套件的 useForm、useField 來建立驗證表格和建立驗證欄位資料
 import { useForm, useField } from 'vee-validate'
 // yup 套件，用來建立定義驗證的資料格式
 import * as yup from 'yup'
-import validator from 'validator'
+import { accountFields } from "@/validation"
 // 引進 axios （已將路徑定義至後端 api）
-import { useApi } from '@/composables/axios'
+import { useApi } from "@/api";
 import { useRouter } from 'vue-router'
 import { definePage } from 'vue-router/auto'
 import { useSnackbar } from 'vuetify-use-dialog'
-import { ref, computed, watch } from 'vue'
+import { logo } from "@/data"
 import multiavatar from '@multiavatar/multiavatar/esm'
 
 
@@ -61,8 +62,6 @@ definePage({
   }
 })
 
-// Logo
-const logo = { to: '/userZone', img: new URL('@/assets/Dost_logo.png', import.meta.url).href }
 
 
 // 隨機生成英數字
@@ -78,44 +77,18 @@ const { backApi } = useApi()
 const router = useRouter()
 const createSnackbar = useSnackbar()
 
+
+
 // 用 yup.object({}) 將要驗證的資料建立成物件陣列
 const registerFormData = yup.object({
-  account: yup
-    .string()
-    .required('使用者帳號必填')
-    .min(4, '使用者帳號文字最少 4 個字')
-    .max(20, '使用者帳號文字最多 20 個字')
-    // .text(自訂驗證名稱, 錯誤訊息, 驗證 function)
-    .test('驗證 account', '使用者帳號格式錯誤',
-      (value) => {
-        return validator.isAlphanumeric(value)
-      }
-    ),
-  password: yup
-    .string()
-    .required('密碼必填')
-    .min(4, '使用者密碼最少 4 個字')
-    .max(20, '使用者密碼最多 20 個字'),
-  passwordConfirm: yup
-    .string()
-    .required('確認密碼必填')
-    // .oneOf(陣列, 錯誤訊息) 只允許符合陣列內其中一個值
-    // .ref('password') 代表這個 schema 的 password 的欄位值
-    .oneOf([yup.ref('password')], '密碼不一致'),
-  email: yup
-    .string()
-    .required('信箱必填')
-    .test(
-      '驗證 Email', '使用者信箱格式錯誤',
-      (value) => {
-        return validator.isEmail(value)
-      }
-    ),
-  image: yup
-    .string(),
-  accountBgImage: yup
-    .string(),
+  account: accountFields.account,
+  password: accountFields.password,
+  passwordConfirm: accountFields.passwordConfirm,
+  email: accountFields.email,
+  image: accountFields.image,
+  accountBgImage: accountFields.accountBgImage,
 })
+
 
 
 // ● 順序一定要"先建立驗證表單，後面接建立的驗證欄位"

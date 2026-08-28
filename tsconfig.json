@@ -1,0 +1,55 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    // ● File Layout
+    // "rootDir": "./src", // 程式碼根目錄(要編譯的檔案位置)
+    // "outDir": "./dist", // 編譯輸出目錄
+
+    // ● Environment Settings
+    // See also https://aka.ms/tsconfig/module
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "esnext",
+    "paths": {
+      "@/*": ["./src/*"] // 因 vite 有設定 @ alias，這邊也要同步設定，讓 TS 可以解析含 "@" 的路徑
+    },
+    // "types": [], // 型別定義檔；不寫，則預設自動搜尋包含所有 @types 開頭的套件（../@types/... 路徑下的檔案）；若有寫，則表示只載入指定的型別。
+    // ● For nodejs:
+    // "lib": ["esnext"],
+    // "types": ["node"],
+    // and npm install -D @types/node
+
+    // ● Other Outputs
+    "sourceMap": true, // 產生對應的 .map 檔案，能將編譯後的 JavaScript 對應回 TypeScript 程式碼（方便找尋 code 的位置）
+    // "declaration": true, // 產生 .d.ts 類型定義檔案
+    // "declarationMap": true, // 產生 .d.ts.map 檔案
+
+    // ● Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true, // 是否會給不確定的索引取值加上 undefined
+    "exactOptionalPropertyTypes": true,  // 是否允許給可選屬性 undefined 值，設定為 true 為不允許
+
+    // ● Style Options
+    // "noImplicitReturns": true,
+    // "noImplicitOverride": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    // "noFallthroughCasesInSwitch": true,
+    // "noPropertyAccessFromIndexSignature": true,
+
+    // ● Recommended Options
+    "strict": true, // 嚴格模式，建議開啟
+    // "jsx": "react-jsx", // 這是 React JSX 的設定
+    "verbatimModuleSyntax": true, // 控制 TypeScript 編譯前後 module 語法是否保持一致（import/export 不會被轉成 require）
+    "isolatedModules": true, // 每個檔案將被獨立編譯
+    "noUncheckedSideEffectImports": true, // 只有 "import xxx" 沒給值的副作用會檢查是否有效，無效時拋出錯誤
+    
+    // 控制 TypeScript 如何判斷檔案是純程式碼腳本還是模組
+    // 設置為 force 使 TypeScript 將所有檔案視為模組, 避免了使用全域變數引起的錯誤
+    // "moduleDetection": "force",
+    "skipLibCheck": true, // 跳過對 .d.ts 的型別檢查
+  },
+  // 包含指定要檢查 TS 的資料夾
+  "include": ["src"],
+  // 排除要檢查 TS 的資料夾
+  "exclude": ["node_modules"]
+}

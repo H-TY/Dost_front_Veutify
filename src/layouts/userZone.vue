@@ -66,11 +66,11 @@ import { ref, computed, onMounted } from 'vue'
 import { useDisplay } from 'vuetify'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user'
-import { useThemeSettingStore } from '@/stores/themeSettings.js'
+import { useThemeSettingStore } from '@/stores/themeSettings'
 import logOutBtn from '@/components/logOutBtn.vue'
 import userPhoto from '@/components/userPhoto.vue'
 import userAccountBg from '@/components/userAccountBg.vue'
-import { logo, userZoneNavItems } from '@/plugins/data_json'
+import { logo, userZoneNavItems } from '@/data'
 
 
 

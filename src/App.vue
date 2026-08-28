@@ -16,13 +16,13 @@
   </v-app>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user';
-import { useThemeSettingStore } from '@/stores/themeSettings.js'
+import { useThemeSettingStore } from '@/stores/themeSettings'
 import AdminLayout from '@/layouts/admin.vue'
 import UserLayout from '@/layouts/userZone.vue'
 import EmptyLayout from '@/layouts/empty.vue'
@@ -36,14 +36,14 @@ const route = useRoute()
 
 // ● 使用 Vite 提供的特殊 API，用來「批次抓取資料夾裡的檔案」。
 // 可以不用自己計算有幾張圖，系統會自己抓取圖片
-const images = import.meta.glob("@/assets/img/enterAnmi_img/*.avif", {
+const images = import.meta.glob<string>("@/assets/img/enterAnmi_img/*.avif", {
   eager: true, // 立即 import 檔案，而不是等到使用時才載入
   import: "default", // 只取每個檔案的 default export（通常就是檔案的 URL）
 });
 
 // ● 進場動畫設定
-const showAnmi = ref(true)
-const fadeAnmi = ref(false)
+const showAnmi = ref<boolean>(true)
+const fadeAnmi = ref<boolean>(false)
 
 const anmiSet = () => {
   // 設定進場動畫透明度變成 0

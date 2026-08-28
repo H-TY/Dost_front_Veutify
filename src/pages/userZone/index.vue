@@ -41,9 +41,9 @@ import { useForm, useField } from 'vee-validate'
 import { definePage } from 'vue-router/auto'
 import { ref, computed, watch, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { useApi } from '@/composables/axios'
+import { useApi } from "@/api";
 import customCard from '@/components/Card.vue'
-import { accountFields } from '@/plugins/data_json'
+import { accountFields } from '@/validation'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
@@ -304,7 +304,7 @@ const submit = handleSubmit(async (formData) => {
     console.log('error', error)
 
     createSnackbar({
-      text: error,
+      text: error.message,
       snackbarProps: {
         class: 'snackbar-fail',
         // timeout: -1   // ✅ 永不自動關閉

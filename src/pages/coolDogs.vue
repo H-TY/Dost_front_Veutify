@@ -19,7 +19,7 @@
 import { ref, watch } from 'vue'
 import { definePage } from 'vue-router/auto'
 import { useDisplay } from 'vuetify'
-import { useApi } from '@/composables/axios'
+import { useApi } from "@/api";
 import { useSnackbar } from 'vuetify-use-dialog'
 import DogsCard from '@/components/dogsCard.vue'
 

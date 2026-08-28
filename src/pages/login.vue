@@ -42,7 +42,7 @@
 import { useForm, useField } from 'vee-validate'
 // yup 套件，用來建立定義驗證的資料格式
 import * as yup from 'yup'
-import validator from 'validator'
+import { accountFields } from "@/validation"
 import { useRouter } from 'vue-router'
 import { definePage } from 'vue-router/auto'
 // 引用 stores 資料夾內的 user.js
@@ -64,23 +64,10 @@ const createSnackbar = useSnackbar()
 
 // 用 yup 將要驗證的資料建立成物件陣列
 const loginFormData = yup.object({
-  account: yup
-    .string()
-    .required('使用者帳號必填')
-    .min(4, '使用者帳號文字最少 4 個字')
-    .max(20, '使用者帳號文字最多 20 個字')
-    // .text(自訂驗證名稱, 錯誤訊息, 驗證 function)
-    .test('驗證 account', '使用者帳號格式錯誤',
-      (value) => {
-        return validator.isAlphanumeric(value)
-      }
-    ),
-  password: yup
-    .string()
-    .required('密碼必填')
-    .min(4, '使用者密碼最少 4 個字')
-    .max(20, '使用者密碼最多 20 個字'),
+  account: accountFields.account,
+  password: accountFields.password,
 })
+
 
 // ● 順序一定要"先建立驗證表單，後面接建立的驗證欄位"
 // 驗證表單 useForm

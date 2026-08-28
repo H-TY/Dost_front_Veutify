@@ -27,7 +27,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue"
 import { definePage } from 'vue-router/auto'
-import { useApi } from '@/composables/axios'
+import { useApi } from "@/api";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/user";
 import { useFavoriteStore } from "@/stores/favorite";

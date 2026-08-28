@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
+    "type-watch": "vue-tsc --noEmit --watch",
+    "type-check":"vue-tsc --noEmit",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix --ignore-path .gitignore"
@@ -26,6 +28,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@types/node": "^26.2.0",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/eslint-config-standard": "^8.0.1",
     "eslint": "^8.57.0",
@@ -39,6 +42,7 @@
     "pinia": "^2.1.7",
     "sass": "1.77.6",
     "sass-loader": "^16.0.2",
+    "typescript": "^6.0.3",
     "unplugin-auto-import": "^0.17.6",
     "unplugin-fonts": "^1.1.1",
     "unplugin-vue-components": "^0.27.2",
@@ -46,7 +50,8 @@
     "vite": "^5.3.3",
     "vite-plugin-vue-layouts": "^0.11.0",
     "vite-plugin-vuetify": "^2.0.3",
-    "vue-router": "^4.4.0"
+    "vue-router": "^4.4.0",
+    "vue-tsc": "^3.3.9"
   },
   "description": "This is the official scaffolding tool for Vuetify, designed to give you a head start in building your new Vuetify application. It sets up a base template with all the necessary configurations and standard directory structure, enabling you to begin development without the hassle of setting up the project from scratch.",
   "main": ".eslintrc.js",

@@ -72,7 +72,7 @@ import { useRoute } from 'vue-router'
 import { useForm, useField } from 'vee-validate'
 import { useUserStore } from '@/stores/user'
 import { useBookingOrderStore } from '@/stores/bookingOrder'
-import { useApi } from '@/composables/axios'
+import { useApi } from "@/api";
 import { useTitleScrollDown, useTableScroll } from '@/composables/scrollAddClass'
 import { scrollToTop } from "@/composables/scrollToTop";
 import OrderInfoCard from '@/components/orderInfoCard'

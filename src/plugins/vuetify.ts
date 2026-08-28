@@ -7,7 +7,7 @@
 // Styles
 import "@mdi/font/css/materialdesignicons.css"; // 提供 Vuetify Icon 元件（如 <v-icon>) 所需的字型和 CSS
 import "vuetify/styles"; // 元件的預設樣式、Grid、RWD 斷點支援
-import "@/styles/style.scss"; // 引用自定義的 SCSS 樣式檔案，後續 vite 打包時會自動處理轉譯成 CSS 檔案
+// import "@/styles/style.scss"; // 引用自定義的 SCSS 樣式檔案，後續 vite 打包時會自動處理轉譯成 CSS 檔案
 
 // Composables
 import { createVuetify } from "vuetify";

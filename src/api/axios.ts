@@ -72,7 +72,7 @@ apiAuth.interceptors.response.use(
     }
     // 回傳原本請求的錯誤到呼叫 apiAuth 的地方
     return Promise.reject(error);
-  }
+  },
 );
 
 export const useApi = () => {

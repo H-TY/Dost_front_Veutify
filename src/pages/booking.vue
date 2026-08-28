@@ -128,7 +128,7 @@ import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue'
 import { useDisplay } from 'vuetify'
 import { definePage } from 'vue-router/auto'
 import { useRoute, useRouter } from 'vue-router'
-import { useApi } from '@/composables/axios'
+import { useApi } from "@/api";
 import { useUserStore } from '@/stores/user'
 import { useBookingOrderStore } from '@/stores/bookingOrder'
 import { useSnackbar } from 'vuetify-use-dialog'

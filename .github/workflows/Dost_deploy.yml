@@ -1,0 +1,107 @@
+# ● CI / CD 原理
+#
+# GitHub Repository
+# ├── main
+# │    └── 主要分支：存放專案原始碼
+# │
+# └── gh-pages
+#      └── 部署分支：存放 Build 完成後的網站檔案
+#
+# 當程式碼 push 到 main：
+#
+# main
+#   ↓
+# 觸發 GitHub Actions Workflow
+#   ↓
+# CI：安裝依賴、TypeScript 型別檢查、Build
+#   ↓
+# Build 成功
+#   ↓
+# CD：將 dist/ 部署到 gh-pages
+#   ↓
+# GitHub Pages
+#   ↓
+# 將 gh-pages 的網站檔案提供給瀏覽器
+
+#※ 補充
+# CI ==> Continuous Integration — 持續整合
+# CD ==> 有兩種：
+#           Continuous Deployment — 持續部署
+#           Continuous Delivery   — 持續交付（需要另外手動按「部署」）
+
+# ┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬
+# ┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴
+# ● CI/CD 自動化流程（Pipeline）
+
+# Action 名稱
+name: Dost Deploy
+
+# 觸發時機，當推送到分支 main 時
+on:
+  push:
+    branches: [main]
+
+# 執行的工作
+jobs:
+  # 工作名稱：編譯
+  compile:
+    # 執行工作的虛擬機作業系統
+    runs-on: ubuntu-latest
+    # 工作步驟
+    steps:
+      # 步驟 1：複製程式碼
+      - name: checkout
+        # 使用的 actions/checkout 複製程式碼
+        uses: actions/checkout@v4
+
+      # 步驟 2：在虛擬機作業系統建置開發環境
+      - name: Install
+        run: npm install
+
+      # 步驟 3：檢查 TS
+      - name: Check TypeScript
+        run: npm run type-check
+
+      # 步驟 4：打包輸出成網站檔案
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API: ${{ secrets.VITE_API }}
+
+      # 步驟 5：建立 .nojekyll（GitHub Pages 部署環境的特殊處理）
+      # 避免 GitHub Pages 使用 Jekyll 處理檔案時，忽略 _ 開頭的檔案，而導致轉跳至網頁 4040
+      # 例如：[id].vue 的檔案，[id] 是動態路由的命名方式，Vite 編譯時把 [ ] 轉成 _，所以一定會產生 _ 開頭的檔案。
+      - name: Add .nojekyll
+        run: touch dist/.nojekyll
+
+      # 步驟 6：將 Build 完成的檔案上傳至 GitHub Artifact 暫存，供需要者（如後續 "部屬" 的工作）下載使用
+      - name: Upload dist
+        uses: actions/upload-artifact@v4
+        with:
+          # 這個 Artifact 的名稱
+          name: dost-dist
+          # 指定要 "上傳" 的檔案或資料夾路徑。
+          path: dist
+
+  # 工作名稱：部署
+  deploy:
+    needs: compile
+    runs-on: ubuntu-latest
+    steps:
+      # 步驟 1：下載 Compile Job 上傳的 Artifact
+      # Artifact 名稱為 dost-dist，下載後放入 dist 資料夾，後續要部屬到分支用
+      - name: Download dist
+        uses: actions/download-artifact@v4
+        with:
+          name: dost-dist
+          # 指定要 "下載" 的檔案或資料夾路徑。
+          path: dist
+
+      # 步驟 2：將已經 Build 完成的檔案部屬到分支
+      - name: Deploy to Other Branch
+        uses: JamesIves/github-pages-deploy-action@v4.6.5
+        with:
+          branch: gh-pages
+          folder: dist
+          # clean 在每次部署前，先把 gh-pages 分支「舊的檔案全部刪掉」，再上傳新的 dist，防止「舊 build 檔案殘留」導致 JS chunk 404 / dynamic import error
+          clean: true

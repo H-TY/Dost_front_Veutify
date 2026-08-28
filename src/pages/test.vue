@@ -78,7 +78,7 @@ import { ref, computed, onMounted, watch } from "vue"
 import { definePage } from 'vue-router/auto'
 import { useSnackbar } from 'vuetify-use-dialog'
 import { useDisplay } from 'vuetify';
-import { useApi } from '@/composables/axios'
+import { useApi } from "@/api";
 import sectionTitle from '@/components/sectionTitle.vue'
 
 

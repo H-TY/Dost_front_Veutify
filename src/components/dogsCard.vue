@@ -88,13 +88,21 @@ const isLike = computed(() => {
 });
 
 // ● 當點擊 收藏/追蹤 icon
-const clickLikeIcon = async (passInCat, passInId) => {
+const clickLikeIcon = async (type, id) => {
+  try {
+    const res = await favoriteStore.toggleLike(type, id)
 
-  const res = await favoriteStore.toggleLike(passInCat, passInId)
-
-  if (!res.success) {
     createSnackbar({
-      text: res.msg || "發生錯誤",
+      text: res,
+      snackbarProps: {
+        class: "snackbar-success",
+        timer: "5000",
+      },
+    });
+
+  } catch (error) {
+    createSnackbar({
+      text: error.message,
       snackbarProps: {
         class: "snackbar-fail",
         timer: "5000",
