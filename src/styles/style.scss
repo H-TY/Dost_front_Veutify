@@ -4612,8 +4612,19 @@ footer {
 		}
 	}
 
+	// 版本字號預設文字為隱藏，需點擊才能看到
 	.git-ver {
+		color: transparent;
 		text-align: center;
+
+		&.git-ver-show {
+			color: $thirdColor;
+		}
+
+		// &::selection {
+		// 	color: $thirdColor;
+		// 	// background: transparent;
+		// }
 	}
 
 	@include rsp-down(md) {
