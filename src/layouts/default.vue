@@ -171,7 +171,7 @@
           前端網頁設計課程 — <strong>期末專題作業</strong>
         </v-col>
 
-        <v-col class="git-ver" cols="12" sm="4">
+        <v-col class="git-ver" :class="{ 'git-ver-show': gitVerShow }" cols="12" sm="4" @click="toggleGitVerShow">
           Git：{{ gitCommit }}．{{ buildDate }}
         </v-col>
 
@@ -218,7 +218,15 @@ const cart = computed(() => {
 })
 
 
-// 自動輸出網站 Git 更新版本與日期
+// ● Git 版本號預設為隱藏，需點擊一次才會顯示
+const gitVerShow = ref(false)
+
+const toggleGitVerShow = () => {
+  gitVerShow.value = !gitVerShow.value
+}
+
+
+// ● 自動輸出網站 Git 更新版本與日期
 const gitCommit = import.meta.env.VITE_GIT_COMMIT?.slice(0, 7) ?? "部署後生成版號";
 const buildDate = import.meta.env.VITE_BUILD_DATE
   ? new Date(
