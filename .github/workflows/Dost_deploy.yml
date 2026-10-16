@@ -15,7 +15,7 @@
 #
 # 流程（參照下半部的自動化部屬）：
 #
-# features/AAA
+# push 分支 features/AAA 至遠端倉庫
 #   ↓
 # Pull Request（PR）到 main
 #   ↓
