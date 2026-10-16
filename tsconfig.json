@@ -49,7 +49,7 @@
     "skipLibCheck": true, // 跳過對 .d.ts 的型別檢查
   },
   // 包含指定要檢查 TS 的資料夾
-  "include": ["src"],
+  "include": ["src", "tests"],
   // 排除要檢查 TS 的資料夾
   "exclude": ["node_modules"]
 }
