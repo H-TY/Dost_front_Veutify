@@ -40,7 +40,7 @@
 
         <!-- ● 預約表單填寫 -->
         <v-col md="6">
-          <v-form class="booking-form" @submit.prevent="submit" :disabled="isSubmitting">
+          <v-form ref="formRef" class="booking-form" @submit.prevent="submit" :disabled="isSubmitting">
 
             <v-text-field label="預約人姓名" variant="underlined" v-model="name.value.value" :error-messages="name.errorMessage.value"></v-text-field>
 
@@ -613,6 +613,30 @@ const loadDinfo = async (passInData) => {
 }
 
 
+// ● 檢查預約表單是否有發生錯誤的欄位，並找出哪一個欄位
+const formRef = ref(null)
+const checkFormError = () => {
+
+  // 只取第一個錯誤欄位的錯誤訊息
+  const formErrorsID = formRef.value.errors[0].id
+
+  // 滾動至該欄位
+  document.getElementById(formErrorsID).scrollIntoView({
+    behavior: 'smooth',
+    block: 'center',
+  })
+
+  // 底部跳出訊息提示
+  createSnackbar({
+    text: '有欄位尚未填寫或格式錯誤，請查看紅色錯誤提示',
+    snackbarProps: {
+      class: 'snackbar-fail',
+      timeout: 5000
+    }
+  })
+}
+
+
 
 // ● 取出各種計算結果
 const {
@@ -822,6 +846,7 @@ function useFormUpdate() {
 
 
 // ★ FormData 直接傳至後端處理會失敗，需再經過 multer 的套件解析 form-data，才能傳入後端
+// handleSubmit(第一個參數：成功時的 callback 函式, 第二個參數：失敗時的 callback 函式)
 const submit = handleSubmit(async (values) => {
   // console.log('有觸發 submit')
   // console.log('submit values', values)
@@ -960,7 +985,15 @@ const submit = handleSubmit(async (values) => {
       }
     })
   }
-})
+},
+  // handleSubmit 的第二個參數
+  /* 寫法說明：
+    checkFormError()      立即執行
+    checkFormError        傳遞函式，等待呼叫
+    ()=>checkFormError()	傳遞匿名函式，等待呼叫
+ */
+  checkFormError
+)
 
 
 
@@ -978,6 +1011,7 @@ onMounted(async () => {
   })
 
   await loadItems()
+
 })
 
 </script>
