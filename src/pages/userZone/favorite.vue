@@ -104,8 +104,10 @@ const getDogLikeDetail = async () => {
 
   // 判斷 favoriteData.value.dogLike 為空陣列，若是則不發送請求
   if (favoriteData.value.dogLike.length === 0) {
+    dogLikeDetail.value = []
     return
   }
+
 
   try {
     const { data } = await apiAuth.get(`/dogs/multipleItems`, {
@@ -121,16 +123,11 @@ const getDogLikeDetail = async () => {
     console.log(error)
   }
 }
-
-
-onMounted(() => {
-  getDogLikeDetail()
-})
+getDogLikeDetail()
 
 
 
 </script>
-
 
 
 <route lang="yaml">

@@ -1,9 +1,7 @@
 <template>
   <div class="dogs-card">
     <!-- 加入我的最愛 icon -->
-    <div class="like-box" @click="clickLikeIcon('dog', _id)">
-      <v-icon :class="['like-icon', { active: isLike, anime }]" icon="mdi-heart" @animationend="anime = false"></v-icon>
-    </div>
+    <likeBtn :type="'dog'" :id="_id"></likeBtn>
 
     <router-link :to="`/dogsResume/${_id}`" class="card-img">
       <div class="search-icon-show">
@@ -41,19 +39,13 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/stores/user'
-import { useFavoriteStore } from '@/stores/favorite'
 import { useRouter, useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { useSnackbar } from 'vuetify-use-dialog'
 import { useNavigationById } from '@/composables/navigationById.js'
+import likeBtn from '@/components/likeBtn.vue'
 
 
-
-const userStore = useUserStore()
-const favoriteStore = useFavoriteStore()
-const { clickedId, favoriteData } = storeToRefs(favoriteStore)
 const route = useRoute() // 目前路由狀態（「現在在哪」），詳細說明看最底下
 const router = useRouter() // 負責「跳轉、返回、取路由設定」（「要去哪、怎麼去」），詳細說明看最底下
 const { mobile } = useDisplay()
@@ -75,62 +67,8 @@ const bookingAddId = () => {
 }
 
 
-
 // ● 藉由傳入的 props 推算預約按鈕狀態，後續根據狀態設定樣式
 const bookingState = computed(() => props.booking === '預約已滿');
-
-
-// ● 渲染收藏/追蹤狀態
-const isLike = computed(() => {
-  const isHave = favoriteData.value.dogLike.includes(props._id);
-
-  return isHave;
-});
-
-// ● 當點擊 收藏/追蹤 icon
-const clickLikeIcon = async (type, id) => {
-  try {
-    const res = await favoriteStore.toggleLike(type, id)
-
-    createSnackbar({
-      text: res,
-      snackbarProps: {
-        class: "snackbar-success",
-        timer: "5000",
-      },
-    });
-
-  } catch (error) {
-    createSnackbar({
-      text: error.message,
-      snackbarProps: {
-        class: "snackbar-fail",
-        timer: "5000",
-      },
-    });
-  }
-}
-
-
-// ● 定義是否添加動畫樣式名稱 .anime
-const anime = ref(false)
-
-// ● 監聽 favoriteData.value.dogLike 的變動，觸發指定 dogsCard 的動畫
-watch(favoriteData, async (newVal) => {
-  // console.log('newVal', newVal)
-  // 依據點擊的 dogId 判斷是否與傳入的 dogsCard 的 props._id 是否相等
-  // => 等於動畫只作用於有觸發點擊的 dogsCard
-  if (clickedId.value === props._id) {
-    anime.value = true
-  }
-
-}, {
-  deep: true // 因為 favoriteData 是槽狀物件，需要加上 deep: true，才能追蹤到更深層的值
-})
-
-
-
-
 
 
 

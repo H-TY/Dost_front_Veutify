@@ -5,9 +5,7 @@
       <div class="bg">
 
         <!-- 加入我的最愛 icon -->
-        <div class="like-box" @click="clickLikeIcon('dog', dogId)">
-          <v-icon :class="['like-icon', { active: isLike, anime }]" icon="mdi-heart" @animationend="anime = false"></v-icon>
-        </div>
+        <likeBtn :type="'dog'" :id="dogId"></likeBtn>
 
         <sectionTitle title="汪星人小檔案" enTitle="profile"></sectionTitle>
 
@@ -63,14 +61,13 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue"
+import { ref } from "vue"
 import { definePage } from 'vue-router/auto'
-import { storeToRefs } from "pinia";
-import { useFavoriteStore } from "@/stores/favorite";
 import { useRoute } from "vue-router";
 import { useApi } from "@/api";
 import { useNavigationById } from '@/composables/navigationById'
 import sectionTitle from '@/components/sectionTitle.vue'
+import likeBtn from '@/components/likeBtn.vue'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 
@@ -84,8 +81,7 @@ definePage({
 })
 
 
-const favoriteStore = useFavoriteStore()
-const { clickedId, favoriteData } = storeToRefs(favoriteStore)
+
 const route = useRoute()
 // console.log('route', route)
 const { backApi } = useApi()
@@ -117,40 +113,6 @@ const getDogData = async () => {
   }
 }
 getDogData() // 這邊要自己呼叫一次，才能在載入頁面時觸發向後端請求資料
-
-
-// ● 計算是否已加入收藏/追蹤
-const isLike = computed(() => {
-  const isHave = favoriteData.value.dogLike.includes(dogId)
-
-  return isHave
-})
-
-
-// ● 點擊 icon，觸發加入 收藏/追蹤 
-const clickLikeIcon = async (passInCat, passInId) => {
-  const res = await favoriteStore.toggleLike(passInCat, passInId)
-
-  if (!res.success) {
-    createSnackbar({
-      text: res.msg || "發生錯誤",
-      snackbarProps: {
-        class: "snackbar-fail",
-        timer: "5000",
-      },
-    })
-  }
-}
-
-
-// ● 點擊後，添加動畫
-const anime = ref(false)
-
-watch(() => favoriteData.value.dogLike, (newVal) => {
-  if (clickedId.value === dogId) {
-    anime.value = true
-  }
-})
 
 
 </script>
