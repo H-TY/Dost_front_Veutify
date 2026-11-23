@@ -2577,18 +2577,16 @@ body {
 				transform: scale(1);
 			}
 
-			.like-icon {
-				&.active {
-					// 變數宣告
-					--CST-offset: 1px;
-					--CST-blur: 0.5px;
+			// .like-icon {
+			// 	// 變數宣告
+			// 	--CST-offset: 1px;
+			// 	--CST-blur: 1px;
 
-					filter: drop-shadow(calc(var(--CST-offset) * -1) calc(var(--CST-offset) * -1) var(--CST-blur) rgba(white, 1))
-						drop-shadow(var(--CST-offset) var(--CST-offset) var(--CST-blur) rgba(white, 1))
-						drop-shadow(calc(var(--CST-offset) * -1) var(--CST-offset) var(--CST-blur) rgba(white, 1))
-						drop-shadow(var(--CST-offset) calc(var(--CST-offset) * -1) var(--CST-blur) rgba(white, 1));
-				}
-			}
+			// 	filter: drop-shadow(calc(var(--CST-offset) * -1) calc(var(--CST-offset) * -1) var(--CST-blur) rgba(lighten($mainColor, 20%), 1))
+			// 		drop-shadow(var(--CST-offset) calc(var(--CST-offset) * -1) var(--CST-blur) rgba(darken($mainColor, 12%), 1))
+			// 		drop-shadow(calc(var(--CST-offset) * -1) var(--CST-offset) var(--CST-blur) rgba(lighten($mainColor, 20%), 1))
+			// 		drop-shadow(var(--CST-offset) var(--CST-offset) var(--CST-blur) rgba(darken($mainColor, 12%), 1));
+			// }
 		}
 
 		.section-title-box {

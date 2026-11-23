@@ -13,6 +13,7 @@ declare module 'vue' {
     DialogCloseBtn: typeof import('./src/components/dialogCloseBtn.vue')['default']
     DogsCard: typeof import('./src/components/dogsCard.vue')['default']
     FloatingBtn: typeof import('./src/components/floatingBtn.vue')['default']
+    LikeBtn: typeof import('./src/components/likeBtn.vue')['default']
     LogOutBtn: typeof import('./src/components/logOutBtn.vue')['default']
     OrderInfoCard: typeof import('./src/components/orderInfoCard.vue')['default']
     OrderList: typeof import('./src/components/orderList.vue')['default']

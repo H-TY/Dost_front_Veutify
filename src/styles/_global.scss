@@ -468,51 +468,104 @@ hr {
 }
 
 // ● 加入收藏/追蹤按鈕
-.like-box {
-	padding: 20px;
+.like-btn {
+	// 宣告變數
+	--with-height: 80px;
+
+	width: var(--with-height);
+	height: var(--with-height);
 	position: absolute;
 	top: 0px;
 	right: 0px;
 	z-index: 99;
 
-	&::before {
-		content: '';
+	.like-box {
 		width: 100%;
 		height: 100%;
-		background: rgba($text, 0.7);
-		border-radius: 50px 0 50px 50px;
-		mix-blend-mode: plus-lighter;
-		position: absolute;
-		top: 0;
-		right: 0;
-		transform-origin: right top;
-		transform: scale(0);
-		transition: 0.2s ease-in;
-	}
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
-	&:hover {
-		cursor: pointer;
+		// 宣告變數
+		--icon-size: calc(2rem + 0.5vw);
 
 		&::before {
-			transform: scaleY(1);
+			content: '';
+			width: 100%;
+			height: 100%;
+			background: rgba($text, 0.7);
+			border-radius: 50px 0 50px 50px;
+			mix-blend-mode: plus-lighter;
+			position: absolute;
+			top: 0;
+			right: 0;
+			transform-origin: right top;
+			transform: scale(0);
+			transition: 0.2s ease-in;
+		}
+
+		&:hover {
+			cursor: pointer;
+
+			&::before {
+				transform: scaleY(1);
+			}
+		}
+
+		&.disabled {
+			pointer-events: none;
+			// mix-blend-mode: multiply;
+		}
+
+		.like-icon {
+			font-size: var(--icon-size);
+			color: white;
+			position: relative;
+			isolation: isolate;
+			filter: drop-shadow(2px 2px 2px rgba($text, 0.2));
+			// transition: 0.1s ease-in;
+
+			// &.active {
+			// 	font-size: calc(2.3rem + 0.5vw);
+			// 	color: $btnRed;
+			// }
+
+			// &.anime {
+			// 	// 動畫設定
+			// 	animation: scale_jump 0.3s ease-in 1;
+			// }
+		}
+
+		.like-icon-fill {
+			font-size: var(--icon-size);
+			color: $btnRed;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+
+			&::before {
+				clip-path: inset(100% 0 0 0);
+				transition: 1s ease-in;
+			}
+
+			&.active {
+				&::before {
+					clip-path: inset(0% 0 0 0);
+				}
+			}
 		}
 	}
 
-	.like-icon {
-		font-size: calc(2rem + 0.5vw);
-		color: white;
-		filter: drop-shadow(2px 2px 2px rgba($text, 0.2));
-		transition: 0.1s ease-in;
-
-		&.active {
-			font-size: calc(2.3rem + 0.5vw);
-			color: $btnRed;
-		}
-
-		&.anime {
-			// 動畫設定
-			animation: scale_jump 0.3s ease-in 1;
-		}
+	// 當作遮罩，需能接收滑鼠事件，防止點擊穿透至下層，觸發下層元素的事件
+	.overlay {
+		width: 100%;
+		height: 100%;
+		background: transparent;
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		z-index: -1;
 	}
 }
 
