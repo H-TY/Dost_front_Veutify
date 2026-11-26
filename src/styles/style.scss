@@ -2993,25 +2993,36 @@ body {
 					.v-field--disabled {
 						opacity: 1;
 
-						&.v-field--error {
-							.v-field-label {
-								color: var(--message-red) !important;
-							}
-						}
-
 						.v-field__outline {
 							&::before {
 								border-image: unset;
 							}
 						}
 					}
+				}
+
+				.v-input--error {
+					// background: var(--message-red);
+
+					.v-field-label {
+						// color: white;
+						color: var(--message-red);
+						font-weight: 600;
+					}
+
+					.v-field__outline {
+						&::before {
+							border-width: 0 0 2px;
+							border-color: var(--message-red);
+						}
+					}
 
 					.v-input__details {
 						opacity: 0.7;
 
-						.v-messages {
-							// color: var(--message-red) !important;
-							color: $gtext;
+						.v-messages__message {
+							color: var(--message-red);
+							// color: $gtext;
 						}
 					}
 				}
