@@ -29,7 +29,7 @@
           </template>
 
           <template v-else>
-            <v-date-picker ref="refDatePicker" v-model="date" @click="dialogOpen" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event"></v-date-picker>
+            <v-date-picker ref="refDatePicker" v-model="date" @click="dialogOpen" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event" @update:model-value="bookingDate.handleChange(chooseBDate)"></v-date-picker>
           </template>
 
           <div class="notice">
@@ -87,7 +87,7 @@
             </v-text-field>
 
             <!-- 送出表單按鈕 -->
-            <v-btn class="submit-btn" type="submit" @click="useFormUpdate" :loading="isSubmitting">送出預約</v-btn>
+            <v-btn class="submit-btn" type="submit" :loading="isSubmitting">送出預約</v-btn>
           </v-form>
         </v-col>
       </v-row>
@@ -99,7 +99,7 @@
 
           <v-divider></v-divider>
 
-          <v-checkbox hide-details v-model="selectedTime" v-for="el in sortBookingTimeData" :label="el" :value="el" false-icon="mdi-paw-outline" true-icon="mdi-paw"></v-checkbox>
+          <v-checkbox hide-details v-model="selectedTime" v-for="el in sortBookingTimeData" :label="el" :value="el" @update:model-value="bookingTime.handleChange($event)" false-icon="mdi-paw-outline" true-icon="mdi-paw"></v-checkbox>
 
           <dialogCloseBtn @click="chooseTimeDialog = false"></dialogCloseBtn>
         </div>
@@ -132,9 +132,10 @@ import { useApi } from "@/api";
 import { useUserStore } from '@/stores/user'
 import { useBookingOrderStore } from '@/stores/bookingOrder'
 import { useSnackbar } from 'vuetify-use-dialog'
-import DogsCard from '@/components/dogsCard.vue'
 import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
+import { orderFields } from '@/validation'
+import DogsCard from '@/components/dogsCard.vue'
 import OrderInfoCard from '@/components/orderInfoCard'
 import dialogCloseBtn from '@/components/dialogCloseBtn.vue'
 // 引用需要 swiper 的 modules
@@ -476,10 +477,12 @@ function reSwiper() {
     swiperInstance.value.slideTo(moveToIndex, 0, false)
 
     loadDinfo(currentID)
+    // console.log('Dinfo.value-指定', Dinfo.value)
 
   } else {
     // 沒有 route.query.id 傳入，使用預設值
     initSwiperHash()
+    // console.log('Dinfo.value1', Dinfo.value)
   }
 }
 
@@ -503,6 +506,10 @@ const onDogIDChange = async (swiper) => {
 
   // 根據當前圖片的 id，去取該 id 的狗狗資料，並更新預約表格的資料
   loadDinfo(dogID)
+  // console.log('Dinfo.value2', Dinfo.value)
+
+  // 預約表單清空欄位
+  resetForm()
 
   // 只在 mobile 版，觸發切換狗狗時，初始化日期選擇器
   if (mobile.value) {
@@ -599,7 +606,11 @@ const loadDinfo = async (passInData) => {
     // 抓取當前狗狗已經預約的時間
     alreadybookingColl.value = await getBookingData(Dinfo.value._id, dateYM.value)
     halfBookingDate()
-    // console.log('當前載入，觸發向後端發送請求 "預約日期" 資料，並渲染預約一半的日期')
+    // console.log('當前載入，觸發向後端發送請求取 "預約日期" 資料，並渲染預約一半的日期')
+
+
+    // 隨著載入/更新狗狗資料時，觸發 useFormUpdate() 函式，將 image、dogName 欄位的值更新成當前狗狗的資料。
+    useFormUpdate()
 
   } catch (error) {
     console.log(error)
@@ -768,40 +779,8 @@ function manualResetForm() {
 
 
 // ● 定義預約表格
-const bookingFormSchema = yup.object({
-  name: yup
-    .string()
-    .required('預約人名字必填'),
-  phone: yup
-    .string()
-    .required('預約人電話必填'),
-  dogName: yup
-    .string()
-    .required('狗狗名字必填'),
-  bookingDate: yup
-    .string()
-    .required('預約日期必填'),
-  bookingTime: yup
-    .array()
-    .required('預約時段必填')
-    .min(1, '預約時段必填'), // 至少要有 1 個元素
-  // totalBookingTime: yup
-  //   .number()
-  //   .required('預約總時數必填')
-  //   .typeError('預約總時數格式錯誤')
-  //   .min(1, '預約總時數不能小於 1'),
-  // totalPrice: yup
-  //   .number()
-  //   .required('預約總金額必填')
-  //   .typeError('預約總金額格式錯誤')
-  //   .min(1, '預約總金額不能小於 1'),
-  accountName: yup
-    .string()
-    .required('帳戶名稱必填'),
-  orderStatus: yup
-    .boolean()
-    .required('訂單狀態必填'),
-})
+const bookingFormSchema = yup.object(orderFields)
+
 
 const { handleSubmit, isSubmitting, resetForm } = useForm({
   validationSchema: bookingFormSchema,
@@ -809,8 +788,8 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
   initialValues: {
     name: userName.value,
     phone: '',
-    image: '',
-    dogName: '',
+    image: Dinfo.value.image,
+    dogName: Dinfo.value.dogName,
     bookingDate: '',
     bookingTime: [],
     // totalBookingTime: 0,
@@ -833,42 +812,24 @@ const orderStatus = useField('orderStatus')
 
 
 
-// ● 點擊發送按鈕，觸發將輸入表單的資料更新至要發送表單資料內
-// name, phone 綁定雙向資料（v-model），只要使用者輸入就會即時更新，故不用在點擊發送按鈕時，再更新一次
+// ● image、dogName 欄位不是隨使用者輸入即時更新的欄位，故在載入/更新狗狗資料時，觸發 useFormUpdate() 函式，將 image、dogName 欄位的值更新成當前狗狗的資料。
 function useFormUpdate() {
   image.value.value = Dinfo.value.image;
   dogName.value.value = Dinfo.value.dogName;
-  bookingDate.value.value = chooseBDate.value;
-  bookingTime.value.value = selectedTime.value;
-  // totalBookingTime.value.value = totalBTime.value;
-  // totalPrice.value.value = totalBPrice.value;
 }
 
 
 // ★ FormData 直接傳至後端處理會失敗，需再經過 multer 的套件解析 form-data，才能傳入後端
 // handleSubmit(第一個參數：成功時的 callback 函式, 第二個參數：失敗時的 callback 函式)
-const submit = handleSubmit(async (values) => {
-  // console.log('有觸發 submit')
-  // console.log('submit values', values)
-
-  // ★ 按下送出表單按鈕時，先判斷是否為登入狀態
-  // 非登入狀態，跳出需登入的提示，關閉提示後，自動轉跳至登入頁面
-  if (!User.isLogin) {
-    // console.log('User.isLogin', User.isLogin)
-
-    createSnackbar({
-      text: '請先登入會員',
-      snackbarProps: {
-        class: 'snackbar-fail',
-      }
-    })
-    router.push('/login')
-    return
-  }
-
+/* 流程：
+    驗證表單欄位 → 欄位有錯誤，就不會送出表單 → 執行 checkFormError() → 滾動至錯誤欄位，並跳出提示訊息
+              ↘  驗證成功 → 檢查是否重複預約 → 送出訂單請求
+*/
+const runHhandleSubmit = handleSubmit(async (values) => {
 
   try {
-    // console.log('有觸發')
+    // console.log('submit values', values)
+    // console.log('handleSubmit 有觸發')
 
     // ● 確認訂單是否有重複預約日期和時段
     // 再次呼叫後端的 "預約日期列表" API，取得最新資料
@@ -997,6 +958,30 @@ const submit = handleSubmit(async (values) => {
 
 
 
+const submit = () => {
+  // console.log('有觸發 submit')
+
+  // ★ 按下送出表單按鈕時，先判斷是否為登入狀態
+  // 非登入狀態，跳出需登入的提示，關閉提示後，自動轉跳至登入頁面
+  if (!User.isLogin) {
+    // console.log('User.isLogin', User.isLogin)
+
+    createSnackbar({
+      text: '請先登入會員',
+      snackbarProps: {
+        class: 'snackbar-fail',
+      }
+    })
+    router.push('/login')
+    return
+  }
+
+  // 確定登入狀態後，才會執行 handleSubmit()
+  runHhandleSubmit()
+}
+
+
+
 // ● onMounted(()=>{}) 用來執行在組件首次渲染（DOM 元素掛載）完成後的操作。
 // 無論你將 onMounted 放在 <script setup> 的哪個位置，都會在組件掛載完成後自動執行。
 // * 使用時機：
@@ -1011,7 +996,6 @@ onMounted(async () => {
   })
 
   await loadItems()
-
 })
 
 </script>
