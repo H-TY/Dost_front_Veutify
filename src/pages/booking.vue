@@ -22,7 +22,7 @@
 
           <template v-if="mobile">
             <v-dialog class="data-dialog" v-model="dataDialog">
-              <v-date-picker ref="refDatePicker" v-model="date" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event"></v-date-picker>
+              <v-date-picker ref="refDatePicker" v-model="date" :allowed-dates="allowedSelectDate" @update:year="changYear = $event" @update:month="changMonth = $event" @update:model-value="bookingDate.handleChange(chooseBDate)"></v-date-picker>
 
               <dialogCloseBtn @click="dataDialog = false"></dialogCloseBtn>
             </v-dialog>
